@@ -1,0 +1,9 @@
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <vertical>
+        <text id="update-text" text="lmao" active="~update-available" color="#FFEE00"/>
+    </vertical>
+
+    <horizontal background="round-rect-panel" anchor-pos-y="-30" pad-left="4" pad-right="4" pad-top="2" pad-bottom="2" horizontal-fit="PreferredSize">
+        <clickable-image src="Greetings.Resources.PauseOrPlay.png" on-click="pause-or-play-clicked"/>
+    </horizontal>
+</bg>

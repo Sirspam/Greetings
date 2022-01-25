@@ -1,0 +1,18 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "Greetings",
+  "name": "Greetings",
+  "author": "Sirspam",
+  "version": "0.0.1",
+  "description": "Beat Saber mod for playing a video on the game's start up",
+  "gameVersion": "1.19.0",
+  "icon": "Greetings.Resources.Greetings.png",
+  "dependsOn": {
+    "BSIPA": "^4.2.1",
+    "BeatSaberMarkupLanguage": "^1.6.1",
+    "SiraUtil": "^3.0.3"
+  },
+  "links": {
+    "project-source": "https://github.com/Sirspam/Greetings"
+  }
+}
