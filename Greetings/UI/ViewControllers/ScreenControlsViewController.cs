@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Utils;
 using IPA.Loader;
+using SiraUtil.Logging;
 using SiraUtil.Web.SiraSync;
 using TMPro;
 using UnityEngine.Video;
@@ -13,6 +14,7 @@ namespace Greetings.UI.ViewControllers
     [ViewDefinition("Greetings.UI.Views.ScreenControlsView.bsml")]
     internal class ScreenControlsViewController : BSMLAutomaticViewController
     {
+        private SiraLog _siraLog = null!;
         private ScreenUtils _screenUtils = null!;
         private ISiraSyncService _siraSyncService = null!;
 
@@ -22,8 +24,9 @@ namespace Greetings.UI.ViewControllers
         private readonly TextMeshProUGUI _updateText = null!;
 
         [Inject]
-        public void Construct(ScreenUtils screenUtils, ISiraSyncService siraSyncService)
+        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, ISiraSyncService siraSyncService)
         {
+            _siraLog = siraLog;
             _screenUtils = screenUtils;
             _siraSyncService = siraSyncService;
         }
@@ -51,11 +54,12 @@ namespace Greetings.UI.ViewControllers
         private async void PostParse()
         {
             var gitVersion = await _siraSyncService.LatestVersion();
-            if (gitVersion == null || PluginManager.GetPluginFromId(nameof(Greetings)).HVersion != gitVersion)
+            if (gitVersion == null || PluginManager.GetPluginFromId(nameof(Greetings)).HVersion >= gitVersion)
             {
                 UpdateAvailable = false;
                 return;
             }
+            _siraLog.Info($"{nameof(Greetings)} v{gitVersion} is available on GitHub!");
             _updateText.text = $"{nameof(Greetings)} v{gitVersion} is available on GitHub!";
             UpdateAvailable = true;
         }
