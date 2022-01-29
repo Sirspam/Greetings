@@ -15,6 +15,7 @@ namespace Greetings
         public Plugin(Config conf, Logger logger, Zenjector zenjector)
         {
             zenjector.UseLogger(logger);
+            zenjector.UseMetadataBinder<Plugin>();
             zenjector.UseSiraSync();
 
             var config = conf.Generated<PluginConfig>();

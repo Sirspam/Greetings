@@ -4,6 +4,7 @@ using Greetings.Utils;
 using IPA.Loader;
 using SiraUtil.Logging;
 using SiraUtil.Web.SiraSync;
+using SiraUtil.Zenject;
 using TMPro;
 using UnityEngine.Video;
 using Zenject;
@@ -16,6 +17,7 @@ namespace Greetings.UI.ViewControllers
     {
         private SiraLog _siraLog = null!;
         private ScreenUtils _screenUtils = null!;
+        private PluginMetadata _metadata = null!;
         private ISiraSyncService _siraSyncService = null!;
 
         private bool _updateAvailable;
@@ -24,10 +26,11 @@ namespace Greetings.UI.ViewControllers
         private readonly TextMeshProUGUI _updateText = null!;
 
         [Inject]
-        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, ISiraSyncService siraSyncService)
+        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata,ISiraSyncService siraSyncService)
         {
             _siraLog = siraLog;
             _screenUtils = screenUtils;
+            _metadata = metadata.Value;
             _siraSyncService = siraSyncService;
         }
 
@@ -54,7 +57,7 @@ namespace Greetings.UI.ViewControllers
         private async void PostParse()
         {
             var gitVersion = await _siraSyncService.LatestVersion();
-            if (gitVersion == null || PluginManager.GetPluginFromId(nameof(Greetings)).HVersion >= gitVersion)
+            if (gitVersion == null || _metadata.HVersion >= gitVersion)
             {
                 UpdateAvailable = false;
                 return;
