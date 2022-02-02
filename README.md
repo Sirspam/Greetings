@@ -1,4 +1,4 @@
-# Greetings
+# Greetings <img src="Greetings\Resources\Greetings.png" align="right" width="150">
 Beat Saber mod for playing a video on the game's start up
 ## Usage
 To change the video played by Greetings, add an MP4 file to UserData/Greetings. From here the video should be selectable from in game.
