@@ -49,7 +49,7 @@ namespace Greetings.Utils
                 VideoPlayer!.StepForward();
 
                 // This obviously could be improved as the player's aspect won't exactly fit the video's
-                // Sadly I am to stupid to figure out a nice way to achieve that
+                // Sadly I am too stupid to figure out a nice way to achieve that
                 if (VideoPlayer.width > VideoPlayer.height)
                     _screenScale = new Vector3(4f, 2.5f, 0f);
                 else if (VideoPlayer.width < VideoPlayer.height)
