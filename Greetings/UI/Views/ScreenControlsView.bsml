@@ -3,7 +3,10 @@
         <text id="update-text" text="lmao" active="~update-available" color="#FFEE00"/>
     </vertical>
 
-    <horizontal background="round-rect-panel" anchor-pos-y="-30" pad-left="4" pad-right="4" pad-top="2" pad-bottom="2" horizontal-fit="PreferredSize">
-        <clickable-image src="Greetings.Resources.PauseOrPlay.png" on-click="pause-or-play-clicked"/>
+    <horizontal background="round-rect-panel" anchor-pos-y="-30" pad-left="3" pad-right="3" pad-top="2" pad-bottom="2" spacing="3" horizontal-fit="PreferredSize">
+        <clickable-image src="Greetings.Resources.Back.png" on-click="back-clicked"/>
+        <clickable-image src="Greetings.Resources.PlayOrPause.png" on-click="play-or-pause-clicked"/>
+        <clickable-image src="Greetings.Resources.Stop.png" on-click="stop-clicked"/>
+        <clickable-image id="loop-image" src="Greetings.Resources.Loop.png" on-click="loop-clicked"/>
     </horizontal>
 </bg>
