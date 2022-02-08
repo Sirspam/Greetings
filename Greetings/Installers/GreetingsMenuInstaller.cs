@@ -21,7 +21,7 @@ namespace Greetings.Installers
             Container.Bind<UIUtils>().AsSingle();
             Container.Bind<ScreenUtils>().AsSingle();
             
-            Container.BindInterfacesTo<GreetingsController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GreetingsController>().AsSingle();
             Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
             Container.Bind<FloorTextViewController>().FromNewComponentAsViewController().AsSingle();
 

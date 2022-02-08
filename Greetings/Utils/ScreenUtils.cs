@@ -43,11 +43,19 @@ namespace Greetings.Utils
             // Then I had to make a reference to the delegate so I could unsub from it
             // Then Rider suggested I make it into a local function
             // Now I'm reconsidering my life choices
-            void ShowScreenDelegate(VideoPlayer source)
+            async void ShowScreenDelegate(VideoPlayer source)
             {
                 VideoPlayer.prepareCompleted -= ShowScreenDelegate;
                 VideoPlayer!.StepForward();
 
+                // Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways
+                var count = 1;
+                while (_songPreviewPlayer.activeAudioClip == null && count <= 3)
+                {
+                    await Utilities.AwaitSleep(250);
+                    count ++;
+                }
+                
                 // This obviously could be improved as the player's aspect won't exactly fit the video's
                 // Sadly I am too stupid to figure out a nice way to achieve that
                 if (VideoPlayer.width > VideoPlayer.height)
@@ -60,7 +68,10 @@ namespace Greetings.Utils
                 if (!doTransition)
                 {
                     _greetingsScreen!.transform.localScale = _screenScale;
-                    if (playOnComplete) PlayAndFadeOutAudio();
+                    if (playOnComplete)
+                    {
+                        PlayAndFadeOutAudio();
+                    }
                     return;
                 }
 
@@ -68,7 +79,10 @@ namespace Greetings.Utils
                 {
                     onCompleted = delegate
                     {
-                        if (playOnComplete) PlayAndFadeOutAudio();
+                        if (playOnComplete)
+                        {
+                            PlayAndFadeOutAudio();
+                        }
                     }
                 };
                 _uwuTweenyManager.AddTween(tween, _greetingsScreen!.gameObject);
@@ -80,7 +94,10 @@ namespace Greetings.Utils
 
         public void HideScreen(bool doTransition = true)
         {
-            if (_greetingsScreen == null || VideoPlayer == null) return;
+            if (_greetingsScreen == null || VideoPlayer == null)
+            {
+                return;
+            }
 
             VideoPlayer.Pause();
             _songPreviewPlayer.CrossfadeToDefault();
@@ -143,18 +160,12 @@ namespace Greetings.Utils
             }
         }
 
-        private async void PlayAndFadeOutAudio()
+        private void PlayAndFadeOutAudio()
         {
-            if (_greetingsScreen == null || !_greetingsScreen.activeSelf || _greetingsScreen.transform.localScale.y == 0f) ShowScreen();
-
-            // Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the music will come in anyways
-            var count = 1;
-            while (_songPreviewPlayer.activeAudioClip == null && count <= 3)
+            if (_greetingsScreen == null || !_greetingsScreen.activeSelf || _greetingsScreen.transform.localScale.y == 0f)
             {
-                await Utilities.AwaitSleep(500);
-                count += 1;
+                ShowScreen();
             }
-           
             
             _songPreviewPlayer.FadeOut(0.8f);
             VideoPlayer!.Play();
@@ -163,7 +174,10 @@ namespace Greetings.Utils
 
         private Shader GetShader()
         {
-            if (_screenShader != null) return _screenShader;
+            if (_screenShader != null)
+            {
+                return _screenShader;
+            }
 
             var loadedAssetBundle = AssetBundle.LoadFromMemory(BeatSaberMarkupLanguage.Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.greetings.bundle"));
             _screenShader = loadedAssetBundle.LoadAsset<Shader>("ScreenShader");

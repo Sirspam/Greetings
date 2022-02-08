@@ -22,6 +22,7 @@ namespace Greetings
         private readonly IFPFCSettings _fpfcSettings;
         private readonly TickableManager _tickableManager;
         private readonly HierarchyManager _hierarchyManager;
+        private readonly GameScenesManager _gameScenesManager;
         private readonly IVRPlatformHelper _vrPlatformHelper;
         private readonly TimeTweeningManager _timeTweeningManager;
         private readonly FloorTextViewController _floorTextViewController;
@@ -32,7 +33,7 @@ namespace Greetings
         private SkipController? _skipController;
         private GreetingsAwaiter? _greetingsAwaiter;
 
-        public GreetingsController(SiraLog siraLog, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
+        public GreetingsController(SiraLog siraLog, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
         {
             _siraLog = siraLog;
             _screenUtils = screenUtils;
@@ -41,27 +42,35 @@ namespace Greetings
             _tickableManager = tickableManager;
             _hierarchyManager = hierarchyManager;
             _vrPlatformHelper = vrPlatformHelper;
+            _gameScenesManager = gameScenesManager;
             _timeTweeningManager = tweeningManager;
             _floorTextViewController = floorTextViewController;
             _vrControllersInputManager = vrControllersInputManager;
         }
 
-        public void Initialize()
+        public virtual void Initialize()
         {
             _screenSystem = _hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
             var gameObject = _screenSystem.gameObject;
             _originalScreenSystemPosition = gameObject.transform.position;
             gameObject.transform.position = Vector3.negativeInfinity; // Sod off wanker
             _screenUtils.CreateScreen();
+            _screenUtils.VideoPlayer!.Prepare();
+            
+            _gameScenesManager.transitionDidFinishEvent += GameScenesManagerOnTransitionDidFinishEvent;
+        }
+
+        private void GameScenesManagerOnTransitionDidFinishEvent(ScenesTransitionSetupDataSO arg1, DiContainer arg2)
+        {
+            _gameScenesManager.transitionDidFinishEvent -= GameScenesManagerOnTransitionDidFinishEvent;
             
             _skipController = new SkipController(this);
             _tickableManager.Add(_skipController);
             _floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowSkipText);
-
+            
             if (_pluginConfig.AwaitFps || _pluginConfig.AwaitHmd)
             {
                 _greetingsAwaiter = new GreetingsAwaiter(this);
-                _screenUtils.VideoPlayer!.Prepare();
                 _tickableManager.Add(_greetingsAwaiter);
                 _floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowFpsText);
                 return;
@@ -86,7 +95,8 @@ namespace Greetings
             _floorTextViewController.HideScreen();
             await Utilities.PauseChamp;
             _screenSystem!.gameObject.transform.position = _originalScreenSystemPosition;
-            foreach (var cg in _screenSystem.gameObject.GetComponentsInChildren<CanvasGroup>()) _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => cg.alpha = val, 0.5f, EaseType.InOutQuad), cg.gameObject);
+            foreach (var cg in _screenSystem.gameObject.GetComponentsInChildren<CanvasGroup>()) 
+                _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => cg.alpha = val, 0.5f, EaseType.InOutQuad), cg.gameObject);
         }
 
         private void VideoPlayer_loopPointReached(VideoPlayer source)
@@ -121,10 +131,12 @@ namespace Greetings
             private readonly GreetingsController _greetingsController;
 
             internal bool YouShouldKillYourselfNow;
-            private float _stabilityCounter;
-            private float _waitTimeCounter;
-            private float _maxWaitTime;
+            private int _targetFps;
+            private int _fpsStreak;
             private bool _awaitingHmd;
+            private float _maxWaitTime;
+            private int _stabilityCounter;
+            private float _waitTimeCounter;
 
             public GreetingsAwaiter(GreetingsController greetingsController)
             {
@@ -134,16 +146,19 @@ namespace Greetings
 
             private void Initialize()
             {
-                _stabilityCounter = 0f;
-                _awaitingHmd = _greetingsController._pluginConfig.AwaitHmd;
+                _stabilityCounter = 0;
+                _waitTimeCounter = 0f;
                 YouShouldKillYourselfNow = false;
 
-                _waitTimeCounter = 0f;
-                _maxWaitTime = 5;
+                _targetFps = _greetingsController._pluginConfig.TargetFps;
+                _fpsStreak = _greetingsController._pluginConfig.FpsStreak;
+                _awaitingHmd = _greetingsController._pluginConfig.AwaitHmd;
+                _maxWaitTime = _greetingsController._pluginConfig.MaxWaitTime;
 
+                _greetingsController._siraLog.Debug("target fps " + _targetFps);
                 if (_awaitingHmd)
                 {
-                    _greetingsController._siraLog.Info("Awaiting HMD and FPS Stabilisation");
+                    _greetingsController._siraLog.Info("Awaiting HMD Focus");
                     return;
                 }
                 _greetingsController._siraLog.Info("Awaiting FPS stabilisation");
@@ -168,14 +183,14 @@ namespace Greetings
                 }
 
                 // We do a lil' bit of logging
-                _greetingsController._siraLog.Debug("target fps " + XRDevice.refreshRate);
-                _greetingsController._siraLog.Debug("fps " + 1f / Time.deltaTime);
+                var fps = Time.timeScale / Time.deltaTime;
+                _greetingsController._siraLog.Debug("fps " + fps);
 
-                _waitTimeCounter += Time.deltaTime;
-                if (XRDevice.refreshRate <= 1f / Time.deltaTime)
+                _waitTimeCounter += Time.unscaledDeltaTime;
+                if (_targetFps <= fps)
                 {
-                    _stabilityCounter += Time.deltaTime;
-                    if (_stabilityCounter >= 0.4f && _greetingsController._screenUtils.VideoPlayer!.isPrepared)
+                    _stabilityCounter += 1;
+                    if (_stabilityCounter >= _fpsStreak && _greetingsController._screenUtils.VideoPlayer!.isPrepared)
                     {
                         _greetingsController._siraLog.Info("Target FPS reached, starting Greetings");
                         PlayTheThingThenKys();
@@ -185,6 +200,10 @@ namespace Greetings
                 {
                     _greetingsController._siraLog.Info("Max wait time reached, starting Greetings");
                     PlayTheThingThenKys();
+                }
+                else
+                {
+                    _stabilityCounter = 0;
                 }
             }
 

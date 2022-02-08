@@ -32,6 +32,27 @@ namespace Greetings.UI.ViewControllers
             set => _pluginConfig.AwaitHmd = value;
         }
 
+        [UIValue("target-fps")]
+        private int TargetFps
+        {
+            get => _pluginConfig.TargetFps;
+            set => _pluginConfig.TargetFps = value;
+        }
+        
+        [UIValue("fps-streak")]
+        private int FpsStreak
+        {
+            get => _pluginConfig.FpsStreak;
+            set => _pluginConfig.FpsStreak = value;
+        }
+        
+        [UIValue("max-wait-time")]
+        private int MaxWaitTime
+        {
+            get => _pluginConfig.MaxWaitTime;
+            set => _pluginConfig.MaxWaitTime = value;
+        }
+
         [Inject]
         public void Construct(PluginConfig pluginConfig)
         {
