@@ -94,7 +94,7 @@ namespace Greetings.UI.ViewControllers
                     selectedFound = true;
                 }
 
-                data.Add(new CustomCellInfo(file.Name.Remove(file.Name.Length - 4)));
+                data.Add(new CustomCellInfo(file.Name.Remove(file.Name.Length - 4), GetFileSize(file.Length)));
             }
 
             _videoList.data = data;
