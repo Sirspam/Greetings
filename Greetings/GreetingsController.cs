@@ -28,6 +28,7 @@ namespace Greetings
         private readonly FloorTextViewController _floorTextViewController;
         private readonly VRControllersInputManager _vrControllersInputManager;
 
+        private static bool _greetingsPlayed;
         private ScreenSystem? _screenSystem;
         private SkipController? _skipController;
         private GreetingsAwaiter? _greetingsAwaiter;
@@ -50,6 +51,11 @@ namespace Greetings
 
         public virtual void Initialize()
         {
+            if (_greetingsPlayed && _pluginConfig.PlayOnce)
+            {
+                return;
+            }
+            
             _screenSystem = _hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
             var gameObject = _screenSystem.gameObject;
             _originalScreenSystemPosition = gameObject.transform.position;

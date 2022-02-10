@@ -17,6 +17,13 @@ namespace Greetings.UI.ViewControllers
             get => _pluginConfig.RandomVideo;
             set => _pluginConfig.RandomVideo = value;
         }
+        
+        [UIValue("play-once")]
+        private bool PlayOnce
+        {
+            get => _pluginConfig.PlayOnce;
+            set => _pluginConfig.PlayOnce = value;
+        }
 
         [UIValue("await-fps")]
         private bool AwaitFps
