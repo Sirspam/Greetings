@@ -29,9 +29,9 @@ namespace Greetings
         private readonly VRControllersInputManager _vrControllersInputManager;
 
         private ScreenSystem? _screenSystem;
-        private Vector3 _originalScreenSystemPosition;
         private SkipController? _skipController;
         private GreetingsAwaiter? _greetingsAwaiter;
+        private Vector3 _originalScreenSystemPosition;
 
         public GreetingsController(SiraLog siraLog, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
         {
@@ -75,8 +75,8 @@ namespace Greetings
                 _floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowFpsText);
                 return;
             }
-            
-            _screenUtils.ShowScreen();
+
+            _screenUtils.ShowScreen(randomVideo: _pluginConfig.RandomVideo);
             _screenUtils.VideoPlayer!.loopPointReached += VideoPlayer_loopPointReached;
         }
 
@@ -90,13 +90,16 @@ namespace Greetings
                 _greetingsAwaiter = null;
             }
 
-            
+
+            _greetingsPlayed = true;
             _screenUtils.HideScreen();
             _floorTextViewController.HideScreen();
             await Utilities.PauseChamp;
             _screenSystem!.gameObject.transform.position = _originalScreenSystemPosition;
-            foreach (var cg in _screenSystem.gameObject.GetComponentsInChildren<CanvasGroup>()) 
+            foreach (var cg in _screenSystem.gameObject.GetComponentsInChildren<CanvasGroup>())
+            {
                 _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => cg.alpha = val, 0.5f, EaseType.InOutQuad), cg.gameObject);
+            }
         }
 
         private void VideoPlayer_loopPointReached(VideoPlayer source)
@@ -209,7 +212,7 @@ namespace Greetings
 
             private void PlayTheThingThenKys()
             {
-                _greetingsController._screenUtils.ShowScreen();
+                _greetingsController._screenUtils.ShowScreen(randomVideo: _greetingsController._pluginConfig.RandomVideo);
                 _greetingsController._screenUtils.VideoPlayer!.loopPointReached += _greetingsController.VideoPlayer_loopPointReached;
                 _greetingsController._floorTextViewController.ChangeText(FloorTextViewController.TextChange.HideFpsText);
                 _greetingsController._tickableManager.Remove(this);

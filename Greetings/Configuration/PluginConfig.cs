@@ -15,6 +15,7 @@ namespace Greetings.Configuration
     {
         public virtual string SelectedVideo { get; set; } = "Greetings.mp4";
         public virtual bool RandomVideo { get; set; } = false;
+        public virtual bool PlayOnce { get; set; } = true;
         public virtual bool AwaitFps { get; set; } = true;
         public virtual bool AwaitHmd { get; set; } = true;
         public virtual int TargetFps { get; set; } = Convert.ToInt16(XRDevice.refreshRate - 10);

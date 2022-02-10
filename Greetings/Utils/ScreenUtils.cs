@@ -35,9 +35,9 @@ namespace Greetings.Utils
             _uwuTweenyManager = timeTweeningManager;
         }
 
-        public void ShowScreen(bool doTransition = true, bool playOnComplete = true)
+        public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false)
         {
-            CreateScreen();
+            CreateScreen(randomVideo);
             
             // Originally this was an anonymous delegate
             // Then I had to make a reference to the delegate so I could unsub from it
@@ -120,7 +120,7 @@ namespace Greetings.Utils
             _uwuTweenyManager.AddTween(tween, _greetingsScreen.gameObject);
         }
 
-        public void CreateScreen()
+        public void CreateScreen(bool randomVideo = false)
         {
             if (_greetingsScreen == null)
             {
@@ -148,7 +148,7 @@ namespace Greetings.Utils
                 _greetingsScreen.SetActive(true);
             }
             
-            if (_pluginConfig.RandomVideo)
+            if (randomVideo)
             {
                 var files = Directory.GetFiles(_greetingsPath);
                 var rand = new Random();
