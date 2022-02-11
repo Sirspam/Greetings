@@ -17,9 +17,8 @@ namespace Greetings
             zenjector.UseLogger(logger);
             zenjector.UseMetadataBinder<Plugin>();
             zenjector.UseSiraSync();
-
-            var config = conf.Generated<PluginConfig>();
-            zenjector.Install<GreetingsMenuInstaller>(Location.Menu, config);
+            
+            zenjector.Install<GreetingsMenuInstaller>(Location.Menu, conf.Generated<PluginConfig>());
         }
     }
 }

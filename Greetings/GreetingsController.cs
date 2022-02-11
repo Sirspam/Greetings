@@ -2,17 +2,17 @@
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using HMUI;
+using IPA.Loader;
 using IPA.Utilities;
 using SiraUtil.Extras;
 using SiraUtil.Logging;
 using SiraUtil.Tools.FPFC;
+using SongCore;
 using Tweening;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.XR;
 using Zenject;
-
-using SongCore;
 
 namespace Greetings
 {
@@ -165,7 +165,7 @@ namespace Greetings
                 _fpsStreak = _greetingsController._pluginConfig.FpsStreak;
                 _maxWaitTime = _greetingsController._pluginConfig.MaxWaitTime;
                 _awaitingHmd = _greetingsController._pluginConfig.AwaitHmd && !_greetingsController._fpfcSettings.Enabled;
-                _awaitingSongCore = _greetingsController._pluginConfig.AwaitSongCore && IPA.Loader.PluginManager.GetPluginFromId("SongCore") != null;
+                _awaitingSongCore = _greetingsController._pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null;
 
 
                 _greetingsController._siraLog.Debug("target fps " + _targetFps);
