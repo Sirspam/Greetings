@@ -8,6 +8,7 @@ using SiraUtil.Logging;
 using SiraUtil.Web.SiraSync;
 using SiraUtil.Zenject;
 using TMPro;
+using Tweening;
 using UnityEngine;
 using UnityEngine.Video;
 using Zenject;
@@ -35,23 +36,28 @@ namespace Greetings.UI.ViewControllers
         private PluginMetadata _metadata = null!;
         private ISiraSyncService _siraSyncService = null!;
         private IPlatformUserModel _platformUserModel = null!;
+        private TimeTweeningManager _timeTweeningManager = null!;
 
         [Inject]
-        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel)
+        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager)
         {
             _siraLog = siraLog;
             _screenUtils = screenUtils;
             _metadata = metadata.Value;
             _siraSyncService = siraSyncService;
             _platformUserModel = platformUserModel;
+            _timeTweeningManager = timeTweeningManager;
         }
 
         protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
 
-            _screenUtils.HideScreen(false);
-            _screenUtils.VideoPlayer!.loopPointReached -= VideoPlayer_loopPointReached;
+            if (_screenUtils.VideoPlayer != null)
+            {
+                _screenUtils.HideScreen(false);
+                _screenUtils.VideoPlayer.loopPointReached -= VideoPlayer_loopPointReached;
+            }
         }
 
         [UIValue("update-available")]
@@ -68,10 +74,20 @@ namespace Greetings.UI.ViewControllers
         [UIAction("#post-parse")]
         private async void PostParse()
         {
-            var gitVersion = await _siraSyncService.LatestVersion();
+            if (!_updateAvailable)
             {
-            
-            /* Fuck you Kryptecc*/ if (_platformUserModel.GetUserInfo().Result.platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
+                var gitVersion = await _siraSyncService.LatestVersion();
+                if (gitVersion != null && gitVersion > _metadata.HVersion)
+                {
+                    _siraLog.Info($"{nameof(Greetings)} v{gitVersion} is available on GitHub!");
+                    _updateText.text = $"{nameof(Greetings)} v{gitVersion} is available on GitHub!";
+                    _updateText.alpha = 0f;
+                    UpdateAvailable = true;
+                    _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
+                }
+            }
+
+            /* Fuck you Kryptec*/ if (_platformUserModel.GetUserInfo().Result.platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
             }
 
         [UIAction("back-clicked")]
