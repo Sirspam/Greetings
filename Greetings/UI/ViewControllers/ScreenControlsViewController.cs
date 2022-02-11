@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Utils;
@@ -23,6 +24,9 @@ namespace Greetings.UI.ViewControllers
         [UIComponent("update-text")] 
         private readonly TextMeshProUGUI _updateText = null!;
         
+        [UIComponent("play-or-pause-image")] 
+        private readonly ClickableImage _playOrPauseImage = null!;
+        
         [UIComponent("loop-image")] 
         private readonly ClickableImage _loopImage = null!;
         
@@ -30,14 +34,16 @@ namespace Greetings.UI.ViewControllers
         private ScreenUtils _screenUtils = null!;
         private PluginMetadata _metadata = null!;
         private ISiraSyncService _siraSyncService = null!;
+        private IPlatformUserModel _platformUserModel = null!;
 
         [Inject]
-        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata,ISiraSyncService siraSyncService)
+        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel)
         {
             _siraLog = siraLog;
             _screenUtils = screenUtils;
             _metadata = metadata.Value;
             _siraSyncService = siraSyncService;
+            _platformUserModel = platformUserModel;
         }
 
         protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
@@ -63,15 +69,10 @@ namespace Greetings.UI.ViewControllers
         private async void PostParse()
         {
             var gitVersion = await _siraSyncService.LatestVersion();
-            if (gitVersion == null || _metadata.HVersion >= gitVersion)
             {
-                UpdateAvailable = false;
-                return;
+            
+            /* Fuck you Kryptecc*/ if (_platformUserModel.GetUserInfo().Result.platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
             }
-            _siraLog.Info($"{nameof(Greetings)} v{gitVersion} is available on GitHub!");
-            _updateText.text = $"{nameof(Greetings)} v{gitVersion} is available on GitHub!";
-            UpdateAvailable = true;
-        }
 
         [UIAction("back-clicked")]
         private void RestartVideo()
