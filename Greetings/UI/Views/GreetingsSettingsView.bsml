@@ -8,6 +8,7 @@
         <checkbox-setting text="Play Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
         <checkbox-setting text="Await FPS Stabilisation" hover-hint="Waits for your frame rate to stabilise before playing Greetings" value="await-fps" apply-on-change="true" bind-value="true"/>
         <checkbox-setting text="Await HMD Focus" hover-hint="Waits for your headset to be active before playing Greetings" value="await-hmd" apply-on-change="true" bind-value="true"/>
+        <checkbox-setting text="Await SongCore" hover-hint="Waits for SongCore to finish loading songs" value="await-songcore" apply-on-change="true" bind-value="true"/>
         <slider-setting text="Target FPS" hover-hint="The FPS Greetings will wait for stabilisation at before Greeting. By default this is 10 frames below your headset's refresh rate" value="target-fps" min="30" max="180" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
         <slider-setting text="FPS Streak" hover-hint="How many frames in a row need to pass while at the target FPS until Greetings plays" value="fps-streak" min="2" max="20" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
         <slider-setting text="Max Stabilisation Wait Time" hover-hint="The maximum amount of seconds Greetings should wait for FPS stabilisation" value="max-wait-time" min="1" max="20" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>

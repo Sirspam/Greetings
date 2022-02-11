@@ -12,6 +12,8 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Zenject;
 
+using SongCore;
+
 namespace Greetings
 {
     internal class GreetingsController : IInitializable
@@ -95,8 +97,7 @@ namespace Greetings
                 _greetingsAwaiter.YouShouldKillYourselfNow = true;
                 _greetingsAwaiter = null;
             }
-
-
+            
             _greetingsPlayed = true;
             _screenUtils.HideScreen();
             _floorTextViewController.HideScreen();
@@ -145,6 +146,7 @@ namespace Greetings
             private bool _awaitingHmd;
             private float _maxWaitTime;
             private int _stabilityCounter;
+            private bool _awaitingSongCore;
             private float _waitTimeCounter;
 
             public GreetingsAwaiter(GreetingsController greetingsController)
@@ -161,8 +163,10 @@ namespace Greetings
 
                 _targetFps = _greetingsController._pluginConfig.TargetFps;
                 _fpsStreak = _greetingsController._pluginConfig.FpsStreak;
-                _awaitingHmd = _greetingsController._pluginConfig.AwaitHmd;
                 _maxWaitTime = _greetingsController._pluginConfig.MaxWaitTime;
+                _awaitingHmd = _greetingsController._pluginConfig.AwaitHmd && !_greetingsController._fpfcSettings.Enabled;
+                _awaitingSongCore = _greetingsController._pluginConfig.AwaitSongCore && IPA.Loader.PluginManager.GetPluginFromId("SongCore") != null;
+
 
                 _greetingsController._siraLog.Debug("target fps " + _targetFps);
                 if (_awaitingHmd)
@@ -183,11 +187,25 @@ namespace Greetings
 
                 if (_awaitingHmd)
                 {
-                    if (_greetingsController._vrPlatformHelper.hasVrFocus || _greetingsController._fpfcSettings.Enabled)
+                    if (!_greetingsController._vrPlatformHelper.hasVrFocus && !_greetingsController._fpfcSettings.Enabled)
                     {
-                        _awaitingHmd = false;
-                        _greetingsController._siraLog.Info("HMD focused. Awaiting FPS stabilisation");
+                        return;
                     }
+                    _awaitingHmd = false;
+                    _greetingsController._siraLog.Info("HMD focused");
+                    
+                    return;
+                }
+
+                if (_awaitingSongCore)
+                {
+                    if (!Loader.AreSongsLoaded)
+                    {
+                        return;
+                    }
+                    _awaitingSongCore = false;
+                    _greetingsController._siraLog.Info("SongCore Loaded");
+
                     return;
                 }
 

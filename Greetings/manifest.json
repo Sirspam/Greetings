@@ -12,6 +12,9 @@
     "BeatSaberMarkupLanguage": "^1.6.1",
     "SiraUtil": "^3.0.3"
   },
+  "loadAfter": [
+    "SongCore"
+  ],
   "links": {
     "project-source": "https://github.com/Sirspam/Greetings"
   }

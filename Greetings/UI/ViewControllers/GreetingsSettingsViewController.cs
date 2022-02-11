@@ -38,6 +38,13 @@ namespace Greetings.UI.ViewControllers
             get => _pluginConfig.AwaitHmd;
             set => _pluginConfig.AwaitHmd = value;
         }
+        
+        [UIValue("await-songcore")]
+        private bool AwaitSongCore
+        {
+            get => _pluginConfig.AwaitSongCore;
+            set => _pluginConfig.AwaitSongCore = value;
+        }
 
         [UIValue("target-fps")]
         private int TargetFps
