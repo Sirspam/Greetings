@@ -1,4 +1,5 @@
-﻿using Greetings.Configuration;
+﻿using System;
+using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using HMUI;
@@ -19,6 +20,7 @@ namespace Greetings
     internal class GreetingsController : IInitializable
     {
         private readonly SiraLog _siraLog;
+        private readonly CheeseUtils _cheeseUtils;
         private readonly ScreenUtils _screenUtils;
         private readonly PluginConfig _pluginConfig;
         private readonly IFPFCSettings _fpfcSettings;
@@ -36,9 +38,10 @@ namespace Greetings
         private GreetingsAwaiter? _greetingsAwaiter;
         private Vector3 _originalScreenSystemPosition;
 
-        public GreetingsController(SiraLog siraLog, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
+        public GreetingsController(SiraLog siraLog, CheeseUtils cheeseUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
         {
             _siraLog = siraLog;
+            _cheeseUtils = cheeseUtils;
             _screenUtils = screenUtils;
             _pluginConfig = pluginConfig;
             _fpfcSettings = fpfcSettings;
@@ -71,10 +74,13 @@ namespace Greetings
         private void GameScenesManagerOnTransitionDidFinishEvent(ScenesTransitionSetupDataSO arg1, DiContainer arg2)
         {
             _gameScenesManager.transitionDidFinishEvent -= GameScenesManagerOnTransitionDidFinishEvent;
-            
-            _skipController = new SkipController(this);
-            _tickableManager.Add(_skipController);
-            _floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowSkipText);
+
+            if (!_cheeseUtils.TheTimeHathCome)
+            {
+                _skipController = new SkipController(this);
+                _tickableManager.Add(_skipController);
+                _floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowSkipText);
+            }
             
             if (_pluginConfig.AwaitFps || _pluginConfig.AwaitHmd)
             {
@@ -90,8 +96,11 @@ namespace Greetings
 
         private async void DismissGreetings()
         {
-            _tickableManager.Remove(_skipController);
-            _skipController = null;
+            if (_skipController != null)
+            {
+                _tickableManager.Remove(_skipController);
+                _skipController = null;   
+            }
             if (_greetingsAwaiter != null)
             {
                 _greetingsAwaiter.YouShouldKillYourselfNow = true;
@@ -140,7 +149,6 @@ namespace Greetings
         {
             private readonly GreetingsController _greetingsController;
 
-            internal bool YouShouldKillYourselfNow;
             private int _targetFps;
             private int _fpsStreak;
             private bool _awaitingHmd;
@@ -148,7 +156,9 @@ namespace Greetings
             private int _stabilityCounter;
             private bool _awaitingSongCore;
             private float _waitTimeCounter;
-
+            private bool _awaitingPreperation;
+            internal bool YouShouldKillYourselfNow;
+            
             public GreetingsAwaiter(GreetingsController greetingsController)
             {
                 _greetingsController = greetingsController;
@@ -159,6 +169,7 @@ namespace Greetings
             {
                 _stabilityCounter = 0;
                 _waitTimeCounter = 0f;
+                _awaitingPreperation = true;
                 YouShouldKillYourselfNow = false;
 
                 _targetFps = _greetingsController._pluginConfig.TargetFps;
@@ -209,6 +220,18 @@ namespace Greetings
                     return;
                 }
 
+                if (_awaitingPreperation)
+                {
+                    if (!_greetingsController._screenUtils.VideoPlayer!.isPrepared)
+                    {
+                        return;
+                    }
+
+                    _awaitingPreperation = false;
+                    _greetingsController._siraLog.Info("Video Prepared");
+                }
+                    
+                
                 // We do a lil' bit of logging
                 var fps = Time.timeScale / Time.deltaTime;
                 _greetingsController._siraLog.Debug("fps " + fps);
@@ -217,7 +240,7 @@ namespace Greetings
                 if (_targetFps <= fps)
                 {
                     _stabilityCounter += 1;
-                    if (_stabilityCounter >= _fpsStreak && _greetingsController._screenUtils.VideoPlayer!.isPrepared)
+                    if (_stabilityCounter >= _fpsStreak)
                     {
                         _greetingsController._siraLog.Info("Target FPS reached, starting Greetings");
                         PlayTheThingThenKys();

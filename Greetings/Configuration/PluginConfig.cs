@@ -16,6 +16,7 @@ namespace Greetings.Configuration
         public virtual string SelectedVideo { get; set; } = "Greetings.mp4";
         public virtual bool RandomVideo { get; set; } = false;
         public virtual bool PlayOnce { get; set; } = true;
+        public virtual bool EasterEggs { get; set; } = true;
         public virtual bool AwaitFps { get; set; } = true;
         public virtual bool AwaitHmd { get; set; } = true;
         public virtual bool AwaitSongCore { get; set; } = true;
@@ -42,9 +43,13 @@ namespace Greetings.Configuration
             {
                 var files = new DirectoryInfo(folderPath).GetFiles("*.mp4");
                 if (files.Length == 0)
+                {
                     File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Greetings.mp4"));
+                }
                 else
+                {
                     SelectedVideo = files[0].Name;
+                }
             }
         }
     }

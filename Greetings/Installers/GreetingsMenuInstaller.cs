@@ -20,8 +20,9 @@ namespace Greetings.Installers
             Container.BindInstance(_pluginConfig).AsSingle();
             Container.Bind<UIUtils>().AsSingle();
             Container.Bind<ScreenUtils>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CheeseUtils>().AsSingle();
             
-            Container.BindInterfacesAndSelfTo<GreetingsController>().AsSingle();
+            Container.BindInterfacesTo<GreetingsController>().AsSingle();
             Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
             Container.Bind<FloorTextViewController>().FromNewComponentAsViewController().AsSingle();
 

@@ -14,6 +14,7 @@ namespace Greetings.Utils
     internal class ScreenUtils
     {
         private readonly SiraLog _siraLog;
+        private readonly CheeseUtils _cheeseUtils;
         private readonly PluginConfig _pluginConfig;
         private readonly SongPreviewPlayer _songPreviewPlayer;
         private readonly TimeTweeningManager _uwuTweenyManager;
@@ -27,9 +28,10 @@ namespace Greetings.Utils
         private Shader? _screenShader;
         private GameObject? _greetingsScreen;
 
-        public ScreenUtils(SiraLog siraLog, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
+        public ScreenUtils(SiraLog siraLog, CheeseUtils cheeseUtils, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
         {
             _siraLog = siraLog;
+            _cheeseUtils = cheeseUtils;
             _pluginConfig = pluginConfig;
             _songPreviewPlayer = songPreviewPlayer;
             _uwuTweenyManager = timeTweeningManager;
@@ -147,8 +149,19 @@ namespace Greetings.Utils
             {
                 _greetingsScreen.SetActive(true);
             }
-            
-            if (randomVideo)
+
+
+            if (_cheeseUtils.TheTimeHathCome)
+            {
+                var cheesePath = Path.Combine(_greetingsPath, "Top Infinite Cheese.mp4");
+                
+                if (!File.Exists(cheesePath))
+                {
+                    File.WriteAllBytes(cheesePath, Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Top Infinite Cheese.mp4"));
+                }
+                VideoPlayer!.url = cheesePath;
+            }
+            else if (randomVideo)
             {
                 var files = Directory.GetFiles(_greetingsPath);
                 var rand = new Random();
