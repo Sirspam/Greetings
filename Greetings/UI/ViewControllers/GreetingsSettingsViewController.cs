@@ -24,6 +24,13 @@ namespace Greetings.UI.ViewControllers
             get => _pluginConfig.PlayOnce;
             set => _pluginConfig.PlayOnce = value;
         }
+        
+        [UIValue("easter-eggs")]
+        private bool EasterEggs
+        {
+            get => _pluginConfig.EasterEggs;
+            set => _pluginConfig.EasterEggs = value;
+        }
 
         [UIValue("await-fps")]
         private bool AwaitFps

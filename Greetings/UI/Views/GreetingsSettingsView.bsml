@@ -3,14 +3,28 @@
         <text text="Settings" align="Center" font-size="8" italics="true"/>
     </horizontal>
 
-    <settings-container pad-top="5">
-        <checkbox-setting text="Use Random Video" value="use-random-video" apply-on-change="true" bind-value="true"/>
-        <checkbox-setting text="Play Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
-        <checkbox-setting text="Await FPS Stabilisation" hover-hint="Waits for your frame rate to stabilise before playing Greetings" value="await-fps" apply-on-change="true" bind-value="true"/>
-        <checkbox-setting text="Await HMD Focus" hover-hint="Waits for your headset to be active before playing Greetings" value="await-hmd" apply-on-change="true" bind-value="true"/>
-        <checkbox-setting text="Await SongCore" hover-hint="Waits for SongCore to finish loading songs" value="await-songcore" apply-on-change="true" bind-value="true"/>
-        <slider-setting text="Target FPS" hover-hint="The FPS Greetings will wait for stabilisation at before Greeting. By default this is 10 frames below your headset's refresh rate" value="target-fps" min="30" max="180" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
-        <slider-setting text="FPS Streak" hover-hint="How many frames in a row need to pass while at the target FPS until Greetings plays" value="fps-streak" min="2" max="20" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
-        <slider-setting text="Max Stabilisation Wait Time" hover-hint="The maximum amount of seconds Greetings should wait for FPS stabilisation" value="max-wait-time" min="1" max="20" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
-    </settings-container>
+    <vertical anchor-pos-y='10'>
+        <horizontal vertical-fit='PreferredSize' horizontal-fit='PreferredSize' pref-height='7' pref-width='60'>
+            <tab-selector tab-tag='settings-tab' child-expand-width="true" child-control-width="true"/>
+        </horizontal>
+    
+        <tab tab-name="General" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
+            <modifier-container child-expand-width='true' horizontal-fit='PreferredSize'>
+                <checkbox-setting text="Use Random Video" value="use-random-video" apply-on-change="true" bind-value="true"/>
+                <checkbox-setting text="Play Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
+                <checkbox-setting text="Easter Eggs" value="easter-eggs" apply-on-change="true" bind-value="true"/>
+            </modifier-container>
+        </tab>
+        
+        <tab tab-name="FPS Stabilisation" tags="settings-tab">
+            <modifier-container child-expand-width='true' horizontal-fit='PreferredSize'>
+                <checkbox-setting text="Await FPS Stabilisation" hover-hint="Waits for your frame rate to stabilise before playing Greetings" value="await-fps" apply-on-change="true" bind-value="true"/>
+                <checkbox-setting text="Await HMD Focus" hover-hint="Waits for your headset to be active before playing Greetings" value="await-hmd" apply-on-change="true" bind-value="true"/>
+                <checkbox-setting text="Await SongCore" hover-hint="Waits for SongCore to finish loading songs" value="await-songcore" apply-on-change="true" bind-value="true"/>
+                <slider-setting text="Target FPS" hover-hint="The FPS Greetings will wait for stabilisation at before Greeting. By default this is 10 frames below your headset's refresh rate" value="target-fps" min="30" max="180" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
+                <slider-setting text="FPS Streak" hover-hint="How many frames in a row need to pass while at the target FPS until Greetings plays" value="fps-streak" min="2" max="20" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
+                <slider-setting text="Max Stabilisation Wait Time" hover-hint="The maximum amount of seconds Greetings should wait for FPS stabilisation" value="max-wait-time" min="1" max="20" integer-only="true" show-buttons="true" apply-on-change="true" bind-value="true"/>
+            </modifier-container>
+        </tab>
+    </vertical>
 </bg>
