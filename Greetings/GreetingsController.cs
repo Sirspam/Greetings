@@ -1,5 +1,4 @@
-﻿using System;
-using Greetings.Configuration;
+﻿using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using HMUI;

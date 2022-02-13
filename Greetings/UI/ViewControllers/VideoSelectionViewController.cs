@@ -104,7 +104,7 @@ namespace Greetings.UI.ViewControllers
 
         // Originally I implemented this to show the file size in the subtext but then I changed the list to simple, which doesn't have subtext
         // Keeping this method here just in case an opportunity arises to reuse it in the future
-        private string GetFileSize(long size)
+        private static string GetFileSize(long size)
         {
             if (size > 1000000000) 
                 return $"{Math.Round((double)size / 1024 / 1024 / 1024, 0)} GB";
