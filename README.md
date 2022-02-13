@@ -8,3 +8,4 @@ Download the latest version of Greetings from [releases](https://github.com/Sirs
 Greetings requires BSML and SiraUtil, which can both be found in ModAssistant.
 ## Contribution
 Feel free to point out any suggestions or improvements to me by submitting a PR or contacting me on Discord ([Sirspam#7765](https://discordapp.com/users/232574143818760192)).
+![Greetings Preview](Greetings.png)
