@@ -12,7 +12,7 @@
             <modifier-container child-expand-width='true' horizontal-fit='PreferredSize'>
                 <checkbox-setting text="Use Random Video" value="use-random-video" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Play Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
-                <checkbox-setting text="Easter Eggs" value="easter-eggs" apply-on-change="true" bind-value="true"/>
+                <checkbox-setting text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" apply-on-change="true" bind-value="true"/>
             </modifier-container>
         </tab>
         
