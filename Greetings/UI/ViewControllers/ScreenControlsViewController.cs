@@ -87,8 +87,8 @@ namespace Greetings.UI.ViewControllers
                 }
             }
 
-            /* Fuck you Kryptec*/ if (_platformUserModel.GetUserInfo().Result.platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
-            }
+            /* Fuck you Kryptec*/ if ((await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
+        }
 
         [UIAction("back-clicked")]
         private void RestartVideo()
