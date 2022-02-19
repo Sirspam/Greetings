@@ -2,6 +2,7 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
+using Greetings.Configuration;
 using Greetings.Utils;
 using IPA.Loader;
 using SiraUtil.Logging;
@@ -34,16 +35,18 @@ namespace Greetings.UI.ViewControllers
         private SiraLog _siraLog = null!;
         private ScreenUtils _screenUtils = null!;
         private PluginMetadata _metadata = null!;
+        private PluginConfig _pluginConfig = null!;
         private ISiraSyncService _siraSyncService = null!;
         private IPlatformUserModel _platformUserModel = null!;
         private TimeTweeningManager _timeTweeningManager = null!;
 
         [Inject]
-        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager)
+        public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata, PluginConfig pluginConfig, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager)
         {
             _siraLog = siraLog;
             _screenUtils = screenUtils;
             _metadata = metadata.Value;
+            _pluginConfig = pluginConfig;
             _siraSyncService = siraSyncService;
             _platformUserModel = platformUserModel;
             _timeTweeningManager = timeTweeningManager;
@@ -86,8 +89,7 @@ namespace Greetings.UI.ViewControllers
                     _timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
                 }
             }
-
-            /* Fuck you Kryptec*/ if ((await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
+            /* Fuck you Kryptec*/ if (_pluginConfig.EasterEggs && (await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
         }
 
         [UIAction("back-clicked")]
