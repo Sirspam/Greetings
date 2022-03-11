@@ -101,9 +101,7 @@ namespace Greetings.UI.ViewControllers
             _videoList.tableView.ReloadData();
             _videoList.tableView.SelectCellWithIdx(index);
         }
-
-        // Originally I implemented this to show the file size in the subtext but then I changed the list to simple, which doesn't have subtext
-        // Keeping this method here just in case an opportunity arises to reuse it in the future
+        
         private static string GetFileSize(long size)
         {
             if (size > 1000000000) 

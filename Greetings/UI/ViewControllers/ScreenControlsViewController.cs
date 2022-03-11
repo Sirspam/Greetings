@@ -52,6 +52,16 @@ namespace Greetings.UI.ViewControllers
             _timeTweeningManager = timeTweeningManager;
         }
 
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        {
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+
+            if (_screenUtils.VideoPlayer == null)
+            {
+                _screenUtils.CreateScreen();
+            }
+        }
+
         protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
