@@ -17,7 +17,7 @@ namespace Greetings.Utils
         private readonly CheeseUtils _cheeseUtils;
         private readonly PluginConfig _pluginConfig;
         private readonly SongPreviewPlayer _songPreviewPlayer;
-        private readonly TimeTweeningManager _uwuTweenyManager;
+        private readonly TimeTweeningManager _timeTweeningManager;
 
         
         public VideoPlayer? VideoPlayer;
@@ -34,7 +34,58 @@ namespace Greetings.Utils
             _cheeseUtils = cheeseUtils;
             _pluginConfig = pluginConfig;
             _songPreviewPlayer = songPreviewPlayer;
-            _uwuTweenyManager = timeTweeningManager;
+            _timeTweeningManager = timeTweeningManager;
+        }
+
+        public void CreateScreen(bool randomVideo = false)
+        {
+            if (_greetingsScreen == null)
+            {
+                _siraLog.Info("Creating GreetingScreen");
+                _greetingsScreen = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                _greetingsScreen.gameObject.name = "GreetingsScreen";
+                _greetingsScreen.transform.position = new Vector3(0, 1.5f, _pluginConfig.ScreenDistance);
+                _greetingsScreen.transform.localScale = Vector3.zero;
+                
+                VideoPlayer = _greetingsScreen.gameObject.AddComponent<VideoPlayer>();
+                VideoPlayer.playOnAwake = false;
+                VideoPlayer.renderMode = VideoRenderMode.MaterialOverride;
+                
+                var screenRenderer = _greetingsScreen.GetComponent<Renderer>();
+                screenRenderer.material = new Material(GetShader())
+                {
+                    color = Color.white
+                };
+                screenRenderer.material.SetTexture(MainTex, VideoPlayer.texture);
+                VideoPlayer.targetMaterialProperty = "_MainTex";
+                VideoPlayer.targetMaterialRenderer = screenRenderer;
+            }
+            else
+            {
+                _greetingsScreen.SetActive(true);
+            }
+
+
+            if (_cheeseUtils.TheTimeHathCome)
+            {
+                var cheesePath = Path.Combine(_greetingsPath, "Top Infinite Cheese.mp4");
+                
+                if (!File.Exists(cheesePath))
+                {
+                    File.WriteAllBytes(cheesePath, Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Top Infinite Cheese.mp4"));
+                }
+                VideoPlayer!.url = cheesePath;
+            }
+            else if (randomVideo)
+            {
+                var files = Directory.GetFiles(_greetingsPath);
+                var rand = new Random();
+                VideoPlayer!.url = files[rand.Next(files.Length)];
+            }
+            else
+            {
+                VideoPlayer!.url = Path.Combine(_greetingsPath, _pluginConfig.SelectedVideo);
+            }
         }
 
         public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false)
@@ -77,6 +128,7 @@ namespace Greetings.Utils
                     return;
                 }
 
+                _timeTweeningManager.KillAllTweens(_greetingsScreen);
                 var tween = new FloatTween(0f, _screenScale.y, val => _greetingsScreen!.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
                 {
                     onCompleted = delegate
@@ -87,16 +139,16 @@ namespace Greetings.Utils
                         }
                     }
                 };
-                _uwuTweenyManager.AddTween(tween, _greetingsScreen!.gameObject);
+                _timeTweeningManager.AddTween(tween, _greetingsScreen);
             }
             
             VideoPlayer!.Prepare();
             VideoPlayer.prepareCompleted += ShowScreenDelegate;
         }
 
-        public void HideScreen(bool doTransition = true)
+        public void HideScreen(bool doTransition = true, bool reloadVideo = false)
         {
-            if (_greetingsScreen == null || VideoPlayer == null)
+            if (_greetingsScreen == null || VideoPlayer == null || !_greetingsScreen.gameObject.activeSelf)
             {
                 return;
             }
@@ -108,69 +160,45 @@ namespace Greetings.Utils
             {
                 VideoPlayer.Stop();
                 _greetingsScreen.transform.localScale = Vector3.zero;
-                _greetingsScreen.SetActive(false);
+                
+                if (reloadVideo)
+                    ShowScreen(doTransition: false);
+                
+                else
+                    _greetingsScreen.SetActive(false);
+                
                 return;
             }
+            
+            _timeTweeningManager.KillAllTweens(_greetingsScreen);
             var tween = new FloatTween(_screenScale.y, 0f, val => _greetingsScreen.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
             {
                 onCompleted = delegate
                 {
-                    VideoPlayer.Stop();
-                    _greetingsScreen.SetActive(false);
+                    if (reloadVideo)
+                        ShowScreen(playOnComplete: false);
+
+                    else
+                    {
+                        VideoPlayer.Stop();
+                        _greetingsScreen.SetActive(false);   
+                    }
                 }
             };
-            _uwuTweenyManager.AddTween(tween, _greetingsScreen.gameObject);
+            _timeTweeningManager.AddTween(tween, _greetingsScreen);
         }
 
-        public void CreateScreen(bool randomVideo = false)
+        public void MoveScreen(float newZValue)
         {
-            if (_greetingsScreen == null)
-            {
-                _siraLog.Info("Creating GreetingScreen");
-                _greetingsScreen = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                _greetingsScreen.gameObject.name = "GreetingsScreen";
-                _greetingsScreen.transform.position = new Vector3(0, 1.5f, 6f);
-                _greetingsScreen.transform.localScale = Vector3.zero;
-                
-                VideoPlayer = _greetingsScreen.gameObject.AddComponent<VideoPlayer>();
-                VideoPlayer.playOnAwake = false;
-                VideoPlayer.renderMode = VideoRenderMode.MaterialOverride;
-                
-                var screenRenderer = _greetingsScreen.GetComponent<Renderer>();
-                screenRenderer.material = new Material(GetShader())
-                {
-                    color = Color.white
-                };
-                screenRenderer.material.SetTexture(MainTex, VideoPlayer.texture);
-                VideoPlayer.targetMaterialProperty = "_MainTex";
-                VideoPlayer.targetMaterialRenderer = screenRenderer;
-            }
-            else
-            {
-                _greetingsScreen.SetActive(true);
-            }
-
-
-            if (_cheeseUtils.TheTimeHathCome)
-            {
-                var cheesePath = Path.Combine(_greetingsPath, "Top Infinite Cheese.mp4");
-                
-                if (!File.Exists(cheesePath))
-                {
-                    File.WriteAllBytes(cheesePath, Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Top Infinite Cheese.mp4"));
-                }
-                VideoPlayer!.url = cheesePath;
-            }
-            else if (randomVideo)
-            {
-                var files = Directory.GetFiles(_greetingsPath);
-                var rand = new Random();
-                VideoPlayer!.url = files[rand.Next(files.Length)];
-            }
-            else
-            {
-                VideoPlayer!.url = Path.Combine(_greetingsPath, _pluginConfig.SelectedVideo);
-            }
+            _siraLog.Info("started method");
+            if (_greetingsScreen == null || !_greetingsScreen.gameObject.activeSelf)
+                CreateScreen();
+            
+            _timeTweeningManager.KillAllTweens(_greetingsScreen);
+            var previousPosition = _greetingsScreen!.transform.position;
+            var newPosition = new Vector3(previousPosition.x, previousPosition.y, newZValue);
+            var tween = new FloatTween(0f, 1f, val => _greetingsScreen.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
+            _timeTweeningManager.AddTween(tween, _greetingsScreen);
         }
 
         private void PlayAndFadeOutAudio()

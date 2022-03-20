@@ -53,8 +53,8 @@ namespace Greetings.UI.ViewControllers
         {
             _pluginConfig.SelectedVideo = _videoList.data[index].text + ".mp4";
             var videoPlayer = _screenUtils.VideoPlayer;
-            if (videoPlayer != null && (videoPlayer.isPrepared || videoPlayer.isPlaying)) _screenUtils.HideScreen();
-            // videoPlayer.url = Path.Combine(UnityGame.UserDataPath, nameof(Greetings), _pluginConfig.SelectedVideo);
+            if (videoPlayer != null && (videoPlayer.isPrepared || videoPlayer.isPlaying)) 
+                _screenUtils.HideScreen(reloadVideo: true);
         }
 
         [UIAction("open-folder-clicked")]

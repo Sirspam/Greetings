@@ -56,10 +56,7 @@ namespace Greetings.UI.ViewControllers
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-            if (_screenUtils.VideoPlayer == null)
-            {
-                _screenUtils.CreateScreen();
-            }
+            _screenUtils.ShowScreen(playOnComplete: false);
         }
 
         protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
@@ -68,7 +65,7 @@ namespace Greetings.UI.ViewControllers
 
             if (_screenUtils.VideoPlayer != null)
             {
-                _screenUtils.HideScreen(false);
+                _screenUtils.HideScreen();
                 _screenUtils.VideoPlayer.loopPointReached -= VideoPlayer_loopPointReached;
             }
         }
@@ -125,24 +122,6 @@ namespace Greetings.UI.ViewControllers
             else if (videoPlayer != null && videoPlayer.isPrepared)
             {
                 videoPlayer.Play();
-            }
-            else
-            {
-                _screenUtils.ShowScreen();
-                videoPlayer!.isLooping = _loop;
-                videoPlayer.loopPointReached += VideoPlayer_loopPointReached;
-            }
-        }
-        
-        [UIAction("stop-clicked")]
-        private void StopVideo()
-        {
-            var videoPlayer = _screenUtils.VideoPlayer;
-
-            if (videoPlayer != null && videoPlayer.isPrepared)
-            {
-                _screenUtils.HideScreen();
-                videoPlayer.isLooping = false;
             }
         }
         

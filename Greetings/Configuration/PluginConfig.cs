@@ -16,6 +16,7 @@ namespace Greetings.Configuration
         public virtual string SelectedVideo { get; set; } = "Greetings.mp4";
         public virtual bool RandomVideo { get; set; } = false;
         public virtual bool PlayOnce { get; set; } = true;
+        public virtual float ScreenDistance { get; set; } = 6f;
         public virtual bool EasterEggs { get; set; } = true;
         public virtual bool AwaitFps { get; set; } = true;
         public virtual bool AwaitHmd { get; set; } = true;

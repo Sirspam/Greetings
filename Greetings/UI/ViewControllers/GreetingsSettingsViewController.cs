@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
+using Greetings.Utils;
 using Zenject;
 
 namespace Greetings.UI.ViewControllers
@@ -9,8 +10,18 @@ namespace Greetings.UI.ViewControllers
     [ViewDefinition("Greetings.UI.Views.GreetingsSettingsView.bsml")]
     internal class GreetingsSettingsViewController : BSMLAutomaticViewController
     {
+        private ScreenUtils _screenUtils = null!;
         private PluginConfig _pluginConfig = null!;
 
+        [Inject]
+        public void Construct(ScreenUtils screenUtils, PluginConfig pluginConfig)
+        {
+            _screenUtils = screenUtils;
+            _pluginConfig = pluginConfig;
+        }
+        
+        #region Values
+        
         [UIValue("use-random-video")]
         private bool UseRandomVideo
         {
@@ -23,6 +34,13 @@ namespace Greetings.UI.ViewControllers
         {
             get => _pluginConfig.PlayOnce;
             set => _pluginConfig.PlayOnce = value;
+        }
+
+        [UIValue("screen-distance")]
+        private float ScreenDistance
+        {
+            get => _pluginConfig.ScreenDistance;
+            set => _pluginConfig.ScreenDistance = value;
         }
         
         [UIValue("easter-eggs")]
@@ -74,10 +92,9 @@ namespace Greetings.UI.ViewControllers
             set => _pluginConfig.MaxWaitTime = value;
         }
 
-        [Inject]
-        public void Construct(PluginConfig pluginConfig)
-        {
-            _pluginConfig = pluginConfig;
-        }
+        #endregion
+
+        [UIAction("move-screen")]
+        private void MoveScreen(float value) => _screenUtils.MoveScreen(value);
     }
 }
