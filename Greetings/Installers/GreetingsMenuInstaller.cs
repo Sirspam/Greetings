@@ -30,6 +30,7 @@ namespace Greetings.Installers
             Container.Bind<GreetingsSettingsViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<ScreenControlsViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<VideoSelectionViewController>().FromNewComponentAsViewController().AsSingle();
+            Container.Bind<DeleteConfirmationViewController>().AsSingle();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Greetings.Utils
         public VideoPlayer? VideoPlayer;
 
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
-        private readonly string _greetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
+        public readonly string GreetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
         private Vector3 _screenScale;
         private Shader? _screenShader;
         private GameObject? _greetingsScreen;
@@ -68,7 +68,7 @@ namespace Greetings.Utils
 
             if (_cheeseUtils.TheTimeHathCome)
             {
-                var cheesePath = Path.Combine(_greetingsPath, "Top Infinite Cheese.mp4");
+                var cheesePath = Path.Combine(GreetingsPath, "Top Infinite Cheese.mp4");
                 
                 if (!File.Exists(cheesePath))
                 {
@@ -78,13 +78,13 @@ namespace Greetings.Utils
             }
             else if (randomVideo)
             {
-                var files = Directory.GetFiles(_greetingsPath);
+                var files = Directory.GetFiles(GreetingsPath);
                 var rand = new Random();
                 VideoPlayer!.url = files[rand.Next(files.Length)];
             }
             else
             {
-                VideoPlayer!.url = Path.Combine(_greetingsPath, _pluginConfig.SelectedVideo);
+                VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedVideo);
             }
         }
 

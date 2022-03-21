@@ -7,7 +7,8 @@
         <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-width="80" pref-height="40"/>
         <horizontal>
             <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="37"/>
-            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Reload Videos" min-height="10" min-width="37"/>
+            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Reload Videos" min-height="10" min-width="28"/>
+            <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon" preserve-aspect="true"/>
         </horizontal>
     </vertical>
 </bg>
