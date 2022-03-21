@@ -11,13 +11,13 @@ namespace Greetings.UI.ViewControllers
 	public class DeleteConfirmationViewController
 	{
 		public delegate void ButtonPressed();
+
 		private ButtonPressed _yesButtonPressed = null!;
 
-		[UIComponent("modal")]
-		private readonly ModalView _modalView = null!;
-		
-		[UIParams]
-		private readonly BSMLParserParams _parserParams = null!;
+		[UIComponent("modal")] private readonly ModalView _modalView = null!;
+
+		[UIParams] private readonly BSMLParserParams _parserParams = null!;
+
 		private void Parse(Component parentTransform)
 		{
 			BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.DeleteConfirmationModalView.bsml"), parentTransform.gameObject, this);

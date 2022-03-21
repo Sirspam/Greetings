@@ -7,7 +7,7 @@
         <horizontal vertical-fit='PreferredSize' horizontal-fit='PreferredSize' pref-height='7' pref-width='60'>
             <tab-selector tab-tag='settings-tab' child-expand-width="true" child-control-width="true"/>
         </horizontal>
-    
+
         <tab tab-name="General" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
             <modifier-container child-expand-width='true' horizontal-fit='PreferredSize'>
                 <checkbox-setting text="Use Random Video" value="use-random-video" apply-on-change="true" bind-value="true"/>
@@ -16,7 +16,7 @@
                 <checkbox-setting text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" apply-on-change="true" bind-value="true"/>
             </modifier-container>
         </tab>
-        
+
         <tab tab-name="FPS Stabilisation" tags="settings-tab">
             <modifier-container child-expand-width='true' horizontal-fit='PreferredSize'>
                 <checkbox-setting text="Await FPS Stabilisation" hover-hint="Waits for your frame rate to stabilise before playing Greetings" value="await-fps" apply-on-change="true" bind-value="true"/>

@@ -8,17 +8,18 @@ using SiraUtil.Zenject;
 
 namespace Greetings
 {
-    [Plugin(RuntimeOptions.DynamicInit)][NoEnableDisable]
-    public class Plugin
-    {
-        [Init]
-        public Plugin(Config conf, Logger logger, Zenjector zenjector)
-        {
-            zenjector.UseLogger(logger);
-            zenjector.UseMetadataBinder<Plugin>();
-            zenjector.UseSiraSync();
-            
-            zenjector.Install<GreetingsMenuInstaller>(Location.Menu, conf.Generated<PluginConfig>());
-        }
-    }
+	[Plugin(RuntimeOptions.DynamicInit)]
+	[NoEnableDisable]
+	public class Plugin
+	{
+		[Init]
+		public Plugin(Config conf, Logger logger, Zenjector zenjector)
+		{
+			zenjector.UseLogger(logger);
+			zenjector.UseMetadataBinder<Plugin>();
+			zenjector.UseSiraSync();
+
+			zenjector.Install<GreetingsMenuInstaller>(Location.Menu, conf.Generated<PluginConfig>());
+		}
+	}
 }
