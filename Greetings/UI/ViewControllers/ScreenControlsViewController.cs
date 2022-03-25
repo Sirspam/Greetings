@@ -52,8 +52,16 @@ namespace Greetings.UI.ViewControllers
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 		{
 			base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-
+			
+			
 			_screenUtils.ShowScreen(playOnComplete: false);
+			
+			if (_pluginConfig.ScreenDistance < 4.5f)
+			{
+				var screenPosition = _screenUtils.GreetingsScreen!.transform.position;
+				_screenUtils.GreetingsScreen.transform.position = new Vector3(screenPosition.x, screenPosition.y, 4.5f);
+				_screenUtils.MoveUnderline(_pluginConfig.ScreenDistance);
+			}
 		}
 
 		protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
@@ -65,6 +73,8 @@ namespace Greetings.UI.ViewControllers
 				_screenUtils.HideScreen();
 				_screenUtils.VideoPlayer.loopPointReached -= VideoPlayer_loopPointReached;
 			}
+			
+			_screenUtils.HideUnderline();
 		}
 
 		[UIValue("update-available")]
@@ -94,8 +104,7 @@ namespace Greetings.UI.ViewControllers
 				}
 			}
 
-			/* Fuck you Kryptec*/
-			if (_pluginConfig.EasterEggs && (await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
+			/* Fuck you Kryptec*/ if (_pluginConfig.EasterEggs && (await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
 		}
 
 		[UIAction("back-clicked")]

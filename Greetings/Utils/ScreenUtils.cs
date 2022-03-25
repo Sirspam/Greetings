@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Greetings.Configuration;
 using IPA.Utilities;
@@ -20,12 +21,14 @@ namespace Greetings.Utils
 		private readonly TimeTweeningManager _timeTweeningManager;
 
 		public VideoPlayer? VideoPlayer;
+		public GameObject? GreetingsScreen;
+		public readonly string GreetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
 		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
-		public readonly string GreetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
+		private FloatTween? _currentMoveTween;
 		private Vector3 _screenScale;
 		private Shader? _screenShader;
-		private GameObject? _greetingsScreen;
+		private GameObject? _greetingsUnderline;
 
 		public ScreenUtils(SiraLog siraLog, CheeseUtils cheeseUtils, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
 		{
@@ -38,19 +41,19 @@ namespace Greetings.Utils
 
 		public void CreateScreen(bool randomVideo = false)
 		{
-			if (_greetingsScreen == null)
+			if (GreetingsScreen == null)
 			{
 				_siraLog.Info("Creating GreetingScreen");
-				_greetingsScreen = GameObject.CreatePrimitive(PrimitiveType.Quad);
-				_greetingsScreen.gameObject.name = "GreetingsScreen";
-				_greetingsScreen.transform.position = new Vector3(0, 1.5f, _pluginConfig.ScreenDistance);
-				_greetingsScreen.transform.localScale = Vector3.zero;
+				GreetingsScreen = GameObject.CreatePrimitive(PrimitiveType.Quad);
+				GreetingsScreen.gameObject.name = "GreetingsScreen";
+				GreetingsScreen.transform.position = new Vector3(0, 1.5f, _pluginConfig.ScreenDistance);
+				GreetingsScreen.transform.localScale = Vector3.zero;
 
-				VideoPlayer = _greetingsScreen.gameObject.AddComponent<VideoPlayer>();
+				VideoPlayer = GreetingsScreen.gameObject.AddComponent<VideoPlayer>();
 				VideoPlayer.playOnAwake = false;
 				VideoPlayer.renderMode = VideoRenderMode.MaterialOverride;
 
-				var screenRenderer = _greetingsScreen.GetComponent<Renderer>();
+				var screenRenderer = GreetingsScreen.GetComponent<Renderer>();
 				screenRenderer.material = new Material(GetShader())
 				{
 					color = Color.white
@@ -61,7 +64,7 @@ namespace Greetings.Utils
 			}
 			else
 			{
-				_greetingsScreen.SetActive(true);
+				GreetingsScreen.SetActive(true);
 			}
 
 
@@ -120,7 +123,7 @@ namespace Greetings.Utils
 
 				if (!doTransition)
 				{
-					_greetingsScreen!.transform.localScale = _screenScale;
+					GreetingsScreen!.transform.localScale = _screenScale;
 					if (playOnComplete)
 					{
 						PlayAndFadeOutAudio();
@@ -129,8 +132,8 @@ namespace Greetings.Utils
 					return;
 				}
 
-				_timeTweeningManager.KillAllTweens(_greetingsScreen);
-				var tween = new FloatTween(0f, _screenScale.y, val => _greetingsScreen!.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
+				_timeTweeningManager.KillAllTweens(GreetingsScreen);
+				var tween = new FloatTween(0f, _screenScale.y, val => GreetingsScreen!.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 				{
 					onCompleted = delegate
 					{
@@ -140,7 +143,7 @@ namespace Greetings.Utils
 						}
 					}
 				};
-				_timeTweeningManager.AddTween(tween, _greetingsScreen);
+				_timeTweeningManager.AddTween(tween, GreetingsScreen);
 			}
 
 			VideoPlayer!.Prepare();
@@ -149,7 +152,7 @@ namespace Greetings.Utils
 
 		public void HideScreen(bool doTransition = true, bool reloadVideo = false)
 		{
-			if (_greetingsScreen == null || VideoPlayer == null || !_greetingsScreen.gameObject.activeSelf)
+			if (GreetingsScreen == null || VideoPlayer == null || !GreetingsScreen.gameObject.activeSelf)
 			{
 				return;
 			}
@@ -157,22 +160,22 @@ namespace Greetings.Utils
 			VideoPlayer.Pause();
 			_songPreviewPlayer.CrossfadeToDefault();
 
-			if (!doTransition || _greetingsScreen.transform.localScale == Vector3.zero)
+			if (!doTransition || GreetingsScreen.transform.localScale == Vector3.zero)
 			{
 				VideoPlayer.Stop();
-				_greetingsScreen.transform.localScale = Vector3.zero;
+				GreetingsScreen.transform.localScale = Vector3.zero;
 
 				if (reloadVideo)
 					ShowScreen(doTransition: false);
 
 				else
-					_greetingsScreen.SetActive(false);
+					GreetingsScreen.SetActive(false);
 
 				return;
 			}
 
-			_timeTweeningManager.KillAllTweens(_greetingsScreen);
-			var tween = new FloatTween(_screenScale.y, 0f, val => _greetingsScreen.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
+			_timeTweeningManager.KillAllTweens(GreetingsScreen);
+			var tween = new FloatTween(_screenScale.y, 0f, val => GreetingsScreen.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 			{
 				onCompleted = delegate
 				{
@@ -182,29 +185,31 @@ namespace Greetings.Utils
 					else
 					{
 						VideoPlayer.Stop();
-						_greetingsScreen.SetActive(false);
+						GreetingsScreen.SetActive(false);
 					}
 				}
 			};
-			_timeTweeningManager.AddTween(tween, _greetingsScreen);
+			_timeTweeningManager.AddTween(tween, GreetingsScreen);
 		}
 
 		public void MoveScreen(float newZValue)
 		{
-			_siraLog.Info("started method");
-			if (_greetingsScreen == null || !_greetingsScreen.gameObject.activeSelf)
+			if (GreetingsScreen == null || !GreetingsScreen.gameObject.activeSelf)
 				CreateScreen();
 
-			_timeTweeningManager.KillAllTweens(_greetingsScreen);
-			var previousPosition = _greetingsScreen!.transform.position;
+			if (Math.Abs(GreetingsScreen!.transform.position.z - newZValue) < 0)
+				return;
+			
+			_timeTweeningManager.KillAllTweens(GreetingsScreen);
+			var previousPosition = GreetingsScreen!.transform.position;
 			var newPosition = new Vector3(previousPosition.x, previousPosition.y, newZValue);
-			var tween = new FloatTween(0f, 1f, val => _greetingsScreen.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
-			_timeTweeningManager.AddTween(tween, _greetingsScreen);
+			var tween = new FloatTween(0f, 1f, val => GreetingsScreen.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
+			_timeTweeningManager.AddTween(tween, GreetingsScreen);
 		}
 
 		private void PlayAndFadeOutAudio()
 		{
-			if (_greetingsScreen == null || !_greetingsScreen.activeSelf || _greetingsScreen.transform.localScale.y == 0f)
+			if (GreetingsScreen == null || !GreetingsScreen.activeSelf || GreetingsScreen.transform.localScale.y == 0f)
 			{
 				ShowScreen();
 			}
@@ -224,6 +229,71 @@ namespace Greetings.Utils
 			_screenShader = loadedAssetBundle.LoadAsset<Shader>("ScreenShader");
 			loadedAssetBundle.Unload(false);
 			return _screenShader;
+		}
+
+		private void CreateUnderline()
+		{
+			if (_greetingsUnderline == null)
+			{
+				_siraLog.Info("Creating GreetingsUnderline");
+				_greetingsUnderline = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				_greetingsUnderline.gameObject.name = "GreetingsUnderline";
+				_greetingsUnderline.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Custom/SimpleLit"));
+				_greetingsUnderline.GetComponent<MeshRenderer>().material.color = Color.red;
+				_greetingsUnderline.transform.localScale = Vector3.zero;
+			}
+			else
+			{
+				_greetingsUnderline.gameObject.SetActive(true);
+			}
+		}
+
+		private void ShowUnderline(float zPosition)
+		{
+			CreateUnderline();
+			_timeTweeningManager.KillAllTweens(_greetingsUnderline);
+
+			_greetingsUnderline!.transform.position = new Vector3(0f, 0.05f, zPosition);
+			_greetingsUnderline.gameObject.transform.localScale = new Vector3(0f, 0.05f, 0.15f);
+			var oldScale = _greetingsUnderline.transform.localScale;
+			var newScale = new Vector3(_screenScale.x, 0.05f, 0.15f);
+			var tween = new Vector3Tween(oldScale, newScale, val => _greetingsUnderline.transform.localScale = val, 0.5f, EaseType.OutQuart)
+			{
+				onStart = () => _greetingsUnderline.gameObject.SetActive(true)
+			};
+			_timeTweeningManager.AddTween(tween, _greetingsUnderline);
+		}
+
+		public void MoveUnderline(float zPosition)
+		{
+			if (_greetingsUnderline == null || _greetingsUnderline.gameObject.activeSelf == false)
+				ShowUnderline(zPosition);
+
+			
+			_currentMoveTween?.Kill();
+			
+			var previousPosition = _greetingsUnderline!.transform.position;
+			var newPosition = new Vector3(previousPosition.x, previousPosition.y, zPosition);
+			_currentMoveTween = new FloatTween(0f, 1f, val => _greetingsUnderline.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
+			_timeTweeningManager.AddTween(_currentMoveTween, _greetingsUnderline);
+		}
+		
+		public void HideUnderline()
+		{
+			if (_greetingsUnderline != null)
+			{
+				var oldScale = _greetingsUnderline.transform.localScale;
+				var newScale = new Vector3(0f, 0.05f, 0.15f);
+				var tween = new Vector3Tween(oldScale, newScale, val => _greetingsUnderline.transform.localScale = val, 0.2f, EaseType.OutQuart)
+				{
+					onCompleted = delegate
+					{
+						_greetingsUnderline!.transform.position = new Vector3(0f, 0.05f, 0.25f);
+						_greetingsUnderline.gameObject.SetActive(false);
+					}
+				};
+				_timeTweeningManager.AddTween(tween, _greetingsUnderline);
+			}
 		}
 	}
 }

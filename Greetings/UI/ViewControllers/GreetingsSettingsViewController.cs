@@ -10,6 +10,8 @@ namespace Greetings.UI.ViewControllers
 	[ViewDefinition("Greetings.UI.Views.GreetingsSettingsView.bsml")]
 	internal class GreetingsSettingsViewController : BSMLAutomaticViewController
 	{
+		private bool _underlineActive;
+		
 		private ScreenUtils _screenUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 
@@ -22,6 +24,17 @@ namespace Greetings.UI.ViewControllers
 
 		#region Values
 
+		[UIValue("underline-active")]
+		private bool UnderlineActive
+		{
+			get => _underlineActive;
+			set
+			{
+				_underlineActive = value;
+				NotifyPropertyChanged();
+			}
+		}
+		
 		[UIValue("use-random-video")]
 		private bool UseRandomVideo
 		{
@@ -94,7 +107,32 @@ namespace Greetings.UI.ViewControllers
 
 		#endregion
 
+		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+		{
+			base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+			
+			
+			if (_pluginConfig.ScreenDistance < 4.5f)
+			{
+				UnderlineActive = true;
+			}
+		}
+		
 		[UIAction("move-screen")]
-		private void MoveScreen(float value) => _screenUtils.MoveScreen(value);
+		private void MoveScreen(float value)
+		{
+			if (value > 4.25f)
+			{
+				_screenUtils.MoveScreen(value);
+				_screenUtils.HideUnderline();
+				UnderlineActive = false;
+			}
+			else
+			{
+				_screenUtils.MoveScreen(4.5f);
+				_screenUtils.MoveUnderline(value);
+				UnderlineActive = true;
+			}
+		}
 	}
 }
