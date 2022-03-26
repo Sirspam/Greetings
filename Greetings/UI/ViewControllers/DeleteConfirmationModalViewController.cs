@@ -3,7 +3,6 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
-using IPA.Utilities;
 using UnityEngine;
 
 namespace Greetings.UI.ViewControllers

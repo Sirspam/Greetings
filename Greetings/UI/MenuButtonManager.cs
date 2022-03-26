@@ -7,15 +7,15 @@ namespace Greetings.UI
 {
 	internal class MenuButtonManager : IInitializable, IDisposable
 	{
-		private readonly GreetingsFlowCoordinator _greetingsFlowCoordinator;
 		private readonly MenuButton _menuButton;
 		private readonly MainFlowCoordinator _mainFlowCoordinator;
+		private readonly GreetingsFlowCoordinator _greetingsFlowCoordinator;
 
-		public MenuButtonManager(GreetingsFlowCoordinator greetingsFlowCoordinator, MainFlowCoordinator mainFlowCoordinator)
+		public MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, GreetingsFlowCoordinator greetingsFlowCoordinator)
 		{
-			_greetingsFlowCoordinator = greetingsFlowCoordinator;
 			_menuButton = new MenuButton(nameof(Greetings), "Wort Wort Wort!", MenuButtonClicked);
 			_mainFlowCoordinator = mainFlowCoordinator;
+			_greetingsFlowCoordinator = greetingsFlowCoordinator;
 		}
 
 		public void Initialize()
@@ -25,7 +25,8 @@ namespace Greetings.UI
 
 		public void Dispose()
 		{
-			if (MenuButtons.IsSingletonAvailable) MenuButtons.instance.UnregisterButton(_menuButton);
+			if (MenuButtons.IsSingletonAvailable)
+				MenuButtons.instance.UnregisterButton(_menuButton);
 		}
 
 		private void MenuButtonClicked()

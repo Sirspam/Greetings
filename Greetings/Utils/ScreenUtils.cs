@@ -173,7 +173,7 @@ namespace Greetings.Utils
 
 				return;
 			}
-			
+
 			var tween = new FloatTween(_screenScale.y, 0f, val => GreetingsScreen.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 			{
 				onCompleted = delegate
@@ -198,7 +198,7 @@ namespace Greetings.Utils
 
 			if (Math.Abs(GreetingsScreen!.transform.position.z - newZValue) < 0)
 				return;
-			
+
 			_timeTweeningManager.KillAllTweens(GreetingsScreen);
 			var previousPosition = GreetingsScreen!.transform.position;
 			var newPosition = new Vector3(previousPosition.x, previousPosition.y, newZValue);
@@ -268,15 +268,15 @@ namespace Greetings.Utils
 			if (_greetingsUnderline == null || _greetingsUnderline.gameObject.activeSelf == false)
 				ShowUnderline(zPosition);
 
-			
+
 			_currentMoveTween?.Kill();
-			
+
 			var previousPosition = _greetingsUnderline!.transform.position;
 			var newPosition = new Vector3(previousPosition.x, previousPosition.y, zPosition);
 			_currentMoveTween = new FloatTween(0f, 1f, val => _greetingsUnderline.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
 			_timeTweeningManager.AddTween(_currentMoveTween, _greetingsUnderline);
 		}
-		
+
 		public void HideUnderline()
 		{
 			if (_greetingsUnderline != null)

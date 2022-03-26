@@ -120,7 +120,7 @@ namespace Greetings.UI.ViewControllers
 			var index = 0;
 			var selectedFound = false;
 			var files = new DirectoryInfo(_screenUtils.GreetingsPath).GetFiles("*.mp4");
-			
+
 			_deleteVideoButton.enabled = files.Length > 1;
 
 			foreach (var file in files)
