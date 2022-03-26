@@ -91,9 +91,7 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("#post-parse")]
 		private async void PostParse()
 		{
-			if (!_updateAvailable)
-			{
-				var gitVersion = await _siraSyncService.LatestVersion();
+			var gitVersion = await _siraSyncService.LatestVersion();
 				if (gitVersion != null && gitVersion > _metadata.HVersion)
 				{
 					_siraLog.Info($"{nameof(Greetings)} v{gitVersion} is available on GitHub!");
@@ -102,10 +100,8 @@ namespace Greetings.UI.ViewControllers
 					UpdateAvailable = true;
 					_timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
 				}
-			}
-
-			/* Fuck you Kryptec*/
-			if (_pluginConfig.EasterEggs && (await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
+				
+			/* Fuck you Kryptec*/ if (_pluginConfig.EasterEggs && (await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
 		}
 
 		[UIAction("back-clicked")]
