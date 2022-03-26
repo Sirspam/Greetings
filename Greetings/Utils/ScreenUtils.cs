@@ -173,8 +173,7 @@ namespace Greetings.Utils
 
 				return;
 			}
-
-			_timeTweeningManager.KillAllTweens(GreetingsScreen);
+			
 			var tween = new FloatTween(_screenScale.y, 0f, val => GreetingsScreen.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 			{
 				onCompleted = delegate

@@ -30,6 +30,7 @@ namespace Greetings
 		private readonly TimeTweeningManager _timeTweeningManager;
 		private readonly FloorTextViewController _floorTextViewController;
 		private readonly VRControllersInputManager _vrControllersInputManager;
+		private readonly GameplaySetupViewController _gameplaySetupViewController;
 
 		private static bool _greetingsPlayed;
 		private ScreenSystem? _screenSystem;
@@ -37,7 +38,7 @@ namespace Greetings
 		private GreetingsAwaiter? _greetingsAwaiter;
 		private Vector3 _originalScreenSystemPosition;
 
-		public GreetingsController(SiraLog siraLog, CheeseUtils cheeseUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
+		public GreetingsController(SiraLog siraLog, CheeseUtils cheeseUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager, GameplaySetupViewController gameplaySetupViewController)
 		{
 			_siraLog = siraLog;
 			_cheeseUtils = cheeseUtils;
@@ -51,6 +52,7 @@ namespace Greetings
 			_timeTweeningManager = tweeningManager;
 			_floorTextViewController = floorTextViewController;
 			_vrControllersInputManager = vrControllersInputManager;
+			_gameplaySetupViewController = gameplaySetupViewController;
 		}
 
 		public virtual void Initialize()
@@ -68,6 +70,7 @@ namespace Greetings
 			_screenUtils.VideoPlayer!.Prepare();
 
 			_gameScenesManager.transitionDidFinishEvent += GameScenesManagerOnTransitionDidFinishEvent;
+			_gameplaySetupViewController.didActivateEvent += GameplaySetupViewControllerOndidActivateEvent;
 		}
 
 		private void GameScenesManagerOnTransitionDidFinishEvent(ScenesTransitionSetupDataSO arg1, DiContainer arg2)
@@ -91,6 +94,14 @@ namespace Greetings
 
 			_screenUtils.ShowScreen(randomVideo: _pluginConfig.RandomVideo);
 			_screenUtils.VideoPlayer!.loopPointReached += VideoPlayer_loopPointReached;
+		}
+
+		// Sometimes the Greetings screen won't close correctly. It's an incredibly rare case and I can't reproduce it myself
+		// This is here just in case that situation does happen.
+		private void GameplaySetupViewControllerOndidActivateEvent(bool firstactivation, bool addedtohierarchy, bool screensystemenabling)
+		{
+			_screenUtils.HideScreen();
+			_gameplaySetupViewController.didActivateEvent -= GameplaySetupViewControllerOndidActivateEvent;
 		}
 
 		private async void DismissGreetings()
