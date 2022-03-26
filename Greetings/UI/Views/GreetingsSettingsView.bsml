@@ -3,13 +3,13 @@
         <text text="Settings" align="Center" font-size="8" italics="true"/>
     </horizontal>
 
-    <vertical anchor-pos-y='10'>
-        <horizontal vertical-fit='PreferredSize' horizontal-fit='PreferredSize' pref-height='7' pref-width='60'>
-            <tab-selector tab-tag='settings-tab' child-expand-width="true" child-control-width="true"/>
+    <vertical anchor-pos-y="10">
+        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="60">
+            <tab-selector tab-tag="settings-tab" child-expand-width="true" child-control-width="true"/>
         </horizontal>
 
-        <tab tab-name="General" tags="settings-tab" horizontal-fit='PreferredSize' vertical-fit='PreferredSize'>
-            <vertical child-expand-width='true' anchor-pos-y="5" horizontal-fit='PreferredSize' vertical-fit="PreferredSize">
+        <tab tab-name="General" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
+            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
                 <checkbox-setting text="Use Random Video" value="use-random-video" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Play Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
                 <slider-setting text="Screen Distance" value="screen-distance" increment="0.25" min="1.75" max="10.0" show-buttons="true" on-change="move-screen" apply-on-change="true" bind-value="true"/>
@@ -21,7 +21,7 @@
         </tab>
 
         <tab tab-name="FPS Stabilisation" tags="settings-tab">
-            <vertical child-expand-width='true' anchor-pos-y="5" horizontal-fit='PreferredSize' vertical-fit="PreferredSize">
+            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
                 <checkbox-setting text="Await FPS Stabilisation" hover-hint="Waits for your frame rate to stabilise before playing Greetings" value="await-fps" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Await HMD Focus" hover-hint="Waits for your headset to be active before playing Greetings" value="await-hmd" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Await SongCore" hover-hint="Waits for SongCore to finish loading songs" value="await-songcore" apply-on-change="true" bind-value="true"/>
