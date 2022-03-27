@@ -255,7 +255,7 @@ namespace Greetings.Utils
 			_greetingsUnderline!.transform.position = new Vector3(0f, 0.05f, zPosition);
 			_greetingsUnderline.gameObject.transform.localScale = new Vector3(0f, 0.05f, 0.15f);
 			var oldScale = _greetingsUnderline.transform.localScale;
-			var newScale = new Vector3(_screenScale.x, 0.05f, 0.15f);
+			var newScale = new Vector3(4f, 0.05f, 0.15f);
 			var tween = new Vector3Tween(oldScale, newScale, val => _greetingsUnderline.transform.localScale = val, 0.5f, EaseType.OutQuart)
 			{
 				onStart = () => _greetingsUnderline.gameObject.SetActive(true)
