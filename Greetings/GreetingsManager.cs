@@ -16,7 +16,7 @@ using Zenject;
 
 namespace Greetings
 {
-	internal class GreetingsController : IInitializable
+	internal class GreetingsManager : IInitializable
 	{
 		private readonly SiraLog _siraLog;
 		private readonly CheeseUtils _cheeseUtils;
@@ -38,7 +38,7 @@ namespace Greetings
 		private GreetingsAwaiter? _greetingsAwaiter;
 		private Vector3 _originalScreenSystemPosition;
 
-		public GreetingsController(SiraLog siraLog, CheeseUtils cheeseUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager, GameplaySetupViewController gameplaySetupViewController)
+		public GreetingsManager(SiraLog siraLog, CheeseUtils cheeseUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager, GameplaySetupViewController gameplaySetupViewController)
 		{
 			_siraLog = siraLog;
 			_cheeseUtils = cheeseUtils;
@@ -137,28 +137,28 @@ namespace Greetings
 
 		private class SkipController : ITickable
 		{
-			private readonly GreetingsController _greetingsController;
+			private readonly GreetingsManager _greetingsManager;
 
-			public SkipController(GreetingsController greetingsController)
+			public SkipController(GreetingsManager greetingsManager)
 			{
-				_greetingsController = greetingsController;
+				_greetingsManager = greetingsManager;
 			}
 
 			public void Tick()
 			{
-				if (_greetingsController._vrControllersInputManager.TriggerValue(XRNode.LeftHand) >= 0.8f || _greetingsController._vrControllersInputManager.TriggerValue(XRNode.RightHand) >= 0.8f || Input.GetKey(KeyCode.Mouse0))
+				if (_greetingsManager._vrControllersInputManager.TriggerValue(XRNode.LeftHand) >= 0.8f || _greetingsManager._vrControllersInputManager.TriggerValue(XRNode.RightHand) >= 0.8f || Input.GetKey(KeyCode.Mouse0))
 				{
-					_greetingsController._siraLog.Info("Skipping Greetings");
+					_greetingsManager._siraLog.Info("Skipping Greetings");
 
-					_greetingsController.DismissGreetings();
-					_greetingsController._screenUtils.VideoPlayer!.loopPointReached -= _greetingsController.VideoPlayer_loopPointReached;
+					_greetingsManager.DismissGreetings();
+					_greetingsManager._screenUtils.VideoPlayer!.loopPointReached -= _greetingsManager.VideoPlayer_loopPointReached;
 				}
 			}
 		}
 
 		private class GreetingsAwaiter : ITickable
 		{
-			private readonly GreetingsController _greetingsController;
+			private readonly GreetingsManager _greetingsManager;
 
 			private int _targetFps;
 			private int _fpsStreak;
@@ -170,9 +170,9 @@ namespace Greetings
 			private bool _awaitingPreperation;
 			internal bool YouShouldKillYourselfNow;
 
-			public GreetingsAwaiter(GreetingsController greetingsController)
+			public GreetingsAwaiter(GreetingsManager greetingsManager)
 			{
-				_greetingsController = greetingsController;
+				_greetingsManager = greetingsManager;
 				Initialize();
 			}
 
@@ -183,40 +183,40 @@ namespace Greetings
 				_awaitingPreperation = true;
 				YouShouldKillYourselfNow = false;
 
-				_targetFps = _greetingsController._pluginConfig.TargetFps;
-				_fpsStreak = _greetingsController._pluginConfig.FpsStreak;
-				_maxWaitTime = _greetingsController._pluginConfig.MaxWaitTime;
-				_awaitingHmd = _greetingsController._pluginConfig.AwaitHmd && !_greetingsController._fpfcSettings.Enabled;
-				_awaitingSongCore = _greetingsController._pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null;
+				_targetFps = _greetingsManager._pluginConfig.TargetFps;
+				_fpsStreak = _greetingsManager._pluginConfig.FpsStreak;
+				_maxWaitTime = _greetingsManager._pluginConfig.MaxWaitTime;
+				_awaitingHmd = _greetingsManager._pluginConfig.AwaitHmd && !_greetingsManager._fpfcSettings.Enabled;
+				_awaitingSongCore = _greetingsManager._pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null;
 
 
-				_greetingsController._siraLog.Debug("target fps " + _targetFps);
+				_greetingsManager._siraLog.Debug("target fps " + _targetFps);
 				if (_awaitingHmd)
 				{
-					_greetingsController._siraLog.Info("Awaiting HMD Focus");
+					_greetingsManager._siraLog.Info("Awaiting HMD Focus");
 					return;
 				}
 
-				_greetingsController._siraLog.Info("Awaiting FPS stabilisation");
+				_greetingsManager._siraLog.Info("Awaiting FPS stabilisation");
 			}
 
 			public void Tick()
 			{
 				if (YouShouldKillYourselfNow)
 				{
-					_greetingsController._tickableManager.Remove(this);
+					_greetingsManager._tickableManager.Remove(this);
 					return;
 				}
 
 				if (_awaitingHmd)
 				{
-					if (!_greetingsController._vrPlatformHelper.hasVrFocus && !_greetingsController._fpfcSettings.Enabled)
+					if (!_greetingsManager._vrPlatformHelper.hasVrFocus && !_greetingsManager._fpfcSettings.Enabled)
 					{
 						return;
 					}
 
 					_awaitingHmd = false;
-					_greetingsController._siraLog.Info("HMD focused");
+					_greetingsManager._siraLog.Info("HMD focused");
 
 					return;
 				}
@@ -229,26 +229,26 @@ namespace Greetings
 					}
 
 					_awaitingSongCore = false;
-					_greetingsController._siraLog.Info("SongCore Loaded");
+					_greetingsManager._siraLog.Info("SongCore Loaded");
 
 					return;
 				}
 
 				if (_awaitingPreperation)
 				{
-					if (!_greetingsController._screenUtils.VideoPlayer!.isPrepared)
+					if (!_greetingsManager._screenUtils.VideoPlayer!.isPrepared)
 					{
 						return;
 					}
 
 					_awaitingPreperation = false;
-					_greetingsController._siraLog.Info("Video Prepared");
+					_greetingsManager._siraLog.Info("Video Prepared");
 				}
 
 
 				// We do a lil' bit of logging
 				var fps = Time.timeScale / Time.deltaTime;
-				_greetingsController._siraLog.Debug("fps " + fps);
+				_greetingsManager._siraLog.Debug("fps " + fps);
 
 				_waitTimeCounter += Time.unscaledDeltaTime;
 				if (_targetFps <= fps)
@@ -256,13 +256,13 @@ namespace Greetings
 					_stabilityCounter += 1;
 					if (_stabilityCounter >= _fpsStreak)
 					{
-						_greetingsController._siraLog.Info("Target FPS reached, starting Greetings");
+						_greetingsManager._siraLog.Info("Target FPS reached, starting Greetings");
 						PlayTheThingThenKys();
 					}
 				}
 				else if (_waitTimeCounter >= _maxWaitTime)
 				{
-					_greetingsController._siraLog.Info("Max wait time reached, starting Greetings");
+					_greetingsManager._siraLog.Info("Max wait time reached, starting Greetings");
 					PlayTheThingThenKys();
 				}
 				else
@@ -273,10 +273,10 @@ namespace Greetings
 
 			private void PlayTheThingThenKys()
 			{
-				_greetingsController._screenUtils.ShowScreen(randomVideo: _greetingsController._pluginConfig.RandomVideo);
-				_greetingsController._screenUtils.VideoPlayer!.loopPointReached += _greetingsController.VideoPlayer_loopPointReached;
-				_greetingsController._floorTextViewController.ChangeText(FloorTextViewController.TextChange.HideFpsText);
-				_greetingsController._tickableManager.Remove(this);
+				_greetingsManager._screenUtils.ShowScreen(randomVideo: _greetingsManager._pluginConfig.RandomVideo);
+				_greetingsManager._screenUtils.VideoPlayer!.loopPointReached += _greetingsManager.VideoPlayer_loopPointReached;
+				_greetingsManager._floorTextViewController.ChangeText(FloorTextViewController.TextChange.HideFpsText);
+				_greetingsManager._tickableManager.Remove(this);
 			}
 		}
 	}

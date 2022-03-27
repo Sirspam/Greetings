@@ -22,7 +22,7 @@ namespace Greetings.Installers
 			Container.Bind<ScreenUtils>().AsSingle();
 			Container.BindInterfacesAndSelfTo<CheeseUtils>().AsSingle();
 
-			Container.BindInterfacesTo<GreetingsController>().AsSingle();
+			Container.BindInterfacesTo<GreetingsManager>().AsSingle();
 			Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
 			Container.Bind<FloorTextViewController>().FromNewComponentAsViewController().AsSingle();
 
