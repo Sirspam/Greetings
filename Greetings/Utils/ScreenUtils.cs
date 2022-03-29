@@ -61,6 +61,11 @@ namespace Greetings.Utils
 				screenRenderer.material.SetTexture(MainTex, VideoPlayer.texture);
 				VideoPlayer.targetMaterialProperty = "_MainTex";
 				VideoPlayer.targetMaterialRenderer = screenRenderer;
+				
+				VideoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+				var audioSource = VideoPlayer.gameObject.AddComponent<AudioSource>();
+				VideoPlayer.SetTargetAudioSource(0, audioSource);
+				audioSource.outputAudioMixerGroup = _songPreviewPlayer.GetField<AudioSource, SongPreviewPlayer>("_audioSourcePrefab").outputAudioMixerGroup;
 			}
 			else
 			{
