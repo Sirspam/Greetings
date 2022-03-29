@@ -136,6 +136,12 @@ namespace Greetings.UI.ViewControllers
 					selectedFound = true;
 				}
 
+				if (file.Length > 100000000)
+				{
+					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
+					continue;
+				}
+				
 				data.Add(new CustomCellInfo(file.Name.Remove(file.Name.Length - 4), GetFileSize(file.Length), Utilities.ImageResources.BlankSprite));
 			}
 
@@ -146,8 +152,6 @@ namespace Greetings.UI.ViewControllers
 
 		private static string GetFileSize(long size)
 		{
-			if (size > 1000000000)
-				return $"{Math.Round((double) size / 1024 / 1024 / 1024, 0)} GB";
 			if (size > 1000000)
 				return $"{Math.Round((double) size / 1024 / 1024, 0)} MB";
 			if (size > 1000)

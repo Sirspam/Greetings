@@ -55,7 +55,7 @@ namespace Greetings.UI.ViewControllers
 			get => _pluginConfig.ScreenDistance;
 			set => _pluginConfig.ScreenDistance = value;
 		}
-
+		
 		[UIValue("easter-eggs")]
 		private bool EasterEggs
 		{

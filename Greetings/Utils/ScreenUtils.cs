@@ -95,10 +95,10 @@ namespace Greetings.Utils
 		{
 			CreateScreen(randomVideo);
 
-			// Originally this was an anonymous delegate
-			// Then I had to make a reference to the delegate so I could unsub from it
-			// Then Rider suggested I make it into a local function
-			// Now I'm reconsidering my life choices
+			VideoPlayer!.Prepare();
+			VideoPlayer.prepareCompleted += ShowScreenDelegate;
+			
+			
 			async void ShowScreenDelegate(VideoPlayer source)
 			{
 				VideoPlayer.prepareCompleted -= ShowScreenDelegate;
@@ -113,7 +113,7 @@ namespace Greetings.Utils
 				}
 
 				// This obviously could be improved as the player's aspect won't exactly fit the video's
-				// Sadly I am too stupid to figure out a nice way to achieve that
+				// Unfortunately I am too stupid to figure out a nice way to achieve that
 				if (VideoPlayer.width > VideoPlayer.height)
 					_screenScale = new Vector3(4f, 2.5f, 0f);
 				else if (VideoPlayer.width < VideoPlayer.height)
@@ -145,9 +145,6 @@ namespace Greetings.Utils
 				};
 				_timeTweeningManager.AddTween(tween, GreetingsScreen);
 			}
-
-			VideoPlayer!.Prepare();
-			VideoPlayer.prepareCompleted += ShowScreenDelegate;
 		}
 
 		public void HideScreen(bool doTransition = true, bool reloadVideo = false)
