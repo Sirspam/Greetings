@@ -99,6 +99,7 @@ namespace Greetings.UI.ViewControllers
 			try
 			{
 				_selectedFile.Delete();
+				_siraLog.Info("Successfully deleted " + _selectedFile.Name);
 				GetVideoListData();
 
 				_timeTweeningManager.KillAllTweens(_deleteVideoButton);
@@ -107,6 +108,7 @@ namespace Greetings.UI.ViewControllers
 			}
 			catch (Exception e)
 			{
+				_siraLog.Error("Failed to delete " + _selectedFile);
 				_siraLog.Error(e);
 			}
 		}
