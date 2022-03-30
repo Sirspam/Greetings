@@ -39,6 +39,9 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		[UIAction("no-clicked")]
-		private void NoClicked() => _parserParams.EmitEvent("close-modal");
+		private void NoClicked()
+		{
+			_parserParams.EmitEvent("close-modal");
+		}
 	}
 }

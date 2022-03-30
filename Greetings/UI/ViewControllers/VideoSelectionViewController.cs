@@ -92,7 +92,10 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		[UIAction("delete-video-clicked")]
-		private void DeleteVideo() => _deleteConfirmationViewController.ShowModal(_deleteVideoButton.transform, DeleteSelectedVideo);
+		private void DeleteVideo()
+		{
+			_deleteConfirmationViewController.ShowModal(_deleteVideoButton.transform, DeleteSelectedVideo);
+		}
 
 		private void DeleteSelectedVideo()
 		{

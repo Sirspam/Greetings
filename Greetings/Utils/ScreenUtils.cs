@@ -168,7 +168,7 @@ namespace Greetings.Utils
 				GreetingsScreen.transform.localScale = Vector3.zero;
 
 				if (reloadVideo)
-					ShowScreen(doTransition: false);
+					ShowScreen(false);
 
 				else
 					GreetingsScreen.SetActive(false);
