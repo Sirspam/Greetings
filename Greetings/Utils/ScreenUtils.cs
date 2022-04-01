@@ -15,7 +15,6 @@ namespace Greetings.Utils
 	internal class ScreenUtils
 	{
 		private readonly SiraLog _siraLog;
-		private readonly CheeseUtils _cheeseUtils;
 		private readonly PluginConfig _pluginConfig;
 		private readonly SongPreviewPlayer _songPreviewPlayer;
 		private readonly TimeTweeningManager _timeTweeningManager;
@@ -30,10 +29,9 @@ namespace Greetings.Utils
 		private Shader? _screenShader;
 		private GameObject? _greetingsUnderline;
 
-		public ScreenUtils(SiraLog siraLog, CheeseUtils cheeseUtils, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
+		public ScreenUtils(SiraLog siraLog, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
 		{
 			_siraLog = siraLog;
-			_cheeseUtils = cheeseUtils;
 			_pluginConfig = pluginConfig;
 			_songPreviewPlayer = songPreviewPlayer;
 			_timeTweeningManager = timeTweeningManager;
@@ -71,20 +69,8 @@ namespace Greetings.Utils
 			{
 				GreetingsScreen.SetActive(true);
 			}
-
-
-			if (_cheeseUtils.TheTimeHathCome)
-			{
-				var cheesePath = Path.Combine(GreetingsPath, "Top Infinite Cheese.mp4");
-
-				if (!File.Exists(cheesePath))
-				{
-					File.WriteAllBytes(cheesePath, Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Top Infinite Cheese.mp4"));
-				}
-
-				VideoPlayer!.url = cheesePath;
-			}
-			else if (randomVideo)
+			
+			if (randomVideo)
 			{
 				var files = Directory.GetFiles(GreetingsPath);
 				var rand = new Random();
@@ -176,6 +162,7 @@ namespace Greetings.Utils
 				return;
 			}
 
+			_timeTweeningManager.KillAllTweens(GreetingsScreen);
 			var tween = new FloatTween(_screenScale.y, 0f, val => GreetingsScreen.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 			{
 				onCompleted = delegate

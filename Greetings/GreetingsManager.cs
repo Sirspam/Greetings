@@ -19,7 +19,6 @@ namespace Greetings
 	internal class GreetingsManager : IInitializable
 	{
 		private readonly SiraLog _siraLog;
-		private readonly CheeseUtils _cheeseUtils;
 		private readonly ScreenUtils _screenUtils;
 		private readonly PluginConfig _pluginConfig;
 		private readonly IFPFCSettings _fpfcSettings;
@@ -38,10 +37,9 @@ namespace Greetings
 		private GreetingsAwaiter? _greetingsAwaiter;
 		private Vector3 _originalScreenSystemPosition;
 
-		public GreetingsManager(SiraLog siraLog, CheeseUtils cheeseUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager, GameplaySetupViewController gameplaySetupViewController)
+		public GreetingsManager(SiraLog siraLog, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, TickableManager tickableManager, HierarchyManager hierarchyManager, IVRPlatformHelper vrPlatformHelper, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager, GameplaySetupViewController gameplaySetupViewController)
 		{
 			_siraLog = siraLog;
-			_cheeseUtils = cheeseUtils;
 			_screenUtils = screenUtils;
 			_pluginConfig = pluginConfig;
 			_fpfcSettings = fpfcSettings;
@@ -76,14 +74,11 @@ namespace Greetings
 		private void GameScenesManagerOnTransitionDidFinishEvent(ScenesTransitionSetupDataSO arg1, DiContainer arg2)
 		{
 			_gameScenesManager.transitionDidFinishEvent -= GameScenesManagerOnTransitionDidFinishEvent;
-
-			if (!_cheeseUtils.TheTimeHathCome)
-			{
-				_skipController = new SkipController(this);
-				_tickableManager.Add(_skipController);
-				_floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowSkipText);
-			}
-
+			
+			_skipController = new SkipController(this);
+			_tickableManager.Add(_skipController);
+			_floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowSkipText);
+			
 			if (_pluginConfig.AwaitFps || _pluginConfig.AwaitHmd)
 			{
 				_greetingsAwaiter = new GreetingsAwaiter(this);

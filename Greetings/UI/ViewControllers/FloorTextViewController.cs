@@ -1,7 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
-using Greetings.Utils;
 using HMUI;
 using Tweening;
 using UnityEngine;
@@ -18,14 +17,12 @@ namespace Greetings.UI.ViewControllers
 		[UIComponent("skip-text")] private readonly CurvedTextMeshPro _skipText = null!;
 
 		[UIComponent("fps-text")] private readonly CurvedTextMeshPro _fpsText = null!;
-
-		private CheeseUtils _cheeseUtils = null!;
+		
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
-		public void Construct(CheeseUtils cheeseUtils, TimeTweeningManager timeTweeningManager)
+		public void Construct(TimeTweeningManager timeTweeningManager)
 		{
-			_cheeseUtils = cheeseUtils;
 			_timeTweeningManager = timeTweeningManager;
 		}
 
@@ -48,11 +45,6 @@ namespace Greetings.UI.ViewControllers
 			_floatingScreen.name = "GreetingsFloorTextFloatingScreen";
 
 			_floatingScreen.SetRootViewController(this, AnimationType.None);
-
-			if (_cheeseUtils.TheTimeHathCome)
-			{
-				_skipText.text = "Greetings cannot be skipped with Trigger or Left Mouse";
-			}
 		}
 
 		public void ChangeText(TextChange action)
