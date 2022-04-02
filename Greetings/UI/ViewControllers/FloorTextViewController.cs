@@ -1,7 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
-using Greetings.Utils;
 using HMUI;
 using Tweening;
 using UnityEngine;
@@ -15,19 +14,15 @@ namespace Greetings.UI.ViewControllers
 	{
 		private FloatingScreen? _floatingScreen;
 
-		[UIComponent("skip-text")] 
-		private readonly CurvedTextMeshPro _skipText = null!;
+		[UIComponent("skip-text")] private readonly CurvedTextMeshPro _skipText = null!;
 
-		[UIComponent("fps-text")] 
-		private readonly CurvedTextMeshPro _fpsText = null!;
-
-		private CheeseUtils _cheeseUtils = null!;
+		[UIComponent("fps-text")] private readonly CurvedTextMeshPro _fpsText = null!;
+		
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
-		public void Construct(CheeseUtils cheeseUtils, TimeTweeningManager timeTweeningManager)
+		public void Construct(TimeTweeningManager timeTweeningManager)
 		{
-			_cheeseUtils = cheeseUtils;
 			_timeTweeningManager = timeTweeningManager;
 		}
 
@@ -46,17 +41,12 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 
-			_floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(105f, 50f), false, new Vector3(0f, 0.1f, 1.5f), new Quaternion(0.5f,0f,0f, 1f));
+			_floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(105f, 50f), false, new Vector3(0f, 0.1f, 1.5f), new Quaternion(0.5f, 0f, 0f, 1f));
 			_floatingScreen.name = "GreetingsFloorTextFloatingScreen";
-			
-			_floatingScreen.SetRootViewController(this, AnimationType.None);
 
-			if (_cheeseUtils.TheTimeHathCome)
-			{
-				_skipText.text = "Greetings cannot be skipped with Trigger or Left Mouse";
-			}
+			_floatingScreen.SetRootViewController(this, AnimationType.None);
 		}
-		
+
 		public void ChangeText(TextChange action)
 		{
 			if (_floatingScreen == null)
