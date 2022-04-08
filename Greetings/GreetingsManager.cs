@@ -1,4 +1,5 @@
-﻿using Greetings.Configuration;
+﻿using System;
+using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using HMUI;
@@ -16,7 +17,7 @@ using Zenject;
 
 namespace Greetings
 {
-	internal class GreetingsManager : IInitializable
+	internal class GreetingsManager : IInitializable, IDisposable
 	{
 		private readonly SiraLog _siraLog;
 		private readonly ScreenUtils _screenUtils;
@@ -53,7 +54,7 @@ namespace Greetings
 			_gameplaySetupViewController = gameplaySetupViewController;
 		}
 
-		public virtual void Initialize()
+		public void Initialize()
 		{
 			if (_greetingsPlayed && _pluginConfig.PlayOnce)
 			{
@@ -69,6 +70,17 @@ namespace Greetings
 
 			_gameScenesManager.transitionDidFinishEvent += GameScenesManagerOnTransitionDidFinishEvent;
 			_gameplaySetupViewController.didActivateEvent += GameplaySetupViewControllerOndidActivateEvent;
+		}
+
+		public void Dispose()
+		{
+			_gameScenesManager.transitionDidFinishEvent -= GameScenesManagerOnTransitionDidFinishEvent;
+			_gameplaySetupViewController.didActivateEvent -= GameplaySetupViewControllerOndidActivateEvent;
+
+			if (_screenUtils.VideoPlayer != null)
+			{
+				_screenUtils.VideoPlayer!.loopPointReached -= VideoPlayer_loopPointReached;
+			}
 		}
 
 		private void GameScenesManagerOnTransitionDidFinishEvent(ScenesTransitionSetupDataSO arg1, DiContainer arg2)
