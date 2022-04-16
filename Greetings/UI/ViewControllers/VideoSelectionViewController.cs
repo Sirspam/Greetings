@@ -130,10 +130,26 @@ namespace Greetings.UI.ViewControllers
 
 			foreach (var file in files)
 			{
+				if (file.Length > 100000000)
+				{
+					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
+					continue;
+				}
+
 				if (file.Name != _pluginConfig.SelectedVideo)
 				{
 					if (!selectedFound)
+					{
 						index += 1;
+
+						if (index == files.Length)
+						{
+							index = 0;
+							_selectedFile = file;
+							selectedFound = true;
+							VideoClicked(null!, 0);
+						}
+					}
 				}
 				else
 				{
@@ -141,12 +157,6 @@ namespace Greetings.UI.ViewControllers
 					selectedFound = true;
 				}
 
-				if (file.Length > 100000000)
-				{
-					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
-					continue;
-				}
-				
 				data.Add(new CustomCellInfo(file.Name.Remove(file.Name.Length - 4), GetFileSize(file.Length), Utilities.ImageResources.BlankSprite));
 			}
 
