@@ -1,13 +1,13 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-    <horizontal background="panel-top" anchor-min-y="1" pad-left="5" pad-right="5" pad-top="1" pad-bottom="1" horizontal-fit="PreferredSize" spacing="5">
-        <text text="Videos" align="Center" font-size="8" italics="true"/>
+    <horizontal background="panel-fade-gradient" background-color="#00C0FFFF" anchor-min-y="1" pref-width="100" horizontal-fit="PreferredSize" spacing="5">
+        <text text="Videos" align="Center" font-size="6" italics="true"/>
     </horizontal>
 
-    <vertical anchor-pos-y="-10" spacing="-8">
-        <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-width="80" pref-height="40"/>
-        <horizontal>
+    <vertical anchor-pos-y="-10" spacing="-8" pref-width="100">
+        <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-height="40"/>
+        <horizontal background="round-rect-panel" background-color="#FFFFFFAA">
             <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="37"/>
-            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Reload Videos" min-height="10" min-width="28"/>
+            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Reload Videos" min-height="10" min-width="37"/>
             <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon" preserve-aspect="true"/>
         </horizontal>
     </vertical>

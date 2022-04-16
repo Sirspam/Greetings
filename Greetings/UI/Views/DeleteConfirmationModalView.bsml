@@ -1,9 +1,9 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
     <modal id="modal" show-event="open-modal" hide-event="close-modal" size-delta-x="50" size-delta-y="30" move-to-center="true">
-        <vertical pad-top="2" pref-width="45">
+        <vertical pad-top="1" pref-width="45">
             <text text="Are you sure you want to delete this video?" font-size="5" anchor-max-x="5" align="Center" word-wrapping="true"/>
             <horizontal spacing="0">
-                <button text="Yes" on-click="yes-clicked" min-width="18"/>
+                <button text="Yes" on-click="yes-clicked" min-width="18" hover-hint="This cannot be undone!"/>
                 <button text="No" on-click="no-clicked" min-width="18"/>
             </horizontal>
         </vertical>

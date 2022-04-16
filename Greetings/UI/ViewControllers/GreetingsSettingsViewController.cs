@@ -2,6 +2,8 @@
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
 using Greetings.Utils;
+using HMUI;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Greetings.UI.ViewControllers
@@ -12,6 +14,8 @@ namespace Greetings.UI.ViewControllers
 	{
 		private bool _underlineActive;
 
+		[UIComponent("top-panel")] private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
+		
 		private ScreenUtils _screenUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 
@@ -110,8 +114,14 @@ namespace Greetings.UI.ViewControllers
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 		{
 			base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-
-
+			
+			if (firstActivation)
+			{
+				var imageView = _topPanel.GetComponent<ImageView>();
+				imageView.color0 = imageView.color0.ColorWithAlpha(1f);
+				imageView.color1 = imageView.color1.ColorWithAlpha(0f);
+			}
+			
 			if (_pluginConfig.ScreenDistance < 4.5f)
 			{
 				UnderlineActive = true;
