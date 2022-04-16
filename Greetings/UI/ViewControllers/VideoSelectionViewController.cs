@@ -128,6 +128,13 @@ namespace Greetings.UI.ViewControllers
 
 			_deleteVideoButton.enabled = files.Length > 1;
 
+			if (files.Length == 0)
+			{
+				// Video selection list will be reloaded before the greetings folder is populated again, leaving the list blank
+				// but Greetings will still work if the game is restarted so this will do
+				_pluginConfig.Changed();
+			}
+			
 			foreach (var file in files)
 			{
 				if (file.Length > 100000000)
