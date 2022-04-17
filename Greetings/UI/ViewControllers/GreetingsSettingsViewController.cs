@@ -3,6 +3,9 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
 using Greetings.Utils;
 using HMUI;
+using IPA.Loader;
+using SiraUtil.Zenject;
+using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
@@ -15,15 +18,20 @@ namespace Greetings.UI.ViewControllers
 		private bool _underlineActive;
 
 		[UIComponent("top-panel")] private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
-		
+		[UIComponent("version-text")] private readonly CurvedTextMeshPro _versionText = null!;
+
 		private ScreenUtils _screenUtils = null!;
 		private PluginConfig _pluginConfig = null!;
+		private PluginMetadata _pluginMetadata = null!;
+		private YesNoViewController _yesNoViewController = null!;
 
 		[Inject]
-		public void Construct(ScreenUtils screenUtils, PluginConfig pluginConfig)
+		public void Construct(ScreenUtils screenUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController)
 		{
 			_screenUtils = screenUtils;
 			_pluginConfig = pluginConfig;
+			_pluginMetadata = pluginMetadata.Value;
+			_yesNoViewController = yesNoViewController;
 		}
 
 		#region Values
@@ -109,6 +117,9 @@ namespace Greetings.UI.ViewControllers
 			set => _pluginConfig.MaxWaitTime = value;
 		}
 
+		[UIValue("version-text-value")]
+		private string VersionText => $"{_pluginMetadata.Name} v{_pluginMetadata.HVersion} by {_pluginMetadata.Author}";
+
 		#endregion
 
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -143,6 +154,18 @@ namespace Greetings.UI.ViewControllers
 				_screenUtils.MoveUnderline(value);
 				UnderlineActive = true;
 			}
+		}
+
+		[UIAction("version-text-clicked")]
+		private void VersionTextClicked()
+		{
+			if (_pluginMetadata.PluginHomeLink == null)
+			{
+				return;
+			}
+			
+			_yesNoViewController.ShowModal(_versionText.transform, $"Open {nameof(Greetings)}'s GitHub repo?", 6,
+				() => Application.OpenURL(_pluginMetadata.PluginHomeLink!.ToString()));
 		}
 	}
 }

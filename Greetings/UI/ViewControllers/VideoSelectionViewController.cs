@@ -38,17 +38,17 @@ namespace Greetings.UI.ViewControllers
 		private ScreenUtils _screenUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private TimeTweeningManager _timeTweeningManager = null!;
-		private DeleteConfirmationViewController _deleteConfirmationViewController = null!;
+		private YesNoViewController _yesNoViewController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, UIUtils uIUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, DeleteConfirmationViewController deleteConfirmationViewController)
+		public void Construct(SiraLog siraLog, UIUtils uIUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, YesNoViewController yesNoViewController)
 		{
 			_siraLog = siraLog;
 			_uIUtils = uIUtils;
 			_screenUtils = screenUtils;
 			_pluginConfig = pluginConfig;
 			_timeTweeningManager = timeTweeningManager;
-			_deleteConfirmationViewController = deleteConfirmationViewController;
+			_yesNoViewController = yesNoViewController;
 		}
 
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -94,7 +94,7 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("delete-video-clicked")]
 		private void DeleteVideo()
 		{
-			_deleteConfirmationViewController.ShowModal(_deleteVideoButton.transform, DeleteSelectedVideo);
+			_yesNoViewController.ShowModal(_deleteVideoButton.transform, "Are you sure you want to delete this video?", 5, DeleteSelectedVideo);
 		}
 
 		private void DeleteSelectedVideo()

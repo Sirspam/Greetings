@@ -31,4 +31,7 @@
             </vertical>
         </tab>
     </vertical>
+    <horizontal anchor-pos-x="30" anchor-pos-y="-35" vertical-fit="PreferredSize" horizontal-fit="PreferredSize" >
+        <clickable-text id="version-text" text="~version-text-value" on-click="version-text-clicked" align="Right" font-size="4" default-color="orange" highlight-color="yellow"/>
+    </horizontal>
 </bg>

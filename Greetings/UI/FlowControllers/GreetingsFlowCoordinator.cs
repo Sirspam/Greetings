@@ -7,18 +7,18 @@ namespace Greetings.UI.FlowControllers
 {
 	internal class GreetingsFlowCoordinator : FlowCoordinator
 	{
+		private MainFlowCoordinator _mainFlowCoordinator = null!;
 		private ScreenControlsViewController _screenControlsViewController = null!;
 		private VideoSelectionViewController _videoSelectionViewController = null!;
 		private GreetingsSettingsViewController _greetingsSettingsViewController = null!;
-		private MainFlowCoordinator _mainFlowCoordinator = null!;
 
 		[Inject]
-		public void Construct(ScreenControlsViewController screenControlsViewController, VideoSelectionViewController videoSelectionViewController, GreetingsSettingsViewController greetingsSettingsViewController, MainFlowCoordinator mainFlowCoordinator)
+		public void Construct(MainFlowCoordinator mainFlowCoordinator, ScreenControlsViewController screenControlsViewController, VideoSelectionViewController videoSelectionViewController, GreetingsSettingsViewController greetingsSettingsViewController)
 		{
+			_mainFlowCoordinator = mainFlowCoordinator;
 			_screenControlsViewController = screenControlsViewController;
 			_videoSelectionViewController = videoSelectionViewController;
 			_greetingsSettingsViewController = greetingsSettingsViewController;
-			_mainFlowCoordinator = mainFlowCoordinator;
 		}
 
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
