@@ -3,7 +3,7 @@
   "id": "Greetings",
   "name": "Greetings",
   "author": "Sirspam",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Beat Saber mod for playing a video on the game's start up",
   "gameVersion": "1.21.0",
   "icon": "Greetings.Resources.Greetings.png",
