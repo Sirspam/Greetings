@@ -1,9 +1,11 @@
 ﻿using System;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
+using Greetings.UI;
+using Greetings.UI.FlowControllers;
 using Zenject;
 
-namespace Greetings.UI
+namespace Greetings.Managers
 {
 	internal class MenuButtonManager : IInitializable, IDisposable
 	{

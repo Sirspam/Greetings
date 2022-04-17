@@ -15,7 +15,7 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Zenject;
 
-namespace Greetings
+namespace Greetings.Managers
 {
 	internal class GreetingsManager : IInitializable, IDisposable
 	{

@@ -3,7 +3,7 @@ using Greetings.UI.ViewControllers;
 using HMUI;
 using Zenject;
 
-namespace Greetings.UI
+namespace Greetings.UI.FlowControllers
 {
 	internal class GreetingsFlowCoordinator : FlowCoordinator
 	{
