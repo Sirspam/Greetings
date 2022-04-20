@@ -164,7 +164,7 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 			
-			_yesNoViewController.ShowModal(_versionText.transform, $"Open {nameof(Greetings)}'s GitHub page?", 6,
+			_yesNoViewController.ShowModal(_versionText.transform, $"Open {_pluginMetadata.Name}'s GitHub page?", 6,
 				() => Application.OpenURL(_pluginMetadata.PluginHomeLink!.ToString()));
 		}
 	}
