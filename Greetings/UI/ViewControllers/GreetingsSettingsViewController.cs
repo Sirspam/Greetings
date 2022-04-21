@@ -18,16 +18,19 @@ namespace Greetings.UI.ViewControllers
 		private bool _underlineActive;
 
 		[UIComponent("top-panel")] private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
+		[UIComponent("underline-text")] private readonly Transform _underlineText = null!;
 		[UIComponent("version-text")] private readonly CurvedTextMeshPro _versionText = null!;
 
+		private UIUtils _uiUtils = null!;
 		private ScreenUtils _screenUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private PluginMetadata _pluginMetadata = null!;
 		private YesNoViewController _yesNoViewController = null!;
 
 		[Inject]
-		public void Construct(ScreenUtils screenUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController)
+		public void Construct(UIUtils uiUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController)
 		{
+			_uiUtils = uiUtils;
 			_screenUtils = screenUtils;
 			_pluginConfig = pluginConfig;
 			_pluginMetadata = pluginMetadata.Value;
@@ -35,15 +38,27 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		#region Values
-
+		
 		[UIValue("underline-active")]
 		private bool UnderlineActive
 		{
 			get => _underlineActive;
 			set
 			{
-				_underlineActive = value;
-				NotifyPropertyChanged();
+				if (_underlineActive != value)
+				{
+					_underlineActive = value;
+					var textGameObject = _underlineText.gameObject;
+					if (value)
+					{
+						NotifyPropertyChanged();
+						_uiUtils.PresentPanelAnimation.ExecuteAnimation(textGameObject);
+					}
+					else
+					{
+						_uiUtils.DismissPanelAnimation.ExecuteAnimation(textGameObject, () => NotifyPropertyChanged());
+					}
+				}
 			}
 		}
 

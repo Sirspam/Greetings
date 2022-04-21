@@ -7,12 +7,19 @@ namespace Greetings.Utils
 {
 	internal class UIUtils
 	{
+		private PanelAnimationSO? _presentPanelAnimation;
+		private PanelAnimationSO? _dismissPanelAnimation;
 		private readonly TimeTweeningManager _uwuTweenyManager; // Thanks once again, PixelBoom
-
-		public UIUtils(TimeTweeningManager timeTweeningManager)
+		private ColorsOverrideSettingsPanelController _colorsOverrideSettingsPanelController;
+		
+		public UIUtils(TimeTweeningManager timeTweeningManager, GameplaySetupViewController gameplaySetupViewController)
 		{
 			_uwuTweenyManager = timeTweeningManager;
+			_colorsOverrideSettingsPanelController = Accessors.ColorsPanelAccessor(ref gameplaySetupViewController);
 		}
+		
+		public PanelAnimationSO PresentPanelAnimation => _presentPanelAnimation ??= Accessors.PresentAnimationAccessor(ref _colorsOverrideSettingsPanelController);
+		public PanelAnimationSO DismissPanelAnimation => _dismissPanelAnimation ??= Accessors.DismissAnimationAccessor(ref _colorsOverrideSettingsPanelController);
 
 		public async void ButtonUnderlineClick(GameObject gameObject)
 		{
