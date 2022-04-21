@@ -21,7 +21,7 @@ namespace Greetings.Configuration
 		public virtual bool AwaitFps { get; set; } = true;
 		public virtual bool AwaitHmd { get; set; } = true;
 		public virtual bool AwaitSongCore { get; set; } = true;
-		public virtual int TargetFps { get; set; } = Convert.ToInt16(XRDevice.refreshRate - 10);
+		public virtual int TargetFps { get; set; } = GetDefaultTargetFps();
 		public virtual int FpsStreak { get; set; } = 8;
 		public virtual int MaxWaitTime { get; set; } = 10;
 
@@ -52,6 +52,17 @@ namespace Greetings.Configuration
 					SelectedVideo = files[0].Name;
 				}
 			}
+		}
+
+		private static int GetDefaultTargetFps()
+		{
+			var refreshRate = Convert.ToInt16(XRDevice.refreshRate - 10);
+			if (refreshRate <= 0)
+			{
+				refreshRate = 60;
+			}
+
+			return refreshRate;
 		}
 	}
 }
