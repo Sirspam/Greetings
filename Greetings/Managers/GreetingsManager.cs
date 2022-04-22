@@ -174,6 +174,7 @@ namespace Greetings.Managers
 			private int _stabilityCounter;
 			private bool _awaitingSongCore;
 			private float _waitTimeCounter;
+			private float _updateRateCounter;
 			private bool _awaitingPreperation;
 			internal bool YouShouldKillYourselfNow;
 
@@ -185,8 +186,9 @@ namespace Greetings.Managers
 
 			private void Initialize()
 			{
-				_stabilityCounter = 0;
 				_waitTimeCounter = 0f;
+				_stabilityCounter = 0;
+				_updateRateCounter = 0f;
 				_awaitingPreperation = true;
 				YouShouldKillYourselfNow = false;
 
@@ -224,8 +226,6 @@ namespace Greetings.Managers
 
 					_awaitingHmd = false;
 					_greetingsManager._siraLog.Info("HMD focused");
-
-					return;
 				}
 
 				if (_awaitingSongCore)
@@ -237,8 +237,6 @@ namespace Greetings.Managers
 
 					_awaitingSongCore = false;
 					_greetingsManager._siraLog.Info("SongCore Loaded");
-
-					return;
 				}
 
 				if (_awaitingPreperation)
@@ -252,6 +250,13 @@ namespace Greetings.Managers
 					_greetingsManager._siraLog.Info("Video Prepared");
 				}
 
+				_updateRateCounter += Time.unscaledDeltaTime;
+				if (_updateRateCounter < 0.10f)
+				{
+					return;
+				}
+
+				_updateRateCounter = 0f;
 
 				// We do a lil' bit of logging
 				var fps = Time.timeScale / Time.deltaTime;
