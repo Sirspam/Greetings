@@ -14,21 +14,25 @@ namespace Greetings.Utils
 {
 	internal class ScreenUtils
 	{
-		private readonly SiraLog _siraLog;
-		private readonly PluginConfig _pluginConfig;
-		private readonly SongPreviewPlayer _songPreviewPlayer;
-		private readonly TimeTweeningManager _timeTweeningManager;
-
 		public VideoPlayer? VideoPlayer;
 		public GameObject? GreetingsScreen;
 		public readonly string GreetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
-		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
-		private FloatTween? _currentMoveTween;
+		private const float MaxWidth = 4f;
+		private const float MaxHeight = 2.6f;
+
 		private Vector3 _screenScale;
 		private Shader? _screenShader;
+		private FloatTween? _underlineMoveTween;
 		private GameObject? _greetingsUnderline;
+		private Vector3Tween? _underlineShowTween;
+		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
+		private readonly SiraLog _siraLog;
+		private readonly PluginConfig _pluginConfig;
+		private readonly SongPreviewPlayer _songPreviewPlayer;
+		private readonly TimeTweeningManager _timeTweeningManager;
+		
 		public ScreenUtils(SiraLog siraLog, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
 		{
 			_siraLog = siraLog;
@@ -82,17 +86,17 @@ namespace Greetings.Utils
 			}
 		}
 
-		public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false)
+		public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false, bool isReload = false)
 		{
 			CreateScreen(randomVideo);
 
 			VideoPlayer!.Prepare();
-			VideoPlayer.prepareCompleted += ShowScreenDelegate;
+			VideoPlayer.prepareCompleted += PrepareCompletedFunction;
 			
 			
-			async void ShowScreenDelegate(VideoPlayer source)
+			async void PrepareCompletedFunction(VideoPlayer source)
 			{
-				VideoPlayer.prepareCompleted -= ShowScreenDelegate;
+				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
 				VideoPlayer!.StepForward();
 
 				// Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways
@@ -102,15 +106,31 @@ namespace Greetings.Utils
 					await Utilities.AwaitSleep(250);
 					count++;
 				}
+				
+				float width = VideoPlayer.width;
+				float height = VideoPlayer.height;
 
-				// This obviously could be improved as the player's aspect won't exactly fit the video's
-				// Unfortunately I am too stupid to figure out a nice way to achieve that
-				if (VideoPlayer.width > VideoPlayer.height)
-					_screenScale = new Vector3(4f, 2.5f, 0f);
-				else if (VideoPlayer.width < VideoPlayer.height)
-					_screenScale = new Vector3(2f, 3f, 0f);
-				else
-					_screenScale = new Vector3(2.5f, 2.5f, 0f);
+				if (width > MaxWidth)
+				{
+					var ratio = MaxWidth / VideoPlayer.width;
+
+					height = VideoPlayer.height * ratio;
+					width = VideoPlayer.width * ratio;
+				}
+				
+				if (height > MaxHeight)
+				{
+					var ratio = MaxHeight / VideoPlayer.height;
+
+					width = VideoPlayer.width * ratio;
+					height = VideoPlayer.height * ratio;
+				}
+
+				_screenScale = new Vector3(width, height);
+				if (isReload)
+				{
+					AdjustUnderlineWidth(_screenScale.x);
+				}
 
 				if (!doTransition)
 				{
@@ -154,10 +174,14 @@ namespace Greetings.Utils
 				GreetingsScreen.transform.localScale = Vector3.zero;
 
 				if (reloadVideo)
-					ShowScreen(false);
+				{
+					ShowScreen(false, isReload: true);
+				}
 
 				else
+				{
 					GreetingsScreen.SetActive(false);
+				}
 
 				return;
 			}
@@ -168,7 +192,9 @@ namespace Greetings.Utils
 				onCompleted = delegate
 				{
 					if (reloadVideo)
-						ShowScreen(playOnComplete: false);
+					{
+						ShowScreen(playOnComplete: false, isReload: true);
+					}
 
 					else
 					{
@@ -244,26 +270,54 @@ namespace Greetings.Utils
 			_greetingsUnderline!.transform.position = new Vector3(0f, 0.05f, zPosition);
 			_greetingsUnderline.gameObject.transform.localScale = new Vector3(0f, 0.05f, 0.15f);
 			var oldScale = _greetingsUnderline.transform.localScale;
-			var newScale = new Vector3(4f, 0.05f, 0.15f);
-			var tween = new Vector3Tween(oldScale, newScale, val => _greetingsUnderline.transform.localScale = val, 0.5f, EaseType.OutQuart)
-			{
-				onStart = () => _greetingsUnderline.gameObject.SetActive(true)
-			};
-			_timeTweeningManager.AddTween(tween, _greetingsUnderline);
+			var newScale = new Vector3(_screenScale.x, 0.05f, 0.15f);
+			_underlineShowTween = new Vector3Tween(oldScale, newScale, val => _greetingsUnderline.transform.localScale = val, 0.5f, EaseType.OutExpo);
+			_timeTweeningManager.AddTween(_underlineShowTween, _greetingsUnderline);
 		}
 
+		private void AdjustUnderlineWidth(float newWidth)
+		{
+			if (_greetingsUnderline == null || !_greetingsUnderline.activeSelf)
+			{
+				return;
+			}
+			
+			_timeTweeningManager.KillAllTweens(_greetingsUnderline);
+			
+			var oldScale = _greetingsUnderline.transform.localScale;
+			var newScale = new Vector3(newWidth, oldScale.y, oldScale.z);
+			var tween = new Vector3Tween(oldScale, newScale, val => _greetingsUnderline.transform.localScale = val, 0.5f, EaseType.OutCubic);
+			_timeTweeningManager.AddTween(tween, _greetingsUnderline);
+		}
+		
 		public void MoveUnderline(float zPosition)
 		{
-			if (_greetingsUnderline == null || _greetingsUnderline.gameObject.activeSelf == false)
-				ShowUnderline(zPosition);
+			if (_greetingsUnderline == null || !_greetingsUnderline.gameObject.activeSelf)
+			{
+				if (VideoPlayer != null && !VideoPlayer.isPrepared)
+				{
+					VideoPlayer.prepareCompleted += PrepareCompletedFunction;
 
+					void PrepareCompletedFunction(VideoPlayer source)
+					{
+						VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
+						ShowUnderline(zPosition);
+					}
+				}
+				else
+				{
+					ShowUnderline(zPosition);
+				}
 
-			_currentMoveTween?.Kill();
+				return;
+			}
+			
+			_underlineMoveTween?.Kill();
 
 			var previousPosition = _greetingsUnderline!.transform.position;
 			var newPosition = new Vector3(previousPosition.x, previousPosition.y, zPosition);
-			_currentMoveTween = new FloatTween(0f, 1f, val => _greetingsUnderline.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
-			_timeTweeningManager.AddTween(_currentMoveTween, _greetingsUnderline);
+			_underlineMoveTween = new FloatTween(0f, 1f, val => _greetingsUnderline.transform.position = Vector3.Lerp(previousPosition, newPosition, val), 0.5f, EaseType.OutQuint);
+			_timeTweeningManager.AddTween(_underlineMoveTween, _greetingsUnderline);
 		}
 
 		public void HideUnderline()

@@ -74,7 +74,9 @@ namespace Greetings.UI.ViewControllers
 
 			var videoPlayer = _screenUtils.VideoPlayer;
 			if (videoPlayer != null && (videoPlayer.isPrepared || videoPlayer.isPlaying))
+			{
 				_screenUtils.HideScreen(reloadVideo: true);
+			}
 		}
 
 		[UIAction("open-folder-clicked")]
@@ -163,7 +165,6 @@ namespace Greetings.UI.ViewControllers
 					_selectedFile = file;
 					selectedFound = true;
 				}
-
 				data.Add(new CustomCellInfo(file.Name.Remove(file.Name.Length - 4), GetFileSize(file.Length), Utilities.ImageResources.BlankSprite));
 			}
 
