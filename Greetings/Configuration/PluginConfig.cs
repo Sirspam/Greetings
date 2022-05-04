@@ -22,7 +22,7 @@ namespace Greetings.Configuration
 		public virtual bool AwaitHmd { get; set; } = true;
 		public virtual bool AwaitSongCore { get; set; } = true;
 		public virtual int TargetFps { get; set; } = GetDefaultTargetFps();
-		public virtual int FpsStreak { get; set; } = 8;
+		public virtual int FpsStreak { get; set; } = 5;
 		public virtual int MaxWaitTime { get; set; } = 10;
 
 		public virtual void OnReload()
