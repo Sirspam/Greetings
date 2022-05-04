@@ -26,6 +26,8 @@ namespace Greetings.UI.ViewControllers
 		private FileInfo _selectedFile = null!;
 
 		[UIComponent("video-list")] private readonly CustomListTableData _videoList = null!;
+		
+		[UIComponent("bottom-buttons-layout")] private readonly HorizontalOrVerticalLayoutGroup _bottomButtonsLayout = null!;
 
 		[UIComponent("open-folder-button")] private readonly Button _openFolderButton = null!;
 
@@ -62,6 +64,7 @@ namespace Greetings.UI.ViewControllers
 		private void PostParse()
 		{
 			_deleteVideoButton.SetField<ImageView, float>("_skew", 0.2f);
+			_bottomButtonsLayout.GetComponent<ImageView>().SetField("_skew", 0.18f);
 		}
 
 		[UIAction("video-clicked")]

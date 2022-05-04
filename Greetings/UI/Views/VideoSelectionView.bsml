@@ -5,9 +5,9 @@
 
     <vertical anchor-pos-y="-10" spacing="-8" pref-width="100">
         <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-height="40"/>
-        <horizontal background="round-rect-panel" background-color="#FFFFFFAA">
-            <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="37"/>
-            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Reload Videos" min-height="10" min-width="37"/>
+        <horizontal id="bottom-buttons-layout" background="round-rect-panel" background-color="#FFFFFFAA" spacing="2">
+            <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="38"/>
+            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Refresh Videos" min-height="10" min-width="38"/>
             <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon" preserve-aspect="true"/>
         </horizontal>
     </vertical>
