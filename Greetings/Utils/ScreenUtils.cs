@@ -23,6 +23,7 @@ namespace Greetings.Utils
 
 		private Vector3 _screenScale;
 		private Shader? _screenShader;
+		private AudioSource? _screenAudioSource;
 		private FloatTween? _underlineMoveTween;
 		private GameObject? _greetingsUnderline;
 		private Vector3Tween? _underlineShowTween;
@@ -65,9 +66,10 @@ namespace Greetings.Utils
 				VideoPlayer.targetMaterialRenderer = screenRenderer;
 				
 				VideoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
-				var audioSource = VideoPlayer.gameObject.AddComponent<AudioSource>();
-				VideoPlayer.SetTargetAudioSource(0, audioSource);
-				audioSource.outputAudioMixerGroup = _songPreviewPlayer.GetField<AudioSource, SongPreviewPlayer>("_audioSourcePrefab").outputAudioMixerGroup;
+				_screenAudioSource = VideoPlayer.gameObject.AddComponent<AudioSource>();
+				VideoPlayer.SetTargetAudioSource(0, _screenAudioSource);
+				_screenAudioSource.outputAudioMixerGroup = _songPreviewPlayer.GetField<AudioSource, SongPreviewPlayer>("_audioSourcePrefab").outputAudioMixerGroup;
+				_screenAudioSource.mute = true;
 			}
 			else
 			{
@@ -84,28 +86,13 @@ namespace Greetings.Utils
 			{
 				VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedVideo);
 			}
-		}
-
-		public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false, bool isReload = false)
-		{
-			CreateScreen(randomVideo);
-
-			VideoPlayer!.Prepare();
+			
+			VideoPlayer.Prepare();
 			VideoPlayer.prepareCompleted += PrepareCompletedFunction;
-			
-			
-			async void PrepareCompletedFunction(VideoPlayer source)
+
+			void PrepareCompletedFunction(VideoPlayer source)
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
-				VideoPlayer!.StepForward();
-
-				// Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways
-				var count = 1;
-				while (_songPreviewPlayer.activeAudioClip == null && count <= 3)
-				{
-					await Utilities.AwaitSleep(250);
-					count++;
-				}
 				
 				float width = VideoPlayer.width;
 				float height = VideoPlayer.height;
@@ -127,6 +114,36 @@ namespace Greetings.Utils
 				}
 
 				_screenScale = new Vector3(width, height);
+			}
+		}
+
+		public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false, bool isReload = false)
+		{
+			if (isReload || VideoPlayer == null || !VideoPlayer.isPrepared)
+			{
+				CreateScreen(randomVideo);
+
+				VideoPlayer!.Prepare();
+				VideoPlayer.prepareCompleted += PrepareCompletedFunction;
+				return;
+			}
+			
+			PrepareCompletedFunction(VideoPlayer);
+			
+			
+			async void PrepareCompletedFunction(VideoPlayer source)
+			{
+				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
+				VideoPlayer!.StepForward();
+
+				// Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways
+				var count = 1;
+				while (_songPreviewPlayer.activeAudioClip == null && count <= 3)
+				{
+					await Utilities.AwaitSleep(250);
+					count++;
+				}
+
 				if (isReload)
 				{
 					AdjustUnderlineWidth(_screenScale.x);
@@ -137,7 +154,7 @@ namespace Greetings.Utils
 					GreetingsScreen!.transform.localScale = _screenScale;
 					if (playOnComplete)
 					{
-						PlayAndFadeOutAudio();
+						PlayAndFadeOutMenuMusic();
 					}
 
 					return;
@@ -150,7 +167,7 @@ namespace Greetings.Utils
 					{
 						if (playOnComplete)
 						{
-							PlayAndFadeOutAudio();
+							PlayAndFadeOutMenuMusic();
 						}
 					}
 				};
@@ -165,8 +182,7 @@ namespace Greetings.Utils
 				return;
 			}
 
-			VideoPlayer.Pause();
-			_songPreviewPlayer.CrossfadeToDefault();
+			PauseAndFadeInMenuMusic();
 
 			if (!doTransition || GreetingsScreen.transform.localScale == Vector3.zero)
 			{
@@ -221,7 +237,7 @@ namespace Greetings.Utils
 			_timeTweeningManager.AddTween(tween, GreetingsScreen);
 		}
 
-		private void PlayAndFadeOutAudio()
+		public void PlayAndFadeOutMenuMusic()
 		{
 			if (GreetingsScreen == null || !GreetingsScreen.activeSelf || GreetingsScreen.transform.localScale.y == 0f)
 			{
@@ -229,7 +245,20 @@ namespace Greetings.Utils
 			}
 
 			_songPreviewPlayer.FadeOut(0.8f);
+			_screenAudioSource!.mute = false;
 			VideoPlayer!.Play();
+		}
+
+		public void PauseAndFadeInMenuMusic()
+		{
+			if (GreetingsScreen == null || !GreetingsScreen.activeSelf || GreetingsScreen.transform.localScale.y == 0f)
+			{
+				return;
+			}
+			
+			VideoPlayer!.Pause();
+			_songPreviewPlayer.CrossfadeToDefault();
+			_screenAudioSource!.mute = true;
 		}
 
 		private Shader GetShader()
