@@ -122,11 +122,11 @@ namespace Greetings.UI.ViewControllers
 
 			if (videoPlayer != null && videoPlayer.isPlaying)
 			{
-				videoPlayer.Pause();
+				_screenUtils.PauseAndFadeInMenuMusic();
 			}
 			else if (videoPlayer != null && videoPlayer.isPrepared)
 			{
-				videoPlayer.Play();
+				_screenUtils.PlayAndFadeOutMenuMusic();
 			}
 		}
 
