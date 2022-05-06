@@ -65,7 +65,7 @@ namespace Greetings.Managers
 			var gameObject = _screenSystem.gameObject;
 			_originalScreenSystemPosition = gameObject.transform.position;
 			gameObject.transform.position = Vector3.negativeInfinity; // Sod off wanker
-			_screenUtils.CreateScreen();
+			_screenUtils.CreateScreen(_pluginConfig.RandomVideo);
 
 			_gameScenesManager.transitionDidFinishEvent += GameScenesManagerOnTransitionDidFinishEvent;
 			_gameplaySetupViewController.didActivateEvent += GameplaySetupViewControllerOndidActivateEvent;
