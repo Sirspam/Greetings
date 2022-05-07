@@ -174,8 +174,11 @@ namespace Greetings.Managers
 			private bool _awaitingSongCore;
 			private float _waitTimeCounter;
 			private float _updateRateCounter;
-			private bool _awaitingPreperation;
+			private bool _awaitingPreparation;
+			private bool _firsTimeAwaitingHmd;
+			private bool _firsTimeAwaitingSongCore;
 			internal bool YouShouldKillYourselfNow;
+			private bool _firstTimeAwaitingPreparation;
 
 			public GreetingsAwaiter(GreetingsManager greetingsManager)
 			{
@@ -188,7 +191,7 @@ namespace Greetings.Managers
 				_waitTimeCounter = 0f;
 				_stabilityCounter = 0;
 				_updateRateCounter = 0f;
-				_awaitingPreperation = true;
+				_awaitingPreparation = true;
 				YouShouldKillYourselfNow = false;
 
 				_targetFps = _greetingsManager._pluginConfig.TargetFps;
@@ -197,6 +200,9 @@ namespace Greetings.Managers
 				_awaitingHmd = _greetingsManager._pluginConfig.AwaitHmd && !_greetingsManager._fpfcSettings.Enabled;
 				_awaitingSongCore = _greetingsManager._pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null;
 
+				_firsTimeAwaitingHmd = true;
+				_firsTimeAwaitingSongCore = true;
+				_firstTimeAwaitingPreparation = true;
 
 				_greetingsManager._siraLog.Debug("target fps " + _targetFps);
 				if (_awaitingHmd)
@@ -218,6 +224,12 @@ namespace Greetings.Managers
 
 				if (_awaitingHmd)
 				{
+					if (_firsTimeAwaitingHmd)
+					{
+						_greetingsManager._siraLog.Info("Awaiting HMD focus");
+						_firsTimeAwaitingHmd = false;
+					}
+					
 					if (!_greetingsManager._vrPlatformHelper.hasVrFocus && !_greetingsManager._fpfcSettings.Enabled)
 					{
 						return;
@@ -229,24 +241,36 @@ namespace Greetings.Managers
 
 				if (_awaitingSongCore)
 				{
+					if (_firsTimeAwaitingSongCore)
+					{
+						_greetingsManager._siraLog.Info("Awaiting SongCore");
+						_firsTimeAwaitingSongCore = false;
+					}
+					
 					if (!Loader.AreSongsLoaded)
 					{
 						return;
 					}
 
 					_awaitingSongCore = false;
-					_greetingsManager._siraLog.Info("SongCore Loaded");
+					_greetingsManager._siraLog.Info("SongCore loaded");
 				}
 
-				if (_awaitingPreperation)
+				if (_awaitingPreparation)
 				{
+					if (_firstTimeAwaitingPreparation)
+					{
+						_greetingsManager._siraLog.Info("Awaiting video preparation");
+						_firstTimeAwaitingPreparation = false;
+					}
+					
 					if (!_greetingsManager._screenUtils.VideoPlayer!.isPrepared)
 					{
 						return;
 					}
 
-					_awaitingPreperation = false;
-					_greetingsManager._siraLog.Info("Video Prepared");
+					_awaitingPreparation = false;
+					_greetingsManager._siraLog.Info("Video prepared");
 				}
 
 				_updateRateCounter += Time.unscaledDeltaTime;
