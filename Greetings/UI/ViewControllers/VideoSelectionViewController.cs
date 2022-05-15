@@ -69,7 +69,7 @@ namespace Greetings.UI.ViewControllers
 
 		[UIAction("video-clicked")]
 		// ReSharper disable once UnusedParameter.Local
-		private void VideoClicked(TableView tableView, int index)
+		private void VideoClicked(TableView? tableView, int index)
 		{
 			var fileName = _videoList.data[index].text + ".mp4";
 			_selectedFile = new FileInfo(_screenUtils.GreetingsPath + "\\" + fileName);
@@ -159,7 +159,7 @@ namespace Greetings.UI.ViewControllers
 							index = 0;
 							_selectedFile = file;
 							selectedFound = true;
-							VideoClicked(null!, 0);
+							VideoClicked(null, 0);
 						}
 					}
 				}
