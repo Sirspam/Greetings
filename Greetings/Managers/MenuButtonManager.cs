@@ -1,7 +1,7 @@
 ﻿using System;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
-using Greetings.UI.FlowControllers;
+using Greetings.UI.FlowCoordinator;
 using Zenject;
 
 namespace Greetings.Managers

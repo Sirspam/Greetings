@@ -1,6 +1,6 @@
 ﻿using Greetings.Configuration;
 using Greetings.Managers;
-using Greetings.UI.FlowControllers;
+using Greetings.UI.FlowCoordinator;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using Zenject;

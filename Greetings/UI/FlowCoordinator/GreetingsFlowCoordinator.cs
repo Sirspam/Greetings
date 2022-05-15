@@ -3,9 +3,9 @@ using Greetings.UI.ViewControllers;
 using HMUI;
 using Zenject;
 
-namespace Greetings.UI.FlowControllers
+namespace Greetings.UI.FlowCoordinator
 {
-	internal class GreetingsFlowCoordinator : FlowCoordinator
+	internal class GreetingsFlowCoordinator : HMUI.FlowCoordinator
 	{
 		private MainFlowCoordinator _mainFlowCoordinator = null!;
 		private ScreenControlsViewController _screenControlsViewController = null!;
