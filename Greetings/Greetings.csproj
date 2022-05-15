@@ -4,7 +4,7 @@
         <TargetFramework>net48</TargetFramework>
         <OutputType>Library</OutputType>
         <LangVersion>8</LangVersion>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
         <BeatSaberDir>$(LocalRefsDir)</BeatSaberDir>
@@ -113,26 +113,26 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')"/>
-        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')"/>
-        <None Include="Greetings.csproj.user" Condition="Exists('Greetings.csproj.user')"/>
+        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
+        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')" />
+        <None Include="Greetings.csproj.user" Condition="Exists('Greetings.csproj.user')" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="manifest.json"/>
-        <EmbeddedResource Include="Resources\*"/>
-        <EmbeddedResource Include="Images\*.png"/>
-        <EmbeddedResource Include="UI\Views\*.bsml"/>
+        <EmbeddedResource Include="manifest.json" />
+        <EmbeddedResource Include="Resources\*" />
+        <EmbeddedResource Include="Images\*.png" />
+        <EmbeddedResource Include="UI\Views\*.bsml" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Resources\bscinema.bundle"/>
-        <None Remove="Resources\greetingsbundle.bundle"/>
-        <None Remove="Resources\mvp.bundle"/>
-        <None Remove="Resources\PauseOrPlay.png"/>
-        <None Remove="UI\Views\GreetingsSettingsView.bsml"/>
-        <None Remove="UI\Views\ScreenControlsView.bsml"/>
-        <None Remove="UI\Views\VideoSelectionView.bsml"/>
+        <None Remove="Resources\bscinema.bundle" />
+        <None Remove="Resources\greetingsbundle.bundle" />
+        <None Remove="Resources\mvp.bundle" />
+        <None Remove="Resources\PauseOrPlay.png" />
+        <None Remove="UI\Views\GreetingsSettingsView.bsml" />
+        <None Remove="UI\Views\ScreenControlsView.bsml" />
+        <None Remove="UI\Views\VideoSelectionView.bsml" />
     </ItemGroup>
 
     <ItemGroup>
