@@ -84,17 +84,9 @@ namespace Greetings.Managers
 
 			_skipController = new SkipController(this);
 			_tickableManager.Add(_skipController);
-			_floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowSkipText);
+			_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.SkipText);
 			_screenUtils.VideoPlayer!.loopPointReached += VideoPlayer_loopPointReached;
-
-			if (_pluginConfig.AwaitFps || _pluginConfig.AwaitHmd)
-			{
-				_diContainer.InstantiateComponent<GreetingsAwaiter>(_screenUtils.GreetingsScreen);
-				_floorTextViewController.ChangeText(FloorTextViewController.TextChange.ShowFpsText);
-				return;
-			}
-
-			_screenUtils.ShowScreen(randomVideo: _pluginConfig.RandomVideo);
+			_greetingsAwaiter = _diContainer.InstantiateComponent<GreetingsAwaiter>(_screenUtils.GreetingsScreen);
 		}
 
 		// Sometimes the Greetings screen won't close correctly. It's an incredibly rare case and I can't reproduce it myself
@@ -115,8 +107,7 @@ namespace Greetings.Managers
 
 			if (_greetingsAwaiter != null)
 			{
-				_greetingsAwaiter.cancelAwaition = true;
-				_greetingsAwaiter = null;
+				_greetingsAwaiter.StopAllCoroutines();
 			}
 
 			_greetingsPlayed = true;

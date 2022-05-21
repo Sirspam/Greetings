@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
@@ -14,9 +15,9 @@ namespace Greetings.UI.ViewControllers
 	{
 		private FloatingScreen? _floatingScreen;
 
-		[UIComponent("skip-text")] private readonly CurvedTextMeshPro _skipText = null!;
+		[UIComponent("top-text")] private readonly CurvedTextMeshPro _topText = null!;
 
-		[UIComponent("fps-text")] private readonly CurvedTextMeshPro _fpsText = null!;
+		[UIComponent("bottom-text")] private readonly CurvedTextMeshPro _bottomText = null!;
 		
 		private TimeTweeningManager _timeTweeningManager = null!;
 
@@ -26,12 +27,32 @@ namespace Greetings.UI.ViewControllers
 			_timeTweeningManager = timeTweeningManager;
 		}
 
+		public enum VisibilityChange
+		{
+			ShowTopText,
+			ShowBottomText,
+			HideTopText,
+			HideBottomText
+		}
+
 		public enum TextChange
 		{
-			ShowSkipText,
-			ShowFpsText,
-			HideSkipText,
-			HideFpsText
+			SkipText,
+			AwaitingVideoPreparationText,
+			AwaitingHmd,
+			AwaitingSongCore,
+			AwaitingFpsStabilisation
+		}
+
+		public enum ChangeSpeed
+		{
+			Slow,
+			Quick
+		}
+
+		private void OnEnable()
+		{
+			CreateScreen();
 		}
 
 		private void CreateScreen()
@@ -45,35 +66,128 @@ namespace Greetings.UI.ViewControllers
 			_floatingScreen.name = "GreetingsFloorTextFloatingScreen";
 
 			_floatingScreen.SetRootViewController(this, AnimationType.None);
+			_topText.alpha = 0;
+			_bottomText.alpha = 0;
 		}
 
-		public void ChangeText(TextChange action)
+		public void ChangeTextTo(TextChange action)
 		{
 			if (_floatingScreen == null)
 			{
 				CreateScreen();
 			}
 
-			FloatTween tween;
 			switch (action)
 			{
-				case TextChange.ShowSkipText:
-					tween = new FloatTween(0f, 1f, val => _skipText.alpha = val, 0.5f, EaseType.InOutQuad);
+				case TextChange.SkipText:
+					ChangeVisibility(VisibilityChange.HideTopText, ChangeSpeed.Quick, () =>
+					{
+						_topText.text = "Greetings can be skipped with Trigger or Left Mouse";
+						ChangeVisibility(VisibilityChange.ShowTopText);
+					});
 					break;
-				case TextChange.ShowFpsText:
-					tween = new FloatTween(0f, 1f, val => _fpsText.alpha = val, 0.5f, EaseType.InOutQuad);
+				case TextChange.AwaitingVideoPreparationText:
+					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
+					{
+						_bottomText.text = "Awaiting Video Preparation";
+						ChangeVisibility(VisibilityChange.ShowBottomText);
+					});
 					break;
-				case TextChange.HideSkipText:
-					tween = new FloatTween(1f, 0f, val => _skipText.alpha = val, 0.5f, EaseType.InOutQuad);
+				case TextChange.AwaitingHmd:
+					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
+					{
+						_bottomText.text = "Awaiting HMD";
+						ChangeVisibility(VisibilityChange.ShowBottomText);
+					});
 					break;
-				case TextChange.HideFpsText:
-					tween = new FloatTween(1f, 0f, val => _fpsText.alpha = val, 0.5f, EaseType.InOutQuad);
+				case TextChange.AwaitingSongCore:
+					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
+					{
+						_bottomText.text = "Awaiting SongCore";
+						ChangeVisibility(VisibilityChange.ShowBottomText);
+					});
+					break;
+				case TextChange.AwaitingFpsStabilisation:
+					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
+					{
+						_bottomText.text = "Awaiting FPS Stabilisation";
+						ChangeVisibility(VisibilityChange.ShowBottomText);
+					});
+					break;
+				default:
+					return;
+			}
+		}
+		
+		public void ChangeVisibility(VisibilityChange action, ChangeSpeed speed = ChangeSpeed.Slow, Action? finishedCallback = null)
+		{
+			if (_floatingScreen == null)
+			{
+				CreateScreen();
+			}
+			
+			float duration;
+			switch (speed)
+			{
+				case ChangeSpeed.Quick:
+					duration = 0.05f;
+					break;
+				default: case ChangeSpeed.Slow:
+					duration = 0.5f;
+					break;
+			}
+
+			FloatTween tween;
+			object owner;
+			switch (action)
+			{
+				case VisibilityChange.ShowTopText:
+					if (_topText.alpha.Equals(1))
+					{
+						finishedCallback?.Invoke();
+						return;
+					}
+					
+					tween = new FloatTween(0f, 1f, val => _topText.alpha = val, duration, EaseType.InOutQuad);
+					owner = _topText;
+					break;
+				case VisibilityChange.ShowBottomText:
+					if (_topText.alpha.Equals(1))
+					{
+						finishedCallback?.Invoke();
+						return;
+					}
+					
+					tween = new FloatTween(0f, 1f, val => _bottomText.alpha = val, duration, EaseType.InOutQuad);
+					owner = _bottomText;
+					break;
+				case VisibilityChange.HideTopText:
+					if (_topText.alpha.Equals(0))
+					{
+						finishedCallback?.Invoke();
+						return;
+					}
+					
+					tween = new FloatTween(1f, 0f, val => _topText.alpha = val, duration, EaseType.InOutQuad);
+					owner = _bottomText;
+					break;
+				case VisibilityChange.HideBottomText:
+					if (_topText.alpha.Equals(0))
+					{
+						finishedCallback?.Invoke();
+						return;
+					}
+					
+					tween = new FloatTween(1f, 0f, val => _bottomText.alpha = val, duration, EaseType.InOutQuad);
+					owner = _bottomText;
 					break;
 				default:
 					return;
 			}
 
-			_timeTweeningManager.AddTween(tween, this);
+			tween.onCompleted = finishedCallback;
+			_timeTweeningManager.KillAllTweens(owner);
+			_timeTweeningManager.AddTween(tween, owner);
 		}
 
 		public void HideScreen()
