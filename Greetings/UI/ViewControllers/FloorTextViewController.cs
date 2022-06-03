@@ -39,7 +39,7 @@ namespace Greetings.UI.ViewControllers
 		{
 			SkipText,
 			AwaitingVideoPreparationText,
-			AwaitingHmd,
+			AwaitingHmdFocus,
 			AwaitingSongCore,
 			AwaitingFpsStabilisation
 		}
@@ -93,10 +93,10 @@ namespace Greetings.UI.ViewControllers
 						ChangeVisibility(VisibilityChange.ShowBottomText);
 					});
 					break;
-				case TextChange.AwaitingHmd:
+				case TextChange.AwaitingHmdFocus:
 					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
 					{
-						_bottomText.text = "Awaiting HMD";
+						_bottomText.text = "Awaiting HMD Focus";
 						ChangeVisibility(VisibilityChange.ShowBottomText);
 					});
 					break;

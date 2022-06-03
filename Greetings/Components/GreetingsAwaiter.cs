@@ -69,8 +69,8 @@ namespace Greetings.Components
 			if (_pluginConfig.AwaitHmd)
 			{
 				_siraLog.Info("Awaiting HMD focus");
-				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingHmd);
 				yield return new WaitUntil(() => _vrPlatformHelper.hasVrFocus || _fpfcSettings.Enabled);
+				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingHmdFocus);
 				_siraLog.Info("HMD focused");
 			}
 
