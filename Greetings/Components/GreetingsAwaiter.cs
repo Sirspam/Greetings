@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using Greetings.Configuration;
-using Greetings.Managers;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using IPA.Loader;
@@ -22,6 +21,7 @@ namespace Greetings.Components
 		private float _waitTimeCounter;
 
 		private SiraLog _siraLog = null!;
+		private MainCamera _mainCamera = null!;
 		private ScreenUtils _screenUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private IFPFCSettings _fpfcSettings = null!;
@@ -29,9 +29,10 @@ namespace Greetings.Components
 		private FloorTextViewController _floorTextViewController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, IVRPlatformHelper vrPlatformHelper, FloorTextViewController floorTextViewController)
+		public void Construct(SiraLog siraLog, MainCamera mainCamera, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, IVRPlatformHelper vrPlatformHelper, FloorTextViewController floorTextViewController)
 		{
 			_siraLog = siraLog;
+			_mainCamera = mainCamera;
 			_screenUtils = screenUtils;
 			_pluginConfig = pluginConfig;
 			_fpfcSettings = fpfcSettings;
@@ -58,7 +59,7 @@ namespace Greetings.Components
 			yield return new WaitUntil(() => _screenUtils.VideoPlayer!.isPrepared);
 			_siraLog.Info("Video Prepared");
 
-			if (PluginManager.GetPluginFromId("SongCore") != null && _pluginConfig.AwaitSongCore)
+			if (_pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null)
 			{
 				_siraLog.Info("Awaiting SongCore");
 				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingSongCore);
@@ -69,14 +70,14 @@ namespace Greetings.Components
 			if (_pluginConfig.AwaitHmd)
 			{
 				_siraLog.Info("Awaiting HMD focus");
-				yield return new WaitUntil(() => _vrPlatformHelper.hasVrFocus || _fpfcSettings.Enabled);
 				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingHmdFocus);
+				yield return new WaitUntil(() => (_vrPlatformHelper.hasVrFocus && Math.Abs(Quaternion.Dot(_mainCamera.rotation, _screenUtils.GreetingsScreen!.transform.rotation)) >= 0.97f) || _fpfcSettings.Enabled);
 				_siraLog.Info("HMD focused");
 			}
-
-
+			
 			if (_pluginConfig.AwaitFps)
 			{
+				_siraLog.Info("Awaiting FPS Stabilisation");
 				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingFpsStabilisation);
 				_siraLog.Debug("target fps " + _targetFps);
 
