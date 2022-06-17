@@ -51,7 +51,13 @@ namespace Greetings.Components
 
 			StartCoroutine(AwaiterCoroutine());
 		}
-		
+
+		private void OnDisable()
+		{
+			_screenUtils.HideScreen();
+			_floorTextViewController.HideScreen();
+		}
+
 		private IEnumerator AwaiterCoroutine()
 		{
 			_siraLog.Info("Awaiting Video Preparation");
