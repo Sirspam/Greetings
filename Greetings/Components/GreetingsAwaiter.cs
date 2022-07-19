@@ -22,18 +22,18 @@ namespace Greetings.Components
 
 		private SiraLog _siraLog = null!;
 		private MainCamera _mainCamera = null!;
-		private ScreenUtils _screenUtils = null!;
+		private GreetingsUtils _greetingsUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private IFPFCSettings _fpfcSettings = null!;
 		private IVRPlatformHelper _vrPlatformHelper = null!;
 		private FloorTextViewController _floorTextViewController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, MainCamera mainCamera, ScreenUtils screenUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, IVRPlatformHelper vrPlatformHelper, FloorTextViewController floorTextViewController)
+		public void Construct(SiraLog siraLog, MainCamera mainCamera, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, IVRPlatformHelper vrPlatformHelper, FloorTextViewController floorTextViewController)
 		{
 			_siraLog = siraLog;
 			_mainCamera = mainCamera;
-			_screenUtils = screenUtils;
+			_greetingsUtils = greetingsUtils;
 			_pluginConfig = pluginConfig;
 			_fpfcSettings = fpfcSettings;
 			_vrPlatformHelper = vrPlatformHelper;
@@ -48,21 +48,21 @@ namespace Greetings.Components
 			_targetFps = _pluginConfig.TargetFps;
 			_fpsStreak = _pluginConfig.FpsStreak;
 			_maxWaitTime = _pluginConfig.MaxWaitTime;
-
-			StartCoroutine(AwaiterCoroutine());
 		}
 
-		private void OnDisable()
+		private void OnDisable() => _floorTextViewController.ChangeVisibility(FloorTextViewController.VisibilityChange.HideBottomText);
+
+		public void StartCoroutine()
 		{
-			_screenUtils.HideScreen();
-			_floorTextViewController.HideScreen();
+			enabled = true;
+			StartCoroutine(AwaiterCoroutine());
 		}
 
 		private IEnumerator AwaiterCoroutine()
 		{
 			_siraLog.Info("Awaiting Video Preparation");
 			_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingVideoPreparationText);
-			yield return new WaitUntil(() => _screenUtils.VideoPlayer!.isPrepared);
+			yield return new WaitUntil(() => _greetingsUtils.VideoPlayer!.isPrepared);
 			_siraLog.Info("Video Prepared");
 
 			if (_pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null)
@@ -77,7 +77,7 @@ namespace Greetings.Components
 			{
 				_siraLog.Info("Awaiting HMD focus");
 				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingHmdFocus);
-				yield return new WaitUntil(() => (_vrPlatformHelper.hasVrFocus && Math.Abs(Quaternion.Dot(_mainCamera.rotation, _screenUtils.GreetingsScreen!.transform.rotation)) >= 0.97f) || _fpfcSettings.Enabled);
+				yield return new WaitUntil(() => (_vrPlatformHelper.hasVrFocus && Math.Abs(Quaternion.Dot(_mainCamera.rotation, _greetingsUtils.GreetingsScreen!.transform.rotation)) >= 0.97f) || _fpfcSettings.Enabled);
 				_siraLog.Info("HMD focused");
 			}
 			
@@ -100,14 +100,14 @@ namespace Greetings.Components
 						if (_stabilityCounter >= _fpsStreak)
 						{
 							_siraLog.Info("Target FPS reached, starting Greetings");
-							PlayTheThingThenGoAwayKThx();
+							PlayTheThing();
 							break;
 						}
 					}
 					else if (_waitTimeCounter >= _maxWaitTime)
 					{
 						_siraLog.Info("Max wait time reached, starting Greetings");
-						PlayTheThingThenGoAwayKThx();
+						PlayTheThing();
 						break;
 					}
 					else
@@ -115,19 +115,19 @@ namespace Greetings.Components
 						_stabilityCounter = 0;
 					}
 				
-					yield return new WaitForSeconds(.25f);	
+					yield return new WaitForSeconds(0.25f);	
 				}
 			}
 			
-			PlayTheThingThenGoAwayKThx();
+			PlayTheThing();
 		}
 
-		private void PlayTheThingThenGoAwayKThx()
+		private void PlayTheThing()
 		{
 			StopCoroutine(AwaiterCoroutine());
 			
-			_screenUtils.ShowScreen(randomVideo: _pluginConfig.RandomVideo);
-			_floorTextViewController.ChangeVisibility(FloorTextViewController.VisibilityChange.HideBottomText);
+			_greetingsUtils.ShowScreen();
+			enabled = false;
 		}
 	}
 }

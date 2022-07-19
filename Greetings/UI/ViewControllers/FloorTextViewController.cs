@@ -3,6 +3,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
+using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -13,17 +14,20 @@ namespace Greetings.UI.ViewControllers
 	[HotReload(RelativePathToLayout = @"..\Views\FloorTextView.bsml")]
 	internal class FloorTextViewController : BSMLAutomaticViewController
 	{
+		private bool _topTextShowing;
+		private bool _bottomTextShowing;
 		private FloatingScreen? _floatingScreen;
 
 		[UIComponent("top-text")] private readonly CurvedTextMeshPro _topText = null!;
-
 		[UIComponent("bottom-text")] private readonly CurvedTextMeshPro _bottomText = null!;
-		
+
+		private SiraLog _siraLog = null!;
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
-		public void Construct(TimeTweeningManager timeTweeningManager)
+		public void Construct(SiraLog siraLog, TimeTweeningManager timeTweeningManager)
 		{
+			_siraLog = siraLog;
 			_timeTweeningManager = timeTweeningManager;
 		}
 
@@ -50,15 +54,11 @@ namespace Greetings.UI.ViewControllers
 			Quick
 		}
 
-		private void OnEnable()
-		{
-			CreateScreen();
-		}
-
 		private void CreateScreen()
 		{
 			if (_floatingScreen != null)
 			{
+				_floatingScreen.gameObject.SetActive(true);
 				return;
 			}
 
@@ -67,74 +67,85 @@ namespace Greetings.UI.ViewControllers
 
 			_floatingScreen.SetRootViewController(this, AnimationType.None);
 			_topText.alpha = 0;
+			_topTextShowing = false;
 			_bottomText.alpha = 0;
+			_bottomTextShowing = false;
 		}
 
 		public void ChangeTextTo(TextChange action)
 		{
-			if (_floatingScreen == null)
-			{
-				CreateScreen();
-			}
-
 			switch (action)
 			{
 				case TextChange.SkipText:
+				{
 					ChangeVisibility(VisibilityChange.HideTopText, ChangeSpeed.Quick, () =>
 					{
 						_topText.text = "Greetings can be skipped with Trigger or Left Mouse";
 						ChangeVisibility(VisibilityChange.ShowTopText);
 					});
 					break;
+				}
 				case TextChange.AwaitingVideoPreparationText:
+				{
 					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
 					{
 						_bottomText.text = "Awaiting Video Preparation";
 						ChangeVisibility(VisibilityChange.ShowBottomText);
 					});
 					break;
+				}
 				case TextChange.AwaitingHmdFocus:
+				{
 					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
 					{
 						_bottomText.text = "Awaiting HMD Focus";
 						ChangeVisibility(VisibilityChange.ShowBottomText);
 					});
 					break;
+				}
 				case TextChange.AwaitingSongCore:
+				{
 					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
 					{
 						_bottomText.text = "Awaiting SongCore";
 						ChangeVisibility(VisibilityChange.ShowBottomText);
 					});
 					break;
+				}
 				case TextChange.AwaitingFpsStabilisation:
+				{
 					ChangeVisibility(VisibilityChange.HideBottomText, ChangeSpeed.Quick, () =>
 					{
 						_bottomText.text = "Awaiting FPS Stabilisation";
 						ChangeVisibility(VisibilityChange.ShowBottomText);
 					});
 					break;
+				}
 				default:
+				{
 					return;
+				}
 			}
 		}
 		
 		public void ChangeVisibility(VisibilityChange action, ChangeSpeed speed = ChangeSpeed.Slow, Action? finishedCallback = null)
 		{
-			if (_floatingScreen == null)
-			{
-				CreateScreen();
-			}
+			CreateScreen();
 			
 			float duration;
 			switch (speed)
 			{
 				case ChangeSpeed.Quick:
+				{
 					duration = 0.05f;
 					break;
-				default: case ChangeSpeed.Slow:
+				}
+				default:
+				case ChangeSpeed.Slow:
+				{
 					duration = 0.5f;
-					break;
+					break;	
+				}
 			}
 
 			FloatTween tween;
@@ -142,7 +153,8 @@ namespace Greetings.UI.ViewControllers
 			switch (action)
 			{
 				case VisibilityChange.ShowTopText:
-					if (_topText.alpha.Equals(1))
+				{
+					if (_topTextShowing)
 					{
 						finishedCallback?.Invoke();
 						return;
@@ -150,9 +162,12 @@ namespace Greetings.UI.ViewControllers
 					
 					tween = new FloatTween(0f, 1f, val => _topText.alpha = val, duration, EaseType.InOutQuad);
 					owner = _topText;
+					_topTextShowing = true;
 					break;
+				}
 				case VisibilityChange.ShowBottomText:
-					if (_topText.alpha.Equals(1))
+				{
+					if (_bottomTextShowing)
 					{
 						finishedCallback?.Invoke();
 						return;
@@ -160,19 +175,25 @@ namespace Greetings.UI.ViewControllers
 					
 					tween = new FloatTween(0f, 1f, val => _bottomText.alpha = val, duration, EaseType.InOutQuad);
 					owner = _bottomText;
+					_bottomTextShowing = true;
 					break;
+				}
 				case VisibilityChange.HideTopText:
-					if (_topText.alpha.Equals(0))
+				{
+					if (!_topTextShowing)
 					{
 						finishedCallback?.Invoke();
 						return;
 					}
 					
 					tween = new FloatTween(1f, 0f, val => _topText.alpha = val, duration, EaseType.InOutQuad);
-					owner = _bottomText;
+					owner = _topText;
+					_topTextShowing = false;
 					break;
+				}
 				case VisibilityChange.HideBottomText:
-					if (_topText.alpha.Equals(0))
+				{
+					if (!_bottomTextShowing)
 					{
 						finishedCallback?.Invoke();
 						return;
@@ -180,9 +201,13 @@ namespace Greetings.UI.ViewControllers
 					
 					tween = new FloatTween(1f, 0f, val => _bottomText.alpha = val, duration, EaseType.InOutQuad);
 					owner = _bottomText;
+					_bottomTextShowing = false;
 					break;
+				}
 				default:
+				{
 					return;
+				}
 			}
 
 			tween.onCompleted = finishedCallback;
@@ -197,23 +222,20 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 
-			var cg = GetComponent<CanvasGroup>();
-			if (cg == null)
+			if (_topTextShowing)
 			{
-				Destroy(_floatingScreen.gameObject);
-				return;
+				ChangeVisibility(VisibilityChange.HideTopText, finishedCallback: () => _floatingScreen.gameObject.SetActive(false));
+				ChangeVisibility(VisibilityChange.HideBottomText);
 			}
-
-			_timeTweeningManager.KillAllTweens(this);
-			var tween = new FloatTween(1f, 0f, val => cg.alpha = val, 0.5f, EaseType.InOutQuad)
+			else if (_bottomTextShowing)
 			{
-				onCompleted = delegate
-				{
-					// This shouldn't be used again after the greeting, so we'll chuck it
-					Destroy(_floatingScreen.gameObject);
-				}
-			};
-			_timeTweeningManager.AddTween(tween, this);
+				ChangeVisibility(VisibilityChange.HideTopText);
+				ChangeVisibility(VisibilityChange.HideBottomText, finishedCallback: () => _floatingScreen.gameObject.SetActive(false));
+			}
+			else
+			{
+				_floatingScreen.gameObject.SetActive(false);
+			}
 		}
 	}
 }

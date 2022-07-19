@@ -30,7 +30,7 @@ namespace Greetings.UI.ViewControllers
 		[UIComponent("loop-image")] private readonly ClickableImage _loopImage = null!;
 
 		private SiraLog _siraLog = null!;
-		private ScreenUtils _screenUtils = null!;
+		private GreetingsUtils _greetingsUtils = null!;
 		private PluginMetadata _metadata = null!;
 		private PluginConfig _pluginConfig = null!;
 		private ISiraSyncService _siraSyncService = null!;
@@ -38,10 +38,10 @@ namespace Greetings.UI.ViewControllers
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, ScreenUtils screenUtils, UBinder<Plugin, PluginMetadata> metadata, PluginConfig pluginConfig, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager)
+		public void Construct(SiraLog siraLog, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> metadata, PluginConfig pluginConfig, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager)
 		{
 			_siraLog = siraLog;
-			_screenUtils = screenUtils;
+			_greetingsUtils = greetingsUtils;
 			_metadata = metadata.Value;
 			_pluginConfig = pluginConfig;
 			_siraSyncService = siraSyncService;
@@ -54,13 +54,13 @@ namespace Greetings.UI.ViewControllers
 			base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
 
-			_screenUtils.ShowScreen(playOnComplete: false);
+			_greetingsUtils.ShowScreen(playOnComplete: false);
 
 			if (_pluginConfig.ScreenDistance < 4.5f)
 			{
-				var screenPosition = _screenUtils.GreetingsScreen!.transform.position;
-				_screenUtils.GreetingsScreen.transform.position = new Vector3(screenPosition.x, screenPosition.y, 4.5f);
-				_screenUtils.MoveUnderline(_pluginConfig.ScreenDistance);
+				var screenPosition = _greetingsUtils.GreetingsScreen!.transform.position;
+				_greetingsUtils.GreetingsScreen.transform.position = new Vector3(screenPosition.x, screenPosition.y, 4.5f);
+				_greetingsUtils.MoveUnderline(_pluginConfig.ScreenDistance);
 			}
 		}
 
@@ -68,13 +68,13 @@ namespace Greetings.UI.ViewControllers
 		{
 			base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
 
-			if (_screenUtils.VideoPlayer != null)
+			if (_greetingsUtils.VideoPlayer != null)
 			{
-				_screenUtils.HideScreen();
-				_screenUtils.VideoPlayer.loopPointReached -= VideoPlayer_loopPointReached;
+				_greetingsUtils.HideScreen();
+				_greetingsUtils.VideoPlayer.loopPointReached -= VideoPlayer_loopPointReached;
 			}
 
-			_screenUtils.HideUnderline();
+			_greetingsUtils.HideUnderline();
 		}
 
 		[UIValue("update-available")]
@@ -107,7 +107,7 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("back-clicked")]
 		private void RestartVideo()
 		{
-			var videoPlayer = _screenUtils.VideoPlayer;
+			var videoPlayer = _greetingsUtils.VideoPlayer;
 
 			if (videoPlayer != null && videoPlayer.isPrepared)
 			{
@@ -118,15 +118,15 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("play-or-pause-clicked")]
 		private void ToggleVideo()
 		{
-			var videoPlayer = _screenUtils.VideoPlayer;
+			var videoPlayer = _greetingsUtils.VideoPlayer;
 
 			if (videoPlayer != null && videoPlayer.isPlaying)
 			{
-				_screenUtils.PauseAndFadeInMenuMusic();
+				_greetingsUtils.PauseAndFadeInMenuMusic();
 			}
 			else if (videoPlayer != null && videoPlayer.isPrepared)
 			{
-				_screenUtils.PlayAndFadeOutMenuMusic();
+				_greetingsUtils.PlayAndFadeOutMenuMusic();
 			}
 		}
 
@@ -136,21 +136,21 @@ namespace Greetings.UI.ViewControllers
 			_loop = !_loop;
 			_loopImage.DefaultColor = _loop ? _loopImage.HighlightColor : Color.white;
 
-			if (_screenUtils.VideoPlayer != null)
+			if (_greetingsUtils.VideoPlayer != null)
 			{
-				_screenUtils.VideoPlayer.isLooping = _loop;
+				_greetingsUtils.VideoPlayer.isLooping = _loop;
 			}
 		}
 
 		private void VideoPlayer_loopPointReached(VideoPlayer source)
 		{
-			if (_screenUtils.VideoPlayer!.isLooping)
+			if (_greetingsUtils.VideoPlayer!.isLooping)
 			{
 				return;
 			}
 
-			_screenUtils.HideScreen();
-			_screenUtils.VideoPlayer!.loopPointReached -= VideoPlayer_loopPointReached;
+			_greetingsUtils.HideScreen();
+			_greetingsUtils.VideoPlayer!.loopPointReached -= VideoPlayer_loopPointReached;
 		}
 	}
 }

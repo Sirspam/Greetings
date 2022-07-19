@@ -22,16 +22,16 @@ namespace Greetings.UI.ViewControllers
 		[UIComponent("version-text")] private readonly CurvedTextMeshPro _versionText = null!;
 
 		private UIUtils _uiUtils = null!;
-		private ScreenUtils _screenUtils = null!;
+		private GreetingsUtils _greetingsUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private PluginMetadata _pluginMetadata = null!;
 		private YesNoViewController _yesNoViewController = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController)
+		public void Construct(UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController)
 		{
 			_uiUtils = uiUtils;
-			_screenUtils = screenUtils;
+			_greetingsUtils = greetingsUtils;
 			_pluginConfig = pluginConfig;
 			_pluginMetadata = pluginMetadata.Value;
 			_yesNoViewController = yesNoViewController;
@@ -61,14 +61,7 @@ namespace Greetings.UI.ViewControllers
 				}
 			}
 		}
-
-		[UIValue("use-random-video")]
-		private bool UseRandomVideo
-		{
-			get => _pluginConfig.RandomVideo;
-			set => _pluginConfig.RandomVideo = value;
-		}
-
+		
 		[UIValue("play-once")]
 		private bool PlayOnce
 		{
@@ -159,14 +152,14 @@ namespace Greetings.UI.ViewControllers
 		{
 			if (value > 4.25f)
 			{
-				_screenUtils.MoveScreen(value);
-				_screenUtils.HideUnderline();
+				_greetingsUtils.MoveScreen(value);
+				_greetingsUtils.HideUnderline();
 				UnderlineActive = false;
 			}
 			else
 			{
-				_screenUtils.MoveScreen(4.5f);
-				_screenUtils.MoveUnderline(value);
+				_greetingsUtils.MoveScreen(4.5f);
+				_greetingsUtils.MoveUnderline(value);
 				UnderlineActive = true;
 			}
 		}

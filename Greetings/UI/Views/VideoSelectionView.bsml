@@ -1,14 +1,38 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
     <horizontal background="panel-fade-gradient" background-color="#00C0FFFF" anchor-min-y="1" pref-width="100" horizontal-fit="PreferredSize" spacing="5">
+        <clickable-image src="#SettingsIcon" on-click="settings-clicked" preserve-aspect="true" size-delta-x="6.5" anchor-pos-x="-45" ignore-layout="true"/>
         <text text="Videos" align="Center" font-size="6" italics="true"/>
     </horizontal>
 
-    <vertical anchor-pos-y="-10" spacing="-8" pref-width="100">
-        <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-height="40"/>
-        <horizontal id="bottom-buttons-layout" background="round-rect-panel" background-color="#FFFFFFAA" spacing="2">
-            <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="38"/>
-            <button id="reload-videos-button" on-click="reload-videos-clicked" text="Refresh Videos" min-height="10" min-width="38"/>
-            <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon" preserve-aspect="true"/>
+    <vertical>
+        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="100" anchor-pos-y="30" ignore-layout="true">
+            <tab-selector tab-tag="video-tab" select-cell="video-tab-selected" child-expand-width="true" child-control-width="true"/>
         </horizontal>
+        <tab tab-name="Start Video" tags="video-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize"/>
+        <tab tab-name="Quit Video" tags="video-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize"/>
+
+        <vertical spacing="-4" pref-width="100" pad-top="5">
+            <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-height="38"/>
+            <horizontal id="bottom-buttons-layout" background="round-rect-panel" background-color="#FFFFFFAA" spacing="2">
+                <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="38"/>
+                <button id="reload-videos-button" on-click="reload-videos-clicked" text="Refresh Videos" min-height="10" min-width="38"/>
+                <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon" preserve-aspect="true"/>
+            </horizontal>
+        </vertical>
     </vertical>
+    
+    <modal id="settings-modal" show-event="open-modal" hide-event="close-modal" size-delta-x="100" size-delta-y="35" move-to-center="true" click-off-closes="true">
+        <horizontal>
+            <vertical pref-width="48" bg="round-rect-panel" bg-color="silver" pad="2" pref-height="33">
+                <text text="Start Settings" font-size="5" font-align="Center"/>
+                <checkbox-setting text="Enabled" value="play-on-start" bind-value="true" apply-on-change="true" hover-hint="Play a video on the game's start"/>
+                <checkbox-setting text="Random video" value="random-start-video" bind-value="true" apply-on-change="true" hover-hint="Use a random video rather than the selected start video"/>
+            </vertical>
+            <vertical pref-width="48" bg="round-rect-panel" bg-color="silver" pad="2">
+                <text text="Quit Settings" font-size="5" font-align="Center"/>
+                <checkbox-setting text="Enabled" value="play-on-quit" bind-value="true" apply-on-change="true" hover-hint="Play a video on the game's quit"/>
+                <checkbox-setting text="Random video" value="random-quit-video" bind-value="true" apply-on-change="true" hover-hint="Use a random video rather than the selected quit video"/>
+            </vertical>
+        </horizontal>
+    </modal>
 </bg>

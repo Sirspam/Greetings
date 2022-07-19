@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Greetings.Components;
 using Greetings.Configuration;
 using IPA.Utilities;
 using SiraUtil.Extras;
@@ -8,14 +9,18 @@ using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 using UnityEngine.Video;
+using Zenject;
 using Random = System.Random;
 
 namespace Greetings.Utils
 {
-	internal class ScreenUtils
+	internal class GreetingsUtils
 	{
 		public VideoPlayer? VideoPlayer;
+		public VideoType CurrentVideoType;
 		public GameObject? GreetingsScreen;
+		public SkipController? SkipController;
+		public GreetingsAwaiter? GreetingsAwaiter;
 		public readonly string GreetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
 		private const float MaxWidth = 4f;
@@ -30,19 +35,28 @@ namespace Greetings.Utils
 		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
 		private readonly SiraLog _siraLog;
+		private readonly DiContainer _diContainer;
 		private readonly PluginConfig _pluginConfig;
 		private readonly SongPreviewPlayer _songPreviewPlayer;
 		private readonly TimeTweeningManager _timeTweeningManager;
 		
-		public ScreenUtils(SiraLog siraLog, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
+		public GreetingsUtils(SiraLog siraLog, DiContainer diContainer, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
 		{
 			_siraLog = siraLog;
+			_diContainer = diContainer;
 			_pluginConfig = pluginConfig;
 			_songPreviewPlayer = songPreviewPlayer;
 			_timeTweeningManager = timeTweeningManager;
 		}
 
-		public void CreateScreen(bool randomVideo = false)
+		public enum VideoType
+		{
+			StartVideo,
+			QuitVideo,
+			RandomVideo
+		}
+
+		public void CreateScreen()
 		{
 			if (GreetingsScreen == null)
 			{
@@ -70,30 +84,49 @@ namespace Greetings.Utils
 				VideoPlayer.SetTargetAudioSource(0, _screenAudioSource);
 				_screenAudioSource.outputAudioMixerGroup = _songPreviewPlayer.GetField<AudioSource, SongPreviewPlayer>("_audioSourcePrefab").outputAudioMixerGroup;
 				_screenAudioSource.mute = true;
+
+				SkipController = _diContainer.InstantiateComponent<SkipController>(GreetingsScreen);
+				GreetingsAwaiter = _diContainer.InstantiateComponent<GreetingsAwaiter>(GreetingsScreen);
 			}
 			else
 			{
 				GreetingsScreen.SetActive(true);
 			}
-			
-			if (randomVideo)
+		}
+
+		public void CreateScreen(VideoType videoType)
+		{
+			CreateScreen();
+
+			switch (videoType)
 			{
-				var files = Directory.GetFiles(GreetingsPath);
-				var rand = new Random();
-				VideoPlayer!.url = files[rand.Next(files.Length)];
-			}
-			else
-			{
-				VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedVideo);
+				case VideoType.StartVideo:
+				{
+					VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedStartVideo);
+					break;
+				}
+				case VideoType.QuitVideo:
+				{
+					VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedQuitVideo);
+					break;
+				}
+				default:
+				case VideoType.RandomVideo:
+				{
+					var files = Directory.GetFiles(GreetingsPath);
+					var rand = new Random();
+					VideoPlayer!.url = files[rand.Next(files.Length)];
+					break;
+				}
 			}
 			
-			VideoPlayer.Prepare();
+			VideoPlayer!.Prepare();
 			VideoPlayer.prepareCompleted += PrepareCompletedFunction;
 
 			void PrepareCompletedFunction(VideoPlayer source)
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
-				
+
 				float width = VideoPlayer.width;
 				float height = VideoPlayer.height;
 
@@ -104,7 +137,7 @@ namespace Greetings.Utils
 					height = VideoPlayer.height * ratio;
 					width = VideoPlayer.width * ratio;
 				}
-				
+
 				if (height > MaxHeight)
 				{
 					var ratio = MaxHeight / VideoPlayer.height;
@@ -116,12 +149,12 @@ namespace Greetings.Utils
 				_screenScale = new Vector3(width, height);
 			}
 		}
-
-		public void ShowScreen(bool doTransition = true, bool playOnComplete = true, bool randomVideo = false, bool isReload = false)
+		
+		public void ShowScreen(bool doTransition = true, bool playOnComplete = true, VideoType? videoType = null)
 		{
-			if (isReload || VideoPlayer == null || !VideoPlayer.isPrepared)
+			if (videoType.HasValue || VideoPlayer == null || !VideoPlayer.isPrepared)
 			{
-				CreateScreen(randomVideo);
+				CreateScreen(videoType.GetValueOrDefault());
 
 				VideoPlayer!.Prepare();
 				VideoPlayer.prepareCompleted += PrepareCompletedFunction;
@@ -134,6 +167,7 @@ namespace Greetings.Utils
 			async void PrepareCompletedFunction(VideoPlayer source)
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
+				
 				VideoPlayer!.StepForward();
 
 				// Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways
@@ -143,11 +177,8 @@ namespace Greetings.Utils
 					await Utilities.AwaitSleep(250);
 					count++;
 				}
-
-				if (isReload)
-				{
-					AdjustUnderlineWidth(_screenScale.x);
-				}
+				
+				AdjustUnderlineWidth(_screenScale.x);
 
 				if (!doTransition)
 				{
@@ -174,7 +205,7 @@ namespace Greetings.Utils
 				_timeTweeningManager.AddTween(tween, GreetingsScreen);
 			}
 		}
-
+		
 		public void HideScreen(bool doTransition = true, bool reloadVideo = false)
 		{
 			if (GreetingsScreen == null || VideoPlayer == null || !GreetingsScreen.gameObject.activeSelf)
@@ -191,7 +222,7 @@ namespace Greetings.Utils
 
 				if (reloadVideo)
 				{
-					ShowScreen(false, isReload: true);
+					ShowScreen(false, videoType: CurrentVideoType);
 				}
 
 				else
@@ -209,7 +240,7 @@ namespace Greetings.Utils
 				{
 					if (reloadVideo)
 					{
-						ShowScreen(playOnComplete: false, isReload: true);
+						ShowScreen(playOnComplete: false, videoType: CurrentVideoType);
 					}
 
 					else
@@ -221,7 +252,7 @@ namespace Greetings.Utils
 			};
 			_timeTweeningManager.AddTween(tween, GreetingsScreen);
 		}
-
+		
 		public void MoveScreen(float newZValue)
 		{
 			if (GreetingsScreen == null || !GreetingsScreen.gameObject.activeSelf)
@@ -243,7 +274,7 @@ namespace Greetings.Utils
 			{
 				ShowScreen();
 			}
-
+			
 			_songPreviewPlayer.FadeOut(0.8f);
 			_screenAudioSource!.mute = false;
 			VideoPlayer!.Play();
@@ -306,7 +337,7 @@ namespace Greetings.Utils
 
 		private void AdjustUnderlineWidth(float newWidth)
 		{
-			if (_greetingsUnderline == null || !_greetingsUnderline.activeSelf)
+			if (_greetingsUnderline == null || !_greetingsUnderline.activeSelf || (int) newWidth == (int) _greetingsUnderline.transform.localScale.x)
 			{
 				return;
 			}

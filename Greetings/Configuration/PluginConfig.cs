@@ -13,8 +13,12 @@ namespace Greetings.Configuration
 {
 	internal class PluginConfig
 	{
-		public virtual string SelectedVideo { get; set; } = "Greetings.mp4";
-		public virtual bool RandomVideo { get; set; } = false;
+		public virtual string SelectedStartVideo { get; set; } = "Greetings.mp4";
+		public virtual string SelectedQuitVideo { get; set; } = "Greetings.mp4";
+		public virtual bool RandomStartVideo { get; set; } = false;
+		public virtual bool RandomQuitVideo { get; set; } = false;
+		public virtual bool PlayOnStart { get; set; } = true;
+		public virtual bool PlayOnQuit { get; set; } = true;
 		public virtual bool PlayOnce { get; set; } = true;
 		public virtual float ScreenDistance { get; set; } = 6f;
 		public virtual bool EasterEggs { get; set; } = true;
@@ -40,18 +44,36 @@ namespace Greetings.Configuration
 			var folderPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 			Directory.CreateDirectory(folderPath);
 
-			if (!File.Exists(Path.Combine(folderPath, SelectedVideo)))
+			if (!File.Exists(Path.Combine(folderPath, SelectedStartVideo)))
 			{
 				var files = new DirectoryInfo(folderPath).GetFiles("*.mp4");
 				if (files.Length == 0)
 				{
-					File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Greetings.mp4"));
+					WriteGreetingsVideoToDisk(folderPath);
 				}
 				else
 				{
-					SelectedVideo = files[0].Name;
+					SelectedStartVideo = files[0].Name;
 				}
 			}
+			
+			if (!File.Exists(Path.Combine(folderPath, SelectedQuitVideo)))
+			{
+				var files = new DirectoryInfo(folderPath).GetFiles("*.mp4");
+				if (files.Length == 0)
+				{
+					WriteGreetingsVideoToDisk(folderPath);
+				}
+				else
+				{
+					SelectedQuitVideo = files[0].Name;
+				}
+			}
+		}
+
+		private void WriteGreetingsVideoToDisk(string folderPath)
+		{
+			File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Goodnight.mp4"));
 		}
 
 		private static int GetDefaultTargetFps()

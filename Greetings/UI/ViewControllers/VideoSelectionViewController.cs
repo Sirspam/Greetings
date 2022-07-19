@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
+using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
 using Greetings.Utils;
@@ -24,40 +26,72 @@ namespace Greetings.UI.ViewControllers
 	internal class VideoSelectionViewController : BSMLAutomaticViewController
 	{
 		private FileInfo _selectedFile = null!;
+		private int _selectedVideoTab;
+		private int _selectedQuitVideoIndex;
+		private int _selectedStartVideoIndex;
 
+		[UIParams] private readonly BSMLParserParams _parserParams = null!;
 		[UIComponent("video-list")] private readonly CustomListTableData _videoList = null!;
-		
 		[UIComponent("bottom-buttons-layout")] private readonly HorizontalOrVerticalLayoutGroup _bottomButtonsLayout = null!;
-
 		[UIComponent("open-folder-button")] private readonly Button _openFolderButton = null!;
-
 		[UIComponent("reload-videos-button")] private readonly Button _reloadVideosButton = null!;
-
 		[UIComponent("delete-video-button")] private readonly ClickableImage _deleteVideoButton = null!;
 
 		private SiraLog _siraLog = null!;
 		private UIUtils _uIUtils = null!;
-		private ScreenUtils _screenUtils = null!;
+		private GreetingsUtils _greetingsUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private TimeTweeningManager _timeTweeningManager = null!;
 		private YesNoViewController _yesNoViewController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, UIUtils uIUtils, ScreenUtils screenUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, YesNoViewController yesNoViewController)
+		public void Construct(SiraLog siraLog, UIUtils uIUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, YesNoViewController yesNoViewController)
 		{
 			_siraLog = siraLog;
 			_uIUtils = uIUtils;
-			_screenUtils = screenUtils;
+			_greetingsUtils = greetingsUtils;
 			_pluginConfig = pluginConfig;
 			_timeTweeningManager = timeTweeningManager;
 			_yesNoViewController = yesNoViewController;
 		}
 
+		[UIValue("play-on-start")]
+		private bool PlayOnStart
+		{
+			get => _pluginConfig.PlayOnStart;
+			set => _pluginConfig.PlayOnStart = value;
+		}
+		
+		[UIValue("random-start-video")]
+		private bool RandomStartVideo
+		{
+			get => _pluginConfig.RandomStartVideo;
+			set => _pluginConfig.RandomStartVideo = value;
+		}
+		
+		[UIValue("play-on-quit")]
+		private bool PlayOnQuit
+		{
+			get => _pluginConfig.PlayOnQuit;
+			set => _pluginConfig.PlayOnQuit = value;
+		}
+		
+		[UIValue("random-quit-video")]
+		private bool RandomQuitVideo
+		{
+			get => _pluginConfig.RandomQuitVideo;
+			set => _pluginConfig.RandomQuitVideo = value;
+		}
+		
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 		{
 			base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-			GetVideoListData();
+			_selectedVideoTab = 0;
+			_selectedQuitVideoIndex = 0;
+			_selectedStartVideoIndex = 0;
+			
+			GetVideoListData(firstActivation);
 		}
 
 		[UIAction("#post-parse")]
@@ -67,18 +101,49 @@ namespace Greetings.UI.ViewControllers
 			_bottomButtonsLayout.GetComponent<ImageView>().SetField("_skew", 0.18f);
 		}
 
+		[UIAction("video-tab-selected")]
+		private void VideoTabSelected(SegmentedControl segmentedControl, int index)
+		{
+			_selectedVideoTab = index;
+
+			switch (index)
+			{
+				case 0:
+					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.StartVideo;
+					_selectedFile = new FileInfo(_greetingsUtils.GreetingsPath + "\\" + _videoList.data[_selectedStartVideoIndex].text + ".mp4");
+					_videoList.tableView.SelectCellWithIdx(_selectedStartVideoIndex);
+					break;
+				case 1:
+					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.QuitVideo;
+					_selectedFile = new FileInfo(_greetingsUtils.GreetingsPath + "\\" + _videoList.data[_selectedQuitVideoIndex].text + ".mp4");
+					_videoList.tableView.SelectCellWithIdx(_selectedQuitVideoIndex);
+					break;
+			}
+			_greetingsUtils.HideScreen(reloadVideo: true);
+		}
+		
 		[UIAction("video-clicked")]
 		// ReSharper disable once UnusedParameter.Local
 		private void VideoClicked(TableView? tableView, int index)
 		{
 			var fileName = _videoList.data[index].text + ".mp4";
-			_selectedFile = new FileInfo(_screenUtils.GreetingsPath + "\\" + fileName);
-			_pluginConfig.SelectedVideo = fileName;
+			_selectedFile = new FileInfo(_greetingsUtils.GreetingsPath + "\\" + fileName);
+			switch (_selectedVideoTab)
+			{
+				case 0:
+					_pluginConfig.SelectedStartVideo = fileName;
+					_selectedStartVideoIndex = index;
+					break;
+				case 1:
+					_pluginConfig.SelectedQuitVideo = fileName;
+					_selectedQuitVideoIndex = index;
+					break;
+			}
 
-			var videoPlayer = _screenUtils.VideoPlayer;
+			var videoPlayer = _greetingsUtils.VideoPlayer;
 			if (videoPlayer != null && (videoPlayer.isPrepared || videoPlayer.isPlaying))
 			{
-				_screenUtils.HideScreen(reloadVideo: true);
+				_greetingsUtils.HideScreen(reloadVideo: true);
 			}
 		}
 
@@ -102,6 +167,13 @@ namespace Greetings.UI.ViewControllers
 			_yesNoViewController.ShowModal(_deleteVideoButton.transform, "Are you sure you want to delete this video?", 5, DeleteSelectedVideo);
 		}
 
+		[UIAction("settings-clicked")]
+		private void SettingsClicked()
+		{
+			_parserParams.EmitEvent("close-modal");
+			_parserParams.EmitEvent("open-modal");
+		}
+
 		private void DeleteSelectedVideo()
 		{
 			try
@@ -121,15 +193,17 @@ namespace Greetings.UI.ViewControllers
 			}
 		}
 
-		private void GetVideoListData()
+		private async void GetVideoListData(bool firstActivation = false)
 		{
 			var data = new List<CustomCellInfo>();
 
 			// I have absolutely no clue what file formats the video player works with and
 			// I'm too lazy to find them all so we'll just limit everything to mp4, just to be safe.
 			var index = 0;
-			var selectedFound = false;
-			var files = new DirectoryInfo(_screenUtils.GreetingsPath).GetFiles("*.mp4");
+			var selectIndex = 0;
+			var foundSelectedQuitVideo = false;
+			var foundSelectedStartVideo = false;
+			var files = new DirectoryInfo(_greetingsUtils.GreetingsPath).GetFiles("*.mp4");
 
 			_deleteVideoButton.enabled = files.Length > 1;
 
@@ -144,36 +218,70 @@ namespace Greetings.UI.ViewControllers
 			{
 				if (file.Length > 100000000)
 				{
+					// Had issues with the video player's prepare event just not being invoked if the video is too large.
+					// No clue why it happens, don't care enough to fix it. I doubt anyone will be trying to watch Shrek or something with Greeting's tiny ass screen
 					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
 					continue;
 				}
 
-				if (file.Name != _pluginConfig.SelectedVideo)
+				if (file.Name == _pluginConfig.SelectedStartVideo)
 				{
-					if (!selectedFound)
+					_selectedStartVideoIndex = index;
+					foundSelectedStartVideo = true;
+					
+					if (_selectedVideoTab == 0)
 					{
-						index += 1;
-
-						if (index == files.Length)
-						{
-							index = 0;
-							_selectedFile = file;
-							selectedFound = true;
-							VideoClicked(null, 0);
-						}
+						_selectedFile = file;
+						selectIndex = index;
 					}
 				}
-				else
+
+				if (file.Name == _pluginConfig.SelectedQuitVideo)
 				{
-					_selectedFile = file;
-					selectedFound = true;
+					_selectedQuitVideoIndex = index;
+					foundSelectedQuitVideo = true;
+
+					if (_selectedVideoTab == 1)
+					{
+						_selectedFile = file;
+						selectIndex = index;
+					}
 				}
+
+				index += 1;
 				data.Add(new CustomCellInfo(file.Name.Remove(file.Name.Length - 4), GetFileSize(file.Length), Utilities.ImageResources.BlankSprite));
 			}
 
+			if (!foundSelectedStartVideo)
+			{
+				_selectedStartVideoIndex = 0;
+				
+				if (_selectedVideoTab == 0)
+				{
+					_selectedFile = files[0];
+				}
+			}
+
+			if (!foundSelectedQuitVideo)
+			{
+				_selectedQuitVideoIndex = 0;
+				
+				if (_selectedVideoTab == 1)
+				{
+					_selectedFile = files[0];
+				}
+			}
+			
+
 			_videoList.data = data;
+			_videoList.tableView.SelectCellWithIdx(selectIndex);
+			
+			// List is moved down a bit until refreshed, for whatever reason
+			if (firstActivation)
+			{
+				await SiraUtil.Extras.Utilities.PauseChamp;	
+			}
 			_videoList.tableView.ReloadData();
-			_videoList.tableView.SelectCellWithIdx(index);
 		}
 
 		private static string GetFileSize(long size)
