@@ -62,7 +62,7 @@ namespace Greetings.Utils
 				_siraLog.Info("Creating GreetingScreen");
 				GreetingsScreen = GameObject.CreatePrimitive(PrimitiveType.Quad);
 				GreetingsScreen.gameObject.name = "GreetingsScreen";
-				GreetingsScreen.transform.position = new Vector3(0, 1.5f, _pluginConfig.ScreenDistance);
+				GreetingsScreen.transform.position = new Vector3(0, -10f, _pluginConfig.ScreenDistance);
 				GreetingsScreen.transform.localScale = Vector3.zero;
 
 				VideoPlayer = GreetingsScreen.gameObject.AddComponent<VideoPlayer>();
@@ -190,6 +190,7 @@ namespace Greetings.Utils
 					return;
 				}
 
+				GreetingsScreen!.transform.position = new Vector3(0, 1.5f, _pluginConfig.ScreenDistance);
 				_timeTweeningManager.KillAllTweens(GreetingsScreen);
 				var tween = new FloatTween(0f, _screenScale.y, val => GreetingsScreen!.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 				{
@@ -217,6 +218,7 @@ namespace Greetings.Utils
 			if (!doTransition || GreetingsScreen.transform.localScale == Vector3.zero)
 			{
 				VideoPlayer.Stop();
+				GreetingsScreen.transform.position = new Vector3(0, -10f, _pluginConfig.ScreenDistance);
 				GreetingsScreen.transform.localScale = Vector3.zero;
 
 				if (reloadVideo)
@@ -245,6 +247,7 @@ namespace Greetings.Utils
 					else
 					{
 						VideoPlayer.Stop();
+						GreetingsScreen.transform.position = new Vector3(0, -10f, _pluginConfig.ScreenDistance);
 						GreetingsScreen.SetActive(false);
 					}
 				}
