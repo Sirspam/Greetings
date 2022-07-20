@@ -55,7 +55,7 @@ namespace Greetings.Managers
 		{
 			if (_greetingsUtils.VideoPlayer != null)
 			{
-				_greetingsUtils.VideoPlayer!.loopPointReached -= VideoPlayer_loopPointReached;
+				_greetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
 			}
 		}
 		
@@ -92,6 +92,8 @@ namespace Greetings.Managers
 
 		public void VideoEnded()
 		{
+			_greetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
+			
 			if (_noDismiss)
 			{
 				_videoFinishedCallback?.Invoke();
@@ -160,13 +162,6 @@ namespace Greetings.Managers
 			}
 
 			_timeTweeningManager.AddTween(tween, _screenSystemCanvasGroup);
-		}
-		
-		private void VideoPlayer_loopPointReached(VideoPlayer source)
-		{
-			DismissGreetings();
-			_videoFinishedCallback?.Invoke();
-			_greetingsUtils.VideoPlayer!.loopPointReached -= VideoPlayer_loopPointReached;
 		}
 	}
 }
