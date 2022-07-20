@@ -110,12 +110,12 @@ namespace Greetings.UI.ViewControllers
 			{
 				case 0:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.StartVideo;
-					_selectedFile = new FileInfo(_greetingsUtils.GreetingsPath + "\\" + _videoList.data[_selectedStartVideoIndex].text + ".mp4");
+					_selectedFile = new FileInfo(_pluginConfig.VideoPath + "\\" + _videoList.data[_selectedStartVideoIndex].text + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedStartVideoIndex);
 					break;
 				case 1:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.QuitVideo;
-					_selectedFile = new FileInfo(_greetingsUtils.GreetingsPath + "\\" + _videoList.data[_selectedQuitVideoIndex].text + ".mp4");
+					_selectedFile = new FileInfo(_pluginConfig.VideoPath + "\\" + _videoList.data[_selectedQuitVideoIndex].text + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedQuitVideoIndex);
 					break;
 			}
@@ -127,7 +127,7 @@ namespace Greetings.UI.ViewControllers
 		private void VideoClicked(TableView? tableView, int index)
 		{
 			var fileName = _videoList.data[index].text + ".mp4";
-			_selectedFile = new FileInfo(_greetingsUtils.GreetingsPath + "\\" + fileName);
+			_selectedFile = new FileInfo(_pluginConfig.VideoPath + "\\" + fileName);
 			switch (_selectedVideoTab)
 			{
 				case 0:
@@ -203,7 +203,7 @@ namespace Greetings.UI.ViewControllers
 			var selectIndex = 0;
 			var foundSelectedQuitVideo = false;
 			var foundSelectedStartVideo = false;
-			var files = new DirectoryInfo(_greetingsUtils.GreetingsPath).GetFiles("*.mp4");
+			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
 
 			_deleteVideoButton.enabled = files.Length > 1;
 

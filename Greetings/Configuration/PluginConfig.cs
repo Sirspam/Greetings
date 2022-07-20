@@ -13,6 +13,7 @@ namespace Greetings.Configuration
 {
 	internal class PluginConfig
 	{
+		public virtual string VideoPath { get; set; } = BaseGameVideoPath;
 		public virtual string SelectedStartVideo { get; set; } = "Greetings.mp4";
 		public virtual string SelectedQuitVideo { get; set; } = "Greetings.mp4";
 		public virtual bool RandomStartVideo { get; set; } = false;
@@ -41,15 +42,19 @@ namespace Greetings.Configuration
 
 		private void FixConfigIssues()
 		{
-			var folderPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
-			Directory.CreateDirectory(folderPath);
-
-			if (!File.Exists(Path.Combine(folderPath, SelectedStartVideo)))
+			if (!Directory.Exists(VideoPath))
 			{
-				var files = new DirectoryInfo(folderPath).GetFiles("*.mp4");
+				VideoPath = BaseGameVideoPath;
+			}
+			
+			Directory.CreateDirectory(VideoPath);
+
+			if (!File.Exists(Path.Combine(VideoPath, SelectedStartVideo)))
+			{
+				var files = new DirectoryInfo(VideoPath).GetFiles("*.mp4");
 				if (files.Length == 0)
 				{
-					WriteGreetingsVideoToDisk(folderPath);
+					WriteGreetingsVideoToDisk(VideoPath);
 				}
 				else
 				{
@@ -57,12 +62,12 @@ namespace Greetings.Configuration
 				}
 			}
 			
-			if (!File.Exists(Path.Combine(folderPath, SelectedQuitVideo)))
+			if (!File.Exists(Path.Combine(VideoPath, SelectedQuitVideo)))
 			{
-				var files = new DirectoryInfo(folderPath).GetFiles("*.mp4");
+				var files = new DirectoryInfo(VideoPath).GetFiles("*.mp4");
 				if (files.Length == 0)
 				{
-					WriteGreetingsVideoToDisk(folderPath);
+					WriteGreetingsVideoToDisk(VideoPath);
 				}
 				else
 				{
@@ -75,6 +80,8 @@ namespace Greetings.Configuration
 		{
 			File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Goodnight.mp4"));
 		}
+
+		private static string BaseGameVideoPath => Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
 		private static int GetDefaultTargetFps()
 		{

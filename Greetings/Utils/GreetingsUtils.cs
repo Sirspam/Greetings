@@ -21,7 +21,6 @@ namespace Greetings.Utils
 		public GameObject? GreetingsScreen;
 		public SkipController? SkipController;
 		public GreetingsAwaiter? GreetingsAwaiter;
-		public readonly string GreetingsPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
 		private const float MaxWidth = 4f;
 		private const float MaxHeight = 2.6f;
@@ -102,18 +101,18 @@ namespace Greetings.Utils
 			{
 				case VideoType.StartVideo:
 				{
-					VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedStartVideo);
+					VideoPlayer!.url = Path.Combine(_pluginConfig.VideoPath, _pluginConfig.SelectedStartVideo);
 					break;
 				}
 				case VideoType.QuitVideo:
 				{
-					VideoPlayer!.url = Path.Combine(GreetingsPath, _pluginConfig.SelectedQuitVideo);
+					VideoPlayer!.url = Path.Combine(_pluginConfig.VideoPath, _pluginConfig.SelectedQuitVideo);
 					break;
 				}
 				default:
 				case VideoType.RandomVideo:
 				{
-					var files = Directory.GetFiles(GreetingsPath);
+					var files = Directory.GetFiles(_pluginConfig.VideoPath);
 					var rand = new Random();
 					VideoPlayer!.url = files[rand.Next(files.Length)];
 					break;
