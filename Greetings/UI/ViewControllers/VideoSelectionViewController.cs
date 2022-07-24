@@ -151,7 +151,7 @@ namespace Greetings.UI.ViewControllers
 		private void OpenGreetingsFolder()
 		{
 			_uIUtils.ButtonUnderlineClick(_openFolderButton.gameObject);
-			Process.Start(Path.Combine(UnityGame.UserDataPath, nameof(Greetings)));
+			Process.Start(_pluginConfig.VideoPath);
 		}
 
 		[UIAction("reload-videos-clicked")]
