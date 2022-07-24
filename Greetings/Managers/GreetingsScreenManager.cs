@@ -59,7 +59,7 @@ namespace Greetings.Managers
 			}
 		}
 		
-		public void StartGreetings(GreetingsUtils.VideoType videoType, Action? callback = null, bool noDismiss = false)
+		public void StartGreetings(GreetingsUtils.VideoType videoType, Action? callback = null, bool noDismiss = false, bool useAwaiter = false)
 		{
 			_videoFinishedCallback = callback;
 			SkipRequested = false;
@@ -73,7 +73,7 @@ namespace Greetings.Managers
 				_noDismiss = noDismiss;
 				_greetingsUtils.SkipController!.StartCoroutine();
 				
-				if (videoType == GreetingsUtils.VideoType.StartVideo)
+				if (useAwaiter)
 				{
 					_greetingsUtils.GreetingsAwaiter!.StartCoroutine();
 					return;

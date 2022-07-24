@@ -39,7 +39,7 @@ namespace Greetings.Managers
 		{
 			_gameScenesManager.transitionDidFinishEvent -= GameScenesManagerOnTransitionDidFinishEvent;
 			
-			_greetingsScreenManager.StartGreetings(_pluginConfig.RandomStartVideo ? GreetingsUtils.VideoType.RandomVideo : GreetingsUtils.VideoType.StartVideo);
+			_greetingsScreenManager.StartGreetings(_pluginConfig.RandomStartVideo ? GreetingsUtils.VideoType.RandomVideo : GreetingsUtils.VideoType.StartVideo, useAwaiter: true);
 			_greetingsPlayed = true;
 		}
 	}
