@@ -33,7 +33,7 @@ namespace Greetings.Components
 
 		private IEnumerator AwaitKeyCoroutine()
 		{
-			while (_vrControllersInputManager.TriggerValue(XRNode.LeftHand) >= 0.8f || _vrControllersInputManager.TriggerValue(XRNode.RightHand) >= 0.8f || !Input.GetKeyDown(KeyCode.Mouse0))
+			while (_vrControllersInputManager.TriggerValue(XRNode.LeftHand) <= 0.8f && _vrControllersInputManager.TriggerValue(XRNode.RightHand) <= 0.8f && !Input.GetKeyDown(KeyCode.Mouse0))
 			{
 				yield return null;
 			}
