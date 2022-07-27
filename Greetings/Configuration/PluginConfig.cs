@@ -3,8 +3,10 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using BeatSaberMarkupLanguage;
+using Greetings.UI.ViewControllers;
 using IPA.Config.Stores;
 using IPA.Utilities;
+using UnityEngine;
 using UnityEngine.XR;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
@@ -29,6 +31,11 @@ namespace Greetings.Configuration
 		public virtual int TargetFps { get; set; } = GetDefaultTargetFps();
 		public virtual int FpsStreak { get; set; } = 5;
 		public virtual int MaxWaitTime { get; set; } = 10;
+		public virtual bool FloatingScreenEnabled { get; set; } = false;
+		public virtual bool HandleEnabled { get; set; } = true;
+		public virtual float FloatingScreenScale { get; set; } = 1f;
+		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
+		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
 
 		public virtual void OnReload()
 		{

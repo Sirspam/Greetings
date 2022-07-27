@@ -1,0 +1,5 @@
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <horizontal horizontal-fit="PreferredSize">
+        <clickable-image id="button" src="Greetings.Resources.Greetings.png" on-click="clicked" preserve-aspect="true" pref-width="35"/>
+    </horizontal>
+</bg>

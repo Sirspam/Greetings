@@ -12,22 +12,22 @@ namespace Greetings.Components
 	{
 		private SiraLog _siraLog = null!;
 		private GreetingsScreenManager _greetingsScreenManager = null!;
-		private FloorTextViewController _floorTextViewController = null!;
+		private FloorTextFloatingScreenController _floorTextFloatingScreenController = null!;
 		private VRControllersInputManager _vrControllersInputManager = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, GreetingsScreenManager greetingsScreenManager, FloorTextViewController floorTextViewController, VRControllersInputManager vrControllersInputManager)
+		public void Construct(SiraLog siraLog, GreetingsScreenManager greetingsScreenManager, FloorTextFloatingScreenController floorTextFloatingScreenController, VRControllersInputManager vrControllersInputManager)
 		{
 			_siraLog = siraLog;
 			_greetingsScreenManager = greetingsScreenManager;
-			_floorTextViewController = floorTextViewController;
+			_floorTextFloatingScreenController = floorTextFloatingScreenController;
 			_vrControllersInputManager = vrControllersInputManager;
 		}
 
 		public void StartCoroutine()
 		{
 			enabled = true;
-			_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.SkipText);
+			_floorTextFloatingScreenController.ChangeTextTo(FloorTextFloatingScreenController.TextChange.SkipText);
 			StartCoroutine(AwaitKeyCoroutine());
 		}
 

@@ -26,7 +26,8 @@ namespace Greetings.Installers
 			Container.BindInterfacesTo<GreetingsStartManager>().AsSingle();
 			Container.BindInterfacesTo<GreetingQuitManager>().AsSingle();
 			Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
-			Container.Bind<FloorTextViewController>().FromNewComponentAsViewController().AsSingle();
+			Container.Bind<FloorTextFloatingScreenController>().FromNewComponentAsViewController().AsSingle();
+			Container.BindInterfacesAndSelfTo<RandomVideoFloatingScreenController>().FromNewComponentAsViewController().AsSingle();
 
 			Container.Bind<GreetingsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
 			Container.Bind<GreetingsSettingsViewController>().FromNewComponentAsViewController().AsSingle();

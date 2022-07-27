@@ -16,6 +16,13 @@ namespace Greetings.Utils
 {
 	internal class GreetingsUtils
 	{
+		public enum VideoType
+		{
+			StartVideo,
+			QuitVideo,
+			RandomVideo
+		}
+		
 		public VideoPlayer? VideoPlayer;
 		public VideoType CurrentVideoType;
 		public GameObject? GreetingsScreen;
@@ -47,20 +54,14 @@ namespace Greetings.Utils
 			_songPreviewPlayer = songPreviewPlayer;
 			_timeTweeningManager = timeTweeningManager;
 		}
-
-		public enum VideoType
-		{
-			StartVideo,
-			QuitVideo,
-			RandomVideo
-		}
-
+		
 		public void CreateScreen()
 		{
 			if (GreetingsScreen == null)
 			{
 				_siraLog.Info("Creating GreetingScreen");
 				GreetingsScreen = GameObject.CreatePrimitive(PrimitiveType.Quad);
+				GreetingsScreen.gameObject.name = "GreetingsScreen";
 				GreetingsScreen.gameObject.name = "GreetingsScreen";
 				GreetingsScreen.transform.position = new Vector3(0, -10f, _pluginConfig.ScreenDistance);
 				GreetingsScreen.transform.localScale = Vector3.zero;
@@ -190,7 +191,7 @@ namespace Greetings.Utils
 					return;
 				}
 
-				GreetingsScreen!.transform.position = new Vector3(0, 1.5f, _pluginConfig.ScreenDistance);
+				GreetingsScreen!.transform.position = new Vector3(0, 1.5f, GreetingsScreen.transform.position.z);
 				_timeTweeningManager.KillAllTweens(GreetingsScreen);
 				var tween = new FloatTween(0f, _screenScale.y, val => GreetingsScreen!.transform.localScale = new Vector3(_screenScale.x, val, _screenScale.z), 0.3f, EaseType.OutExpo)
 				{
@@ -258,10 +259,14 @@ namespace Greetings.Utils
 		public void MoveScreen(float newZValue)
 		{
 			if (GreetingsScreen == null || !GreetingsScreen.gameObject.activeSelf)
+			{
 				CreateScreen();
+			}
 
 			if (Math.Abs(GreetingsScreen!.transform.position.z - newZValue) < 0)
+			{
 				return;
+			}
 
 			_timeTweeningManager.KillAllTweens(GreetingsScreen);
 			var previousPosition = GreetingsScreen!.transform.position;

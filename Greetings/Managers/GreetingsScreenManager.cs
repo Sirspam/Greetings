@@ -20,31 +20,32 @@ namespace Greetings.Managers
 			Out
 		}
 
+		public event Action? GreetingsShown;
+		public event Action? GreetingsHidden;
+
 		private bool _noDismiss;
 		public bool SkipRequested;
-		private ScreenSystem? _screenSystem;
 		private Action? _videoFinishedCallback;
 		private CanvasGroup? _screenSystemCanvasGroup;
 		private Vector3 _originalScreenSystemPosition;
 		
-		private readonly GreetingsUtils _greetingsUtils;
+		private readonly ScreenSystem _screenSystem;
 		private readonly VRInputModule _vrInputModule;
-		private readonly HierarchyManager _hierarchyManager;
+		private readonly GreetingsUtils _greetingsUtils;
 		private readonly TimeTweeningManager _timeTweeningManager;
-		private readonly FloorTextViewController _floorTextViewController;
+		private readonly FloorTextFloatingScreenController _floorTextFloatingScreenController;
 
-		public GreetingsScreenManager(GreetingsUtils greetingsUtils, VRInputModule vrInputModule, HierarchyManager hierarchyManager, TimeTweeningManager tweeningManager, FloorTextViewController floorTextViewController)
+		public GreetingsScreenManager(GreetingsUtils greetingsUtils, VRInputModule vrInputModule, HierarchyManager hierarchyManager, TimeTweeningManager tweeningManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
 		{
-			_greetingsUtils = greetingsUtils;
 			_vrInputModule = vrInputModule;
-			_hierarchyManager = hierarchyManager;
+			_greetingsUtils = greetingsUtils;
+			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
 			_timeTweeningManager = tweeningManager;
-			_floorTextViewController = floorTextViewController;
+			_floorTextFloatingScreenController = floorTextFloatingScreenController;
 		}
 
 		public void Initialize()
 		{
-			_screenSystem = _hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
 			var gameObject = _screenSystem.gameObject;
 			_screenSystemCanvasGroup = gameObject.AddComponent<CanvasGroup>();
 			_originalScreenSystemPosition = gameObject.transform.position;
@@ -64,8 +65,9 @@ namespace Greetings.Managers
 			_videoFinishedCallback = callback;
 			SkipRequested = false;
 			_greetingsUtils.CreateScreen(videoType);
-
+			
 			_vrInputModule.enabled = false;
+			GreetingsShown?.Invoke();
 			TweenScreenSystemAlpha(TweenType.Out, () =>
 			{
 				_greetingsUtils.VideoPlayer!.loopPointReached += VideoEnded;
@@ -105,7 +107,7 @@ namespace Greetings.Managers
 			}
 		}
 
-		private async void DismissGreetings()
+		public async void DismissGreetings(bool instant = false)
 		{
 			if (_greetingsUtils.SkipController != null)
 			{
@@ -117,23 +119,25 @@ namespace Greetings.Managers
 				_greetingsUtils.GreetingsAwaiter.enabled = false;
 			}
 			
-			_greetingsUtils.HideScreen();
-			_floorTextViewController.HideScreen();
+			_greetingsUtils.HideScreen(!instant);
+			_floorTextFloatingScreenController.HideScreen();
+			GreetingsHidden?.Invoke();
+			
 			await Utilities.PauseChamp;
 			_screenSystem!.gameObject.transform.position = _originalScreenSystemPosition;
 			TweenScreenSystemAlpha(TweenType.In, () =>
 			{
 				_vrInputModule.enabled = true;
-				
+
 				if (_videoFinishedCallback != null)
 				{
 					_videoFinishedCallback.Invoke();
 					_videoFinishedCallback = null;
 				}
-			});
+			}, instant);
 		}
 
-		private void TweenScreenSystemAlpha(TweenType tweenType, Action? callback = null)
+		private void TweenScreenSystemAlpha(TweenType tweenType, Action? callback = null, bool instant = false)
 		{
 			if (_screenSystemCanvasGroup == null)
 			{
@@ -145,7 +149,8 @@ namespace Greetings.Managers
 
 			switch (tweenType)
 			{
-				default: case TweenType.In:
+				default:
+				case TweenType.In:
 					fromValue = 0f;
 					toValue = 1f;
 					break;
@@ -155,13 +160,21 @@ namespace Greetings.Managers
 					break;
 			}
 
-			var tween = new FloatTween(fromValue, toValue, val => _screenSystemCanvasGroup.alpha = val, 0.35f, EaseType.InQuad);
-			if (callback != null)
+			if (instant)
 			{
-				tween.onCompleted = callback.Invoke;
+				_screenSystemCanvasGroup.alpha = toValue;
+				callback?.Invoke();
 			}
+			else
+			{
+				var tween = new FloatTween(fromValue, toValue, val => _screenSystemCanvasGroup.alpha = val, 0.28f, EaseType.InQuad);
+				if (callback != null)
+				{
+					tween.onCompleted = callback.Invoke;
+				}
 
-			_timeTweeningManager.AddTween(tween, _screenSystemCanvasGroup);
+				_timeTweeningManager.AddTween(tween, _screenSystemCanvasGroup);	
+			}
 		}
 	}
 }

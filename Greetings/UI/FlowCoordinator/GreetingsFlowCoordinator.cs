@@ -29,9 +29,6 @@ namespace Greetings.UI.FlowCoordinator
 			ProvideInitialViewControllers(_screenControlsViewController, _videoSelectionViewController, _greetingsSettingsViewController);
 		}
 
-		protected override void BackButtonWasPressed(ViewController topViewController)
-		{
-			_mainFlowCoordinator.DismissFlowCoordinator(this);
-		}
+		protected override void BackButtonWasPressed(ViewController topViewController) => _mainFlowCoordinator.DismissFlowCoordinator(this);
 	}
 }

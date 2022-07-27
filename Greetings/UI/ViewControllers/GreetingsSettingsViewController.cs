@@ -18,6 +18,9 @@ namespace Greetings.UI.ViewControllers
 		private bool _underlineActive;
 
 		[UIComponent("top-panel")] private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
+		[UIComponent("reset-position-button")] private readonly Button _resetPositionButton = null!;
+		[UIComponent("face-headset-button")] private readonly Button _faceHeadsetButton = null!;
+		[UIComponent("set-upright-button")] private readonly Button _setUprightButton = null!;
 		[UIComponent("underline-text")] private readonly Transform _underlineText = null!;
 		[UIComponent("version-text")] private readonly CurvedTextMeshPro _versionText = null!;
 
@@ -26,15 +29,17 @@ namespace Greetings.UI.ViewControllers
 		private PluginConfig _pluginConfig = null!;
 		private PluginMetadata _pluginMetadata = null!;
 		private YesNoViewController _yesNoViewController = null!;
+		private RandomVideoFloatingScreenController _randomVideoFloatingScreenController = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController)
+		public void Construct(UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
 		{
 			_uiUtils = uiUtils;
 			_greetingsUtils = greetingsUtils;
 			_pluginConfig = pluginConfig;
 			_pluginMetadata = pluginMetadata.Value;
 			_yesNoViewController = yesNoViewController;
+			_randomVideoFloatingScreenController = randomVideoFloatingScreenController;
 		}
 
 		#region Values
@@ -124,6 +129,40 @@ namespace Greetings.UI.ViewControllers
 			get => _pluginConfig.MaxWaitTime;
 			set => _pluginConfig.MaxWaitTime = value;
 		}
+		
+		[UIValue("floating-screen-enabled")]
+		private bool FloatingScreenEnabled
+		{
+			get => _pluginConfig.FloatingScreenEnabled;
+			set
+			{
+				_pluginConfig.FloatingScreenEnabled = value;
+				_randomVideoFloatingScreenController.SetFloatingScreenActive(value);
+				NotifyPropertyChanged();
+			}
+		}
+
+		[UIValue("handle-enabled")]
+		private bool HandleEnabled
+		{
+			get => _pluginConfig.HandleEnabled;
+			set
+			{
+				_pluginConfig.HandleEnabled = value;
+				_randomVideoFloatingScreenController.SetHandleActive(value);
+			}
+		}
+
+		[UIValue("floating-screen-scale")]
+		private float FloatingScreenScale
+		{
+			get => _pluginConfig.FloatingScreenScale;
+			set
+			{
+				_pluginConfig.FloatingScreenScale = FloatingScreenScale;
+				_randomVideoFloatingScreenController.SetScale(value);
+			}
+		}
 
 		[UIValue("version-text-value")]
 		private string VersionText => $"{_pluginMetadata.Name} v{_pluginMetadata.HVersion} by {_pluginMetadata.Author}";
@@ -164,6 +203,33 @@ namespace Greetings.UI.ViewControllers
 			}
 		}
 
+		[UIAction("floating-screen-scale-formatter")]
+		private string FloatingScreenScaleFormatter(float value)
+		{
+			return value * 100 + "%";
+		}
+
+		[UIAction("reset-position")]
+		private void ResetPosition()
+		{
+			_randomVideoFloatingScreenController.ResetPosition();
+			_uiUtils.ButtonUnderlineClick(_resetPositionButton.gameObject);
+		}
+
+		[UIAction("face-headset")]
+		private void FaceHeadset()
+		{
+			_randomVideoFloatingScreenController.FaceHeadset();
+			_uiUtils.ButtonUnderlineClick(_faceHeadsetButton.gameObject);
+		}
+
+		[UIAction("set-upright")]
+		private void SetUpright()
+		{
+			_randomVideoFloatingScreenController.SetUpright();
+			_uiUtils.ButtonUnderlineClick(_setUprightButton.gameObject);
+		}
+
 		[UIAction("version-text-clicked")]
 		private void VersionTextClicked()
 		{
@@ -174,6 +240,20 @@ namespace Greetings.UI.ViewControllers
 			
 			_yesNoViewController.ShowModal(_versionText.transform, $"Open {_pluginMetadata.Name}'s GitHub page?", 6,
 				() => Application.OpenURL(_pluginMetadata.PluginHomeLink!.ToString()));
+		}
+
+		private void OnEnable() => _randomVideoFloatingScreenController.Interactable = false;
+
+		private void OnDisable()
+		{
+			if (!_pluginConfig.FloatingScreenEnabled)
+			{
+				_randomVideoFloatingScreenController.Dispose();
+			}
+			else
+			{
+				_randomVideoFloatingScreenController.Interactable = true;
+			}
 		}
 	}
 }

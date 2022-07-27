@@ -26,10 +26,10 @@ namespace Greetings.Components
 		private PluginConfig _pluginConfig = null!;
 		private IFPFCSettings _fpfcSettings = null!;
 		private IVRPlatformHelper _vrPlatformHelper = null!;
-		private FloorTextViewController _floorTextViewController = null!;
+		private FloorTextFloatingScreenController _floorTextFloatingScreenController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, MainCamera mainCamera, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, IVRPlatformHelper vrPlatformHelper, FloorTextViewController floorTextViewController)
+		public void Construct(SiraLog siraLog, MainCamera mainCamera, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, IFPFCSettings fpfcSettings, IVRPlatformHelper vrPlatformHelper, FloorTextFloatingScreenController floorTextFloatingScreenController)
 		{
 			_siraLog = siraLog;
 			_mainCamera = mainCamera;
@@ -37,7 +37,7 @@ namespace Greetings.Components
 			_pluginConfig = pluginConfig;
 			_fpfcSettings = fpfcSettings;
 			_vrPlatformHelper = vrPlatformHelper;
-			_floorTextViewController = floorTextViewController;
+			_floorTextFloatingScreenController = floorTextFloatingScreenController;
 		}
 
 		private void Start()
@@ -50,7 +50,7 @@ namespace Greetings.Components
 			_maxWaitTime = _pluginConfig.MaxWaitTime;
 		}
 
-		private void OnDisable() => _floorTextViewController.ChangeVisibility(FloorTextViewController.VisibilityChange.HideBottomText);
+		private void OnDisable() => _floorTextFloatingScreenController.ChangeVisibility(FloorTextFloatingScreenController.VisibilityChange.HideBottomText);
 
 		public void StartCoroutine()
 		{
@@ -61,14 +61,14 @@ namespace Greetings.Components
 		private IEnumerator AwaiterCoroutine()
 		{
 			_siraLog.Info("Awaiting Video Preparation");
-			_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingVideoPreparationText);
+			_floorTextFloatingScreenController.ChangeTextTo(FloorTextFloatingScreenController.TextChange.AwaitingVideoPreparationText);
 			yield return new WaitUntil(() => _greetingsUtils.VideoPlayer!.isPrepared);
 			_siraLog.Info("Video Prepared");
 
 			if (_pluginConfig.AwaitSongCore && PluginManager.GetPluginFromId("SongCore") != null)
 			{
 				_siraLog.Info("Awaiting SongCore");
-				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingSongCore);
+				_floorTextFloatingScreenController.ChangeTextTo(FloorTextFloatingScreenController.TextChange.AwaitingSongCore);
 				yield return new WaitUntil(() => Loader.AreSongsLoaded);
 				_siraLog.Info("SongCore Loaded");	
 			}
@@ -76,7 +76,7 @@ namespace Greetings.Components
 			if (_pluginConfig.AwaitHmd)
 			{
 				_siraLog.Info("Awaiting HMD focus");
-				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingHmdFocus);
+				_floorTextFloatingScreenController.ChangeTextTo(FloorTextFloatingScreenController.TextChange.AwaitingHmdFocus);
 				yield return new WaitUntil(() => (_vrPlatformHelper.hasVrFocus && Math.Abs(Quaternion.Dot(_mainCamera.rotation, _greetingsUtils.GreetingsScreen!.transform.rotation)) >= 0.97f) || _fpfcSettings.Enabled);
 				_siraLog.Info("HMD focused");
 			}
@@ -84,7 +84,7 @@ namespace Greetings.Components
 			if (_pluginConfig.AwaitFps)
 			{
 				_siraLog.Info("Awaiting FPS Stabilisation");
-				_floorTextViewController.ChangeTextTo(FloorTextViewController.TextChange.AwaitingFpsStabilisation);
+				_floorTextFloatingScreenController.ChangeTextTo(FloorTextFloatingScreenController.TextChange.AwaitingFpsStabilisation);
 				_siraLog.Debug("target fps " + _targetFps);
 
 				while (true)
