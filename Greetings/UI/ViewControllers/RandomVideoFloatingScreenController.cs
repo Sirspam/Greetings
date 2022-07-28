@@ -20,7 +20,7 @@ namespace Greetings.UI.ViewControllers
 		public static Vector3 DefaultPosition = new Vector3(4.20f, 1f, 0.5f);
 		public static Quaternion DefaultRotation = Quaternion.Euler(0f, 80f, 0f);
 
-		private bool _interactable;
+		private bool _interactable = true;
 		private Vector3 _handleScale;
 		private Color? _highlightColor;
 		private Vector3 _floatingScreenScale;
@@ -70,7 +70,7 @@ namespace Greetings.UI.ViewControllers
 			_floatingScreen.SetRootViewController(this, AnimationType.None);
 			
 			_highlightColor = _imageButton.HighlightColor;
-			Interactable = true;
+			SetIntractability(_interactable);
 
 			_floatingScreen.HandleReleased += FloatingScreenOnHandleReleased;
 			_greetingsScreenManager.GreetingsShown += GreetingsShown;
@@ -281,7 +281,7 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("clicked")]
 		private void Clicked()
 		{
-			if (Interactable)
+			if (_interactable)
 			{
 				SetFloatingScreenActive(false);
 				_greetingsScreenManager.StartGreetings(GreetingsUtils.VideoType.RandomVideo);

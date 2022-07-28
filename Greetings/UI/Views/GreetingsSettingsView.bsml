@@ -9,18 +9,21 @@
         </horizontal>
         
         <tab tab-name="General" tags="settings-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize">
-            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="3" background="round-rect-panel" background-color="#FFFFFFAA">
-                <checkbox-setting text="Play Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
+            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="2" background="round-rect-panel" background-color="#FFFFFFAA">
+                <checkbox-setting text="Play Start Video Once" hover-hint="Stops Greetings from playing again after an internal restart" value="play-once" apply-on-change="true" bind-value="true"/>
                 <slider-setting text="Screen Distance" value="screen-distance" increment="0.25" min="1.75" max="10.0" show-buttons="true" on-change="move-screen" apply-on-change="true" bind-value="true"/>
                 <horizontal id="underline-text" active="~underline-active" spacing="2">
-                    <text text="The red underline represents where the Greetings screen will be" color="red" align="Center"/>
+                    <text text="The red underline represents where the Greetings screen will be" color="red" align="Center" italics="true"/>
                 </horizontal>
                 <checkbox-setting text="Easter Eggs" hover-hint="They're funny please I swear" value="easter-eggs" apply-on-change="true" bind-value="true"/>
             </vertical>
         </tab>
 
         <tab tab-name="FPS Stabilisation" tags="settings-tab">
-            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="3" background="round-rect-panel" background-color="#FFFFFFAA">
+            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="2" background="round-rect-panel" background-color="#FFFFFFAA">
+                <vertical pad-bottom="3" pref-width="90">
+                    <text text="FPS Stabilisation is only used for the start video" font-size="4.6" face-color="silver" word-wrapping="true" italics="true" align="Center"/>
+                </vertical>
                 <checkbox-setting text="Await FPS Stabilisation" hover-hint="Waits for your frame rate to stabilise before playing Greetings" value="await-fps" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Await HMD Focus" hover-hint="Waits for your headset to be active before playing Greetings" value="await-hmd" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Await SongCore" hover-hint="Waits for SongCore to finish loading songs" value="await-songcore" apply-on-change="true" bind-value="true"/>
@@ -31,9 +34,9 @@
         </tab>
         
         <tab tab-name="Floating Screen" tags="settings-tab">
-            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="3" background="round-rect-panel" background-color="#FFFFFFAA">
-                <vertical child-expand-width="false" pad-bottom="4" pref-width="80">
-                    <text text="The floating screen allows for you to play a random Greetings video on demand where ever in the menu!" word-wrapping="true" italics="true" align="Center"/>
+            <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="2" background="round-rect-panel" background-color="#FFFFFFAA">
+                <vertical pad-bottom="3" pref-width="90">
+                    <text text="The floating screen allows for you to play a random Greetings video on demand wherever in the menu!" font-size="4.6" face-color="silver" word-wrapping="true" italics="true" align="Center"/>
                 </vertical>
                 <checkbox-setting text="Enable Floating Screen" value="floating-screen-enabled" apply-on-change="true" bind-value="true"/>
                 <checkbox-setting text="Enable Handle" hover-hint="Allows for grabbing and moving the floating screen around" value="handle-enabled" apply-on-change="true" bind-value="true" interactable="~floating-screen-enabled"/>
@@ -46,7 +49,7 @@
             </vertical>
         </tab>
     </vertical>
-    <horizontal anchor-pos-x="30" anchor-pos-y="-35" vertical-fit="PreferredSize" horizontal-fit="PreferredSize" >
+    <horizontal anchor-pos-x="30" anchor-pos-y="-38" vertical-fit="PreferredSize" horizontal-fit="PreferredSize">
         <clickable-text id="version-text" text="~version-text-value" on-click="version-text-clicked" align="Right" font-size="4" default-color="orange" highlight-color="yellow"/>
     </horizontal>
 </bg>

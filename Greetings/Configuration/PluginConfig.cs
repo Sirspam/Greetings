@@ -37,15 +37,9 @@ namespace Greetings.Configuration
 		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
 		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
 
-		public virtual void OnReload()
-		{
-			FixConfigIssues();
-		}
+		public virtual void OnReload() => FixConfigIssues();
 
-		public virtual void Changed()
-		{
-			FixConfigIssues();
-		}
+		public virtual void Changed() => FixConfigIssues();
 
 		private void FixConfigIssues()
 		{
@@ -85,7 +79,7 @@ namespace Greetings.Configuration
 
 		private void WriteGreetingsVideoToDisk(string folderPath)
 		{
-			File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Goodnight.mp4"));
+			File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Greetings.mp4"));
 		}
 
 		private static string BaseGameVideoPath => Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
