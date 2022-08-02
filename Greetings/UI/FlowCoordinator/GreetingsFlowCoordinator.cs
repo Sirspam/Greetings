@@ -1,5 +1,4 @@
 ﻿using BeatSaberMarkupLanguage;
-using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using HMUI;
 using Zenject;

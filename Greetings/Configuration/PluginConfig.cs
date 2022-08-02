@@ -15,8 +15,8 @@ namespace Greetings.Configuration
 	internal class PluginConfig
 	{
 		public virtual string VideoPath { get; set; } = BaseGameVideoPath;
-		public virtual string? SelectedStartVideo { get; set; } = null;
-		public virtual string? SelectedQuitVideo { get; set; } = null;
+		public virtual string? SelectedStartVideo { get; set; }
+		public virtual string? SelectedQuitVideo { get; set; }
 		public virtual bool RandomStartVideo { get; set; } = false;
 		public virtual bool RandomQuitVideo { get; set; } = false;
 		public virtual bool PlayOnStart { get; set; } = true;

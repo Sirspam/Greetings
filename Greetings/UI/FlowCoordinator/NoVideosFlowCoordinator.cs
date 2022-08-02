@@ -34,7 +34,7 @@ namespace Greetings.UI.FlowCoordinator
 		{
 			_noVideosViewController.VideosAddedEvent -= NoVideosViewControllerOnVideosAddedEvent;
 			
-			_mainFlowCoordinator.DismissFlowCoordinator(this, finishedCallback: () => _mainFlowCoordinator.PresentFlowCoordinator(_greetingsFlowCoordinator), immediately: true);
+			_mainFlowCoordinator.DismissFlowCoordinator(this, () => _mainFlowCoordinator.PresentFlowCoordinator(_greetingsFlowCoordinator), immediately: true);
 		}
 	}
 }

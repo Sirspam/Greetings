@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <Reference Include="0Harmony">
-          <HintPath>$(BeatSaberDir)\Libs\0Harmony.dll</HintPath>
+            <HintPath>$(BeatSaberDir)\Libs\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="Hive.Versioning">
             <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
@@ -102,7 +102,7 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="VRUI">
-          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\VRUI.dll</HintPath>
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\VRUI.dll</HintPath>
         </Reference>
         <Reference Include="Zenject">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
@@ -119,26 +119,26 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
-        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')" />
-        <None Include="Greetings.csproj.user" Condition="Exists('Greetings.csproj.user')" />
+        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')"/>
+        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')"/>
+        <None Include="Greetings.csproj.user" Condition="Exists('Greetings.csproj.user')"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="manifest.json" />
-        <EmbeddedResource Include="Resources\*" />
-        <EmbeddedResource Include="Images\*.png" />
-        <EmbeddedResource Include="UI\Views\*.bsml" />
+        <EmbeddedResource Include="manifest.json"/>
+        <EmbeddedResource Include="Resources\*"/>
+        <EmbeddedResource Include="Images\*.png"/>
+        <EmbeddedResource Include="UI\Views\*.bsml"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Resources\bscinema.bundle" />
-        <None Remove="Resources\greetingsbundle.bundle" />
-        <None Remove="Resources\mvp.bundle" />
-        <None Remove="Resources\PauseOrPlay.png" />
-        <None Remove="UI\Views\GreetingsSettingsView.bsml" />
-        <None Remove="UI\Views\ScreenControlsView.bsml" />
-        <None Remove="UI\Views\VideoSelectionView.bsml" />
+        <None Remove="Resources\bscinema.bundle"/>
+        <None Remove="Resources\greetingsbundle.bundle"/>
+        <None Remove="Resources\mvp.bundle"/>
+        <None Remove="Resources\PauseOrPlay.png"/>
+        <None Remove="UI\Views\GreetingsSettingsView.bsml"/>
+        <None Remove="UI\Views\ScreenControlsView.bsml"/>
+        <None Remove="UI\Views\VideoSelectionView.bsml"/>
     </ItemGroup>
 
     <ItemGroup>

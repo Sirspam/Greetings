@@ -133,7 +133,7 @@ namespace Greetings.Managers
 			GreetingsHidden?.Invoke();
 			
 			await Utilities.PauseChamp;
-			_screenSystem!.gameObject.transform.position = _originalScreenSystemPosition;
+			_screenSystem.gameObject.transform.position = _originalScreenSystemPosition;
 			TweenScreenSystemAlpha(TweenType.In, () =>
 			{
 				_vrInputModule.enabled = true;

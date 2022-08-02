@@ -27,7 +27,7 @@ namespace Greetings.UI.ViewControllers
 		private FloatingScreen? _floatingScreen;
 		private Vector3 _originalFloatingScreenScale;
 
-		[UIComponent("button")] private ClickableImage _imageButton = null!;
+		[UIComponent("button")] private readonly ClickableImage _imageButton = null!;
 
 		public bool Interactable
 		{

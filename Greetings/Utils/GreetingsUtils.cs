@@ -97,16 +97,26 @@ namespace Greetings.Utils
 		public void CreateScreen(VideoType videoType)
 		{
 			CreateScreen();
-
+			
 			switch (videoType)
 			{
 				case VideoType.StartVideo:
 				{
+					if (_pluginConfig.SelectedStartVideo == null)
+					{
+						return;
+					}
+					
 					VideoPlayer!.url = Path.Combine(_pluginConfig.VideoPath, _pluginConfig.SelectedStartVideo);
 					break;
 				}
 				case VideoType.QuitVideo:
 				{
+					if (_pluginConfig.SelectedQuitVideo == null)
+					{
+						return;
+					}
+					
 					VideoPlayer!.url = Path.Combine(_pluginConfig.VideoPath, _pluginConfig.SelectedQuitVideo);
 					break;
 				}

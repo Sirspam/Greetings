@@ -3,7 +3,6 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
-using SiraUtil.Logging;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -20,16 +19,11 @@ namespace Greetings.UI.ViewControllers
 
 		[UIComponent("top-text")] private readonly CurvedTextMeshPro _topText = null!;
 		[UIComponent("bottom-text")] private readonly CurvedTextMeshPro _bottomText = null!;
-
-		private SiraLog _siraLog = null!;
+		
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, TimeTweeningManager timeTweeningManager)
-		{
-			_siraLog = siraLog;
-			_timeTweeningManager = timeTweeningManager;
-		}
+		public void Construct(TimeTweeningManager timeTweeningManager) => _timeTweeningManager = timeTweeningManager;
 
 		public enum VisibilityChange
 		{

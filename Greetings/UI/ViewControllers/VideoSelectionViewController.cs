@@ -5,7 +5,6 @@ using System.IO;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
 using Greetings.UI.FlowCoordinator;
@@ -163,7 +162,7 @@ namespace Greetings.UI.ViewControllers
 
 			if (_pluginConfig.CheckIfVideoPathEmpty())
 			{
-				_mainFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), finishedCallback: () => _mainFlowCoordinator.PresentFlowCoordinator(_noVideosFlowCoordinator), immediately: true);
+				_mainFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), () => _mainFlowCoordinator.PresentFlowCoordinator(_noVideosFlowCoordinator), immediately: true);
 				return;
 			}
 

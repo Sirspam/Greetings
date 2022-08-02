@@ -2,7 +2,6 @@
 using Greetings.Configuration;
 using Greetings.Utils;
 using IPA.Utilities;
-using SiraUtil.Logging;
 using UnityEngine.UI;
 using Zenject;
 

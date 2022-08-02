@@ -1,11 +1,14 @@
-﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
     <vertical>
         <text id="update-text" active="~update-available" color="#FFEE00"/>
     </vertical>
 
-    <horizontal background="round-rect-panel" anchor-pos-y="-30" pad-left="3" pad-right="3" pad-top="2" pad-bottom="2" spacing="3" horizontal-fit="PreferredSize">
+    <horizontal background="round-rect-panel" anchor-pos-y="-30" pad-left="3" pad-right="3" pad-top="2" pad-bottom="2"
+                spacing="3" horizontal-fit="PreferredSize">
         <clickable-image src="Greetings.Resources.Back.png" hover-hint="Restart" on-click="back-clicked"/>
-        <clickable-image id="play-or-pause-image" src="Greetings.Resources.PlayOrPause.png" hover-hint="Play / Pause" on-click="play-or-pause-clicked"/>
+        <clickable-image id="play-or-pause-image" src="Greetings.Resources.PlayOrPause.png" hover-hint="Play / Pause"
+                         on-click="play-or-pause-clicked"/>
         <clickable-image id="loop-image" src="Greetings.Resources.Loop.png" hover-hint="Loop" on-click="loop-clicked"/>
     </horizontal>
 </bg>
