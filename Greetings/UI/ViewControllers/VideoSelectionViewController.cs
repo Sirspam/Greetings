@@ -27,8 +27,7 @@ namespace Greetings.UI.ViewControllers
 		private int _selectedVideoTab;
 		private int _selectedQuitVideoIndex;
 		private int _selectedStartVideoIndex;
-
-		[UIParams] private readonly BSMLParserParams _parserParams = null!;
+		
 		[UIComponent("video-list")] private readonly CustomListTableData _videoList = null!;
 		[UIComponent("bottom-buttons-layout")] private readonly HorizontalOrVerticalLayoutGroup _bottomButtonsLayout = null!;
 		[UIComponent("open-folder-button")] private readonly Button _openFolderButton = null!;
@@ -53,34 +52,6 @@ namespace Greetings.UI.ViewControllers
 			_mainFlowCoordinator = mainFlowCoordinator;
 			_noVideosFlowCoordinator = noVideosFlowCoordinator;
 			_yesNoModalViewController = yesNoModalViewController;
-		}
-
-		[UIValue("play-on-start")]
-		private bool PlayOnStart
-		{
-			get => _pluginConfig.PlayOnStart;
-			set => _pluginConfig.PlayOnStart = value;
-		}
-		
-		[UIValue("random-start-video")]
-		private bool RandomStartVideo
-		{
-			get => _pluginConfig.RandomStartVideo;
-			set => _pluginConfig.RandomStartVideo = value;
-		}
-		
-		[UIValue("play-on-quit")]
-		private bool PlayOnQuit
-		{
-			get => _pluginConfig.PlayOnQuit;
-			set => _pluginConfig.PlayOnQuit = value;
-		}
-		
-		[UIValue("random-quit-video")]
-		private bool RandomQuitVideo
-		{
-			get => _pluginConfig.RandomQuitVideo;
-			set => _pluginConfig.RandomQuitVideo = value;
 		}
 		
 		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -163,14 +134,7 @@ namespace Greetings.UI.ViewControllers
 
 		[UIAction("delete-video-clicked")]
 		private void DeleteVideo() => _yesNoModalViewController.ShowModal(_deleteVideoButton.transform, "Are you sure you want to delete this video?", 5, DeleteSelectedVideo);
-
-		[UIAction("settings-clicked")]
-		private void SettingsClicked()
-		{
-			_parserParams.EmitEvent("close-modal");
-			_parserParams.EmitEvent("open-modal");
-		}
-
+		
 		private void DeleteSelectedVideo()
 		{
 			try

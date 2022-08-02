@@ -67,6 +67,34 @@ namespace Greetings.UI.ViewControllers
 			}
 		}
 		
+		[UIValue("play-on-start")]
+		private bool PlayOnStart
+		{
+			get => _pluginConfig.PlayOnStart;
+			set => _pluginConfig.PlayOnStart = value;
+		}
+		
+		[UIValue("random-start-video")]
+		private bool RandomStartVideo
+		{
+			get => _pluginConfig.RandomStartVideo;
+			set => _pluginConfig.RandomStartVideo = value;
+		}
+		
+		[UIValue("play-on-quit")]
+		private bool PlayOnQuit
+		{
+			get => _pluginConfig.PlayOnQuit;
+			set => _pluginConfig.PlayOnQuit = value;
+		}
+		
+		[UIValue("random-quit-video")]
+		private bool RandomQuitVideo
+		{
+			get => _pluginConfig.RandomQuitVideo;
+			set => _pluginConfig.RandomQuitVideo = value;
+		}
+		
 		[UIValue("play-once")]
 		private bool PlayOnce
 		{
