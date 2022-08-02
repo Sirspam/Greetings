@@ -30,10 +30,12 @@ namespace Greetings.Installers
 			Container.BindInterfacesAndSelfTo<RandomVideoFloatingScreenController>().FromNewComponentAsViewController().AsSingle();
 
 			Container.Bind<GreetingsFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
+			Container.Bind<NoVideosFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
+			Container.Bind<NoVideosViewController>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<GreetingsSettingsViewController>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<ScreenControlsViewController>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<VideoSelectionViewController>().FromNewComponentAsViewController().AsSingle();
-			Container.Bind<YesNoViewController>().AsSingle();
+			Container.Bind<YesNoModalViewController>().AsSingle();
 		}
 	}
 }

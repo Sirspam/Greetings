@@ -1,4 +1,5 @@
 ﻿using System;
+using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using HMUI;
@@ -28,20 +29,22 @@ namespace Greetings.Managers
 		private Action? _videoFinishedCallback;
 		private CanvasGroup? _screenSystemCanvasGroup;
 		private Vector3 _originalScreenSystemPosition;
-		
+
+		private readonly PluginConfig _pluginConfig;
 		private readonly ScreenSystem _screenSystem;
 		private readonly VRInputModule _vrInputModule;
 		private readonly GreetingsUtils _greetingsUtils;
 		private readonly TimeTweeningManager _timeTweeningManager;
 		private readonly FloorTextFloatingScreenController _floorTextFloatingScreenController;
 
-		public GreetingsScreenManager(GreetingsUtils greetingsUtils, VRInputModule vrInputModule, HierarchyManager hierarchyManager, TimeTweeningManager tweeningManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
+		public GreetingsScreenManager(PluginConfig pluginConfig, VRInputModule vrInputModule, GreetingsUtils greetingsUtils, HierarchyManager hierarchyManager, TimeTweeningManager tweeningManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
 		{
+			_pluginConfig = pluginConfig;
 			_vrInputModule = vrInputModule;
 			_greetingsUtils = greetingsUtils;
-			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
 			_timeTweeningManager = tweeningManager;
 			_floorTextFloatingScreenController = floorTextFloatingScreenController;
+			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
 		}
 
 		public void Initialize()
@@ -62,6 +65,12 @@ namespace Greetings.Managers
 		
 		public void StartGreetings(GreetingsUtils.VideoType videoType, Action? callback = null, bool noDismiss = false, bool useAwaiter = false)
 		{
+			if (_pluginConfig.IsVideoPathEmpty)
+			{
+				callback?.Invoke();
+				return;
+			}
+			
 			_videoFinishedCallback = callback;
 			SkipRequested = false;
 			_greetingsUtils.CreateScreen(videoType);

@@ -281,7 +281,7 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("clicked")]
 		private void Clicked()
 		{
-			if (_interactable)
+			if (_interactable && !_pluginConfig.IsVideoPathEmpty)
 			{
 				SetFloatingScreenActive(false);
 				_greetingsScreenManager.StartGreetings(GreetingsUtils.VideoType.RandomVideo);

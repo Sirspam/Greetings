@@ -28,17 +28,17 @@ namespace Greetings.UI.ViewControllers
 		private GreetingsUtils _greetingsUtils = null!;
 		private PluginConfig _pluginConfig = null!;
 		private PluginMetadata _pluginMetadata = null!;
-		private YesNoViewController _yesNoViewController = null!;
+		private YesNoModalViewController _yesNoModalViewController = null!;
 		private RandomVideoFloatingScreenController _randomVideoFloatingScreenController = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoViewController yesNoViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
+		public void Construct(UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
 		{
 			_uiUtils = uiUtils;
 			_greetingsUtils = greetingsUtils;
 			_pluginConfig = pluginConfig;
 			_pluginMetadata = pluginMetadata.Value;
-			_yesNoViewController = yesNoViewController;
+			_yesNoModalViewController = yesNoModalViewController;
 			_randomVideoFloatingScreenController = randomVideoFloatingScreenController;
 		}
 
@@ -238,7 +238,7 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 			
-			_yesNoViewController.ShowModal(_versionText.transform, $"Open {_pluginMetadata.Name}'s GitHub page?", 6,
+			_yesNoModalViewController.ShowModal(_versionText.transform, $"Open {_pluginMetadata.Name}'s GitHub page?", 6,
 				() => Application.OpenURL(_pluginMetadata.PluginHomeLink!.ToString()));
 		}
 

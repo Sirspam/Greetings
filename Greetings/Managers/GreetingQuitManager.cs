@@ -44,7 +44,7 @@ namespace Greetings.Managers
 
 		private void OnClickListener()
 		{
-			if (_pluginConfig.PlayOnQuit)
+			if (_pluginConfig.PlayOnQuit && _pluginConfig.SelectedQuitVideo != null)
 			{
 				_greetingsScreenManager.StartGreetings(
 					_pluginConfig.RandomQuitVideo

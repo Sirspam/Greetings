@@ -1,4 +1,5 @@
 ﻿using BeatSaberMarkupLanguage;
+using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using HMUI;
 using Zenject;
@@ -25,7 +26,7 @@ namespace Greetings.UI.FlowCoordinator
 		{
 			SetTitle(nameof(Greetings));
 			showBackButton = true;
-
+			
 			ProvideInitialViewControllers(_screenControlsViewController, _videoSelectionViewController, _greetingsSettingsViewController);
 		}
 

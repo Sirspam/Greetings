@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using BeatSaberMarkupLanguage;
 using Greetings.UI.ViewControllers;
 using IPA.Config.Stores;
+using IPA.Config.Stores.Attributes;
 using IPA.Utilities;
 using UnityEngine;
 using UnityEngine.XR;
@@ -16,8 +15,8 @@ namespace Greetings.Configuration
 	internal class PluginConfig
 	{
 		public virtual string VideoPath { get; set; } = BaseGameVideoPath;
-		public virtual string SelectedStartVideo { get; set; } = "Greetings.mp4";
-		public virtual string SelectedQuitVideo { get; set; } = "Greetings.mp4";
+		public virtual string? SelectedStartVideo { get; set; } = null;
+		public virtual string? SelectedQuitVideo { get; set; } = null;
 		public virtual bool RandomStartVideo { get; set; } = false;
 		public virtual bool RandomQuitVideo { get; set; } = false;
 		public virtual bool PlayOnStart { get; set; } = true;
@@ -36,11 +35,37 @@ namespace Greetings.Configuration
 		public virtual float FloatingScreenScale { get; set; } = 1f;
 		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
 		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
+		[Ignore]
+		public bool IsVideoPathEmpty;
 
 		public virtual void OnReload() => FixConfigIssues();
 
-		public virtual void Changed() => FixConfigIssues();
+		public bool CheckIfVideoPathEmpty()
+		{
+			var files = new DirectoryInfo(VideoPath).GetFiles("*.mp4");
+			if (files.Length > 0)
+			{
+				IsVideoPathEmpty = false;
+				SelectedStartVideo ??= files[0].Name;
+				SelectedQuitVideo ??= files[0].Name;
+			}
+			else
+			{
+				IsVideoPathEmpty = true;
+				if (SelectedStartVideo != null)
+				{
+					SelectedStartVideo = null;	
+				}
 
+				if (SelectedQuitVideo != null)
+				{
+					SelectedQuitVideo = null;	
+				}
+			}
+
+			return IsVideoPathEmpty;
+		}
+		
 		private void FixConfigIssues()
 		{
 			if (!Directory.Exists(VideoPath))
@@ -50,49 +75,15 @@ namespace Greetings.Configuration
 			
 			Directory.CreateDirectory(VideoPath);
 
-			if (!File.Exists(Path.Combine(VideoPath, SelectedStartVideo)))
-			{
-				var files = new DirectoryInfo(VideoPath).GetFiles("*.mp4");
-				if (files.Length == 0)
-				{
-					WriteGreetingsVideoToDisk(VideoPath);
-				}
-				else
-				{
-					SelectedStartVideo = files[0].Name;
-				}
-			}
-			
-			if (!File.Exists(Path.Combine(VideoPath, SelectedQuitVideo)))
-			{
-				var files = new DirectoryInfo(VideoPath).GetFiles("*.mp4");
-				if (files.Length == 0)
-				{
-					WriteGreetingsVideoToDisk(VideoPath);
-				}
-				else
-				{
-					SelectedQuitVideo = files[0].Name;
-				}
-			}
+			CheckIfVideoPathEmpty();
 		}
-
-		private void WriteGreetingsVideoToDisk(string folderPath)
-		{
-			File.WriteAllBytes(Path.Combine(folderPath, "Greetings.mp4"), Utilities.GetResource(Assembly.GetExecutingAssembly(), "Greetings.Resources.Greetings.mp4"));
-		}
-
+		
 		private static string BaseGameVideoPath => Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
 		private static int GetDefaultTargetFps()
 		{
 			var refreshRate = Convert.ToInt16(XRDevice.refreshRate - 10);
-			if (refreshRate <= 0)
-			{
-				refreshRate = 60;
-			}
-
-			return refreshRate;
+			return refreshRate <= 0 ? 60 : refreshRate;
 		}
 	}
 }

@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
+using Greetings.UI.FlowCoordinator;
 using Greetings.Utils;
 using HMUI;
 using IPA.Utilities;
 using SiraUtil.Logging;
-using Tweening;
-using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using static BeatSaberMarkupLanguage.Components.CustomListTableData;
@@ -38,21 +36,23 @@ namespace Greetings.UI.ViewControllers
 		[UIComponent("delete-video-button")] private readonly ClickableImage _deleteVideoButton = null!;
 
 		private SiraLog _siraLog = null!;
-		private UIUtils _uIUtils = null!;
-		private GreetingsUtils _greetingsUtils = null!;
+		private UIUtils _uiUtils = null!;
 		private PluginConfig _pluginConfig = null!;
-		private TimeTweeningManager _timeTweeningManager = null!;
-		private YesNoViewController _yesNoViewController = null!;
+		private GreetingsUtils _greetingsUtils = null!;
+		private MainFlowCoordinator _mainFlowCoordinator = null!;
+		private NoVideosFlowCoordinator _noVideosFlowCoordinator = null!;
+		private YesNoModalViewController _yesNoModalViewController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, UIUtils uIUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, YesNoViewController yesNoViewController)
+		public void Construct(SiraLog siraLog, UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, MainFlowCoordinator mainFlowCoordinator, NoVideosFlowCoordinator noVideosFlowCoordinator, YesNoModalViewController yesNoModalViewController)
 		{
 			_siraLog = siraLog;
-			_uIUtils = uIUtils;
-			_greetingsUtils = greetingsUtils;
+			_uiUtils = uiUtils;
 			_pluginConfig = pluginConfig;
-			_timeTweeningManager = timeTweeningManager;
-			_yesNoViewController = yesNoViewController;
+			_greetingsUtils = greetingsUtils;
+			_mainFlowCoordinator = mainFlowCoordinator;
+			_noVideosFlowCoordinator = noVideosFlowCoordinator;
+			_yesNoModalViewController = yesNoModalViewController;
 		}
 
 		[UIValue("play-on-start")]
@@ -150,22 +150,19 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("open-folder-clicked")]
 		private void OpenGreetingsFolder()
 		{
-			_uIUtils.ButtonUnderlineClick(_openFolderButton.gameObject);
+			_uiUtils.ButtonUnderlineClick(_openFolderButton.gameObject);
 			Process.Start(_pluginConfig.VideoPath);
 		}
 
 		[UIAction("reload-videos-clicked")]
 		private void ReloadVideos()
 		{
-			_uIUtils.ButtonUnderlineClick(_reloadVideosButton.gameObject);
+			_uiUtils.ButtonUnderlineClick(_reloadVideosButton.gameObject);
 			GetVideoListData();
 		}
 
 		[UIAction("delete-video-clicked")]
-		private void DeleteVideo()
-		{
-			_yesNoViewController.ShowModal(_deleteVideoButton.transform, "Are you sure you want to delete this video?", 5, DeleteSelectedVideo);
-		}
+		private void DeleteVideo() => _yesNoModalViewController.ShowModal(_deleteVideoButton.transform, "Are you sure you want to delete this video?", 5, DeleteSelectedVideo);
 
 		[UIAction("settings-clicked")]
 		private void SettingsClicked()
@@ -181,10 +178,6 @@ namespace Greetings.UI.ViewControllers
 				_selectedFile.Delete();
 				_siraLog.Info("Successfully deleted " + _selectedFile.Name);
 				GetVideoListData();
-
-				_timeTweeningManager.KillAllTweens(_deleteVideoButton);
-				var tween = new FloatTween(0f, 1f, val => _deleteVideoButton.color = Color.Lerp(new Color(0f, 0.7f, 1f), new Color(1f, 1f, 1f, 1f), val), 1f, EaseType.InSine);
-				_timeTweeningManager.AddTween(tween, _deleteVideoButton);
 			}
 			catch (Exception e)
 			{
@@ -203,23 +196,20 @@ namespace Greetings.UI.ViewControllers
 			var selectIndex = 0;
 			var foundSelectedQuitVideo = false;
 			var foundSelectedStartVideo = false;
-			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
 
-			_deleteVideoButton.enabled = files.Length > 1;
-
-			if (files.Length == 0)
+			if (_pluginConfig.CheckIfVideoPathEmpty())
 			{
-				// Video selection list will be reloaded before the greetings folder is populated again, leaving the list blank
-				// but Greetings will still work if the game is restarted so this will do
-				_pluginConfig.Changed();
+				_mainFlowCoordinator.DismissFlowCoordinator(_mainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf(), finishedCallback: () => _mainFlowCoordinator.PresentFlowCoordinator(_noVideosFlowCoordinator), immediately: true);
+				return;
 			}
-			
+
+			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
 			foreach (var file in files)
 			{
 				if (file.Length > 100000000)
 				{
 					// Had issues with the video player's prepare event just not being invoked if the video is too large.
-					// No clue why it happens, don't care enough to fix it. I doubt anyone will be trying to watch Shrek or something with Greeting's tiny ass screen
+					// No clue why it happens, I doubt anyone will be trying to watch a 4k movie or something with Greeting's tiny ass screen
 					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
 					continue;
 				}
@@ -259,6 +249,7 @@ namespace Greetings.UI.ViewControllers
 				if (_selectedVideoTab == 0)
 				{
 					_selectedFile = files[0];
+					_pluginConfig.SelectedStartVideo = _selectedFile.Name;
 				}
 			}
 
@@ -269,6 +260,7 @@ namespace Greetings.UI.ViewControllers
 				if (_selectedVideoTab == 1)
 				{
 					_selectedFile = files[0];
+					_pluginConfig.SelectedQuitVideo = _selectedFile.Name;
 				}
 			}
 			

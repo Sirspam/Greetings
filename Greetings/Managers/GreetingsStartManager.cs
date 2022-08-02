@@ -38,9 +38,12 @@ namespace Greetings.Managers
 		private void GameScenesManagerOnTransitionDidFinishEvent(ScenesTransitionSetupDataSO arg1, DiContainer arg2)
 		{
 			_gameScenesManager.transitionDidFinishEvent -= GameScenesManagerOnTransitionDidFinishEvent;
-			
-			_greetingsScreenManager.StartGreetings(_pluginConfig.RandomStartVideo ? GreetingsUtils.VideoType.RandomVideo : GreetingsUtils.VideoType.StartVideo, useAwaiter: true);
+
 			_greetingsPlayed = true;
+			if (_pluginConfig.SelectedStartVideo != null)
+			{
+				_greetingsScreenManager.StartGreetings(_pluginConfig.RandomStartVideo ? GreetingsUtils.VideoType.RandomVideo : GreetingsUtils.VideoType.StartVideo, useAwaiter: true);	
+			}
 		}
 	}
 }

@@ -11,7 +11,7 @@ using Component = UnityEngine.Component;
 
 namespace Greetings.UI.ViewControllers
 {
-	public class YesNoViewController : INotifyPropertyChanged
+	public class YesNoModalViewController : INotifyPropertyChanged
 	{
 		private bool _parsed;
 		private int _fontSize;

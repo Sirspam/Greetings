@@ -66,8 +66,10 @@
         </PropertyGroup>
         <ItemGroup>
             <OldZips Include="$(DestinationDirectory)$(AssemblyName)*.zip"/>
+            <GreetingsVideo Include="$(BeatSaberDir)\UserData\Greetings\Greetings.mp4"/>
         </ItemGroup>
         <Copy SourceFiles="$(OutputAssemblyName).dll" DestinationFiles="$(ArtifactDestination)\Plugins\$(AssemblyName).dll"/>
+        <Copy SourceFiles="@(GreetingsVideo)" DestinationFiles="$(ArtifactDestination)\UserData\Greetings\Greetings.mp4"/>
         <Message Text="PluginVersion: $(PluginVersion), AssemblyVersion: $(AssemblyVersion), GameVersion: $(GameVersion)" Importance="high"/>
         <Delete Files="@(OldZips)" TreatErrorsAsWarnings="true" ContinueOnError="true"/>
         <ZipDir SourceDirectory="$(ArtifactDestination)" DestinationFile="$(DestinationDirectory)$(ArtifactName).zip"/>
