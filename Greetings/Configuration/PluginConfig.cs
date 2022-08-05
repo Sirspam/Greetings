@@ -20,7 +20,7 @@ namespace Greetings.Configuration
 		public virtual bool RandomStartVideo { get; set; } = false;
 		public virtual bool RandomQuitVideo { get; set; } = false;
 		public virtual bool PlayOnStart { get; set; } = true;
-		public virtual bool PlayOnQuit { get; set; } = true;
+		public virtual bool PlayOnQuit { get; set; } = false;
 		public virtual bool PlayOnce { get; set; } = true;
 		public virtual float ScreenDistance { get; set; } = 6f;
 		public virtual bool EasterEggs { get; set; } = true;
