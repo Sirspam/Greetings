@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Greetings.UI.ViewControllers;
 using IPA.Config.Stores;
@@ -35,10 +36,14 @@ namespace Greetings.Configuration
 		public virtual float FloatingScreenScale { get; set; } = 1f;
 		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
 		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
+		public virtual bool RandomiserEnabled { get; set; } = false;
+		public virtual int RandomiserMinMinutes { get; set; } = 3;
+		public virtual int RandomiserMaxMinutes { get; set; } = 10;
+		
 		[Ignore]
 		public bool IsVideoPathEmpty;
 
-		public virtual void OnReload() => FixConfigIssues();
+		public virtual void Changed() => FixConfigIssues();
 
 		public bool CheckIfVideoPathEmpty()
 		{
@@ -46,12 +51,20 @@ namespace Greetings.Configuration
 			if (files.Length > 0)
 			{
 				IsVideoPathEmpty = false;
-				SelectedStartVideo ??= files[0].Name;
-				SelectedQuitVideo ??= files[0].Name;
+				if (SelectedStartVideo == null || !File.Exists(Path.Combine(VideoPath, SelectedStartVideo)))
+				{
+					SelectedStartVideo = files[0].Name;
+				}
+				
+				if (SelectedQuitVideo == null || !File.Exists(Path.Combine(VideoPath, SelectedQuitVideo)))
+				{
+					SelectedQuitVideo = files[0].Name;
+				}
 			}
 			else
 			{
 				IsVideoPathEmpty = true;
+				// Stops IPA from writing to the config when it isn't necessary
 				if (SelectedStartVideo != null)
 				{
 					SelectedStartVideo = null;	
