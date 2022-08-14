@@ -1,17 +1,13 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-    <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize"
-              pad="2" background="round-rect-panel" background-color="#FFFFFFAA">
+    <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="2" background="round-rect-panel" background-color="#FFFFFFAA">
         <vertical pref-width="110">
             <text text="~no-videos-text" font-size="7" font-align="Center" font-color="red"/>
-            <text text="Add some MP4s files to Greeting's video folder" word-wrapping="true" font-size="5"
-                  font-align="Center"/>
+            <text text="Add some MP4s files to Greeting's video folder" word-wrapping="true" font-size="5" font-align="Center"/>
         </vertical>
         <horizontal pad-top="4">
-            <button id="reload-videos-button" text="Reload videos" on-click="reload-videos-clicked" pref-width="45"
-                    pref-height="11"/>
-            <button id="open-folder-button" text="Open Greetings Folder" on-click="open-folder-clicked" pref-width="45"
-                    pref-height="11"/>
+            <button id="reload-videos-button" text="Reload videos" on-click="reload-videos-clicked" pref-width="45" pref-height="11"/>
+            <button id="open-folder-button" text="Open Greetings Folder" on-click="open-folder-clicked" pref-width="45" pref-height="11"/>
         </horizontal>
     </vertical>
 </bg>

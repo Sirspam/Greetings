@@ -1,30 +1,22 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-    <horizontal background="panel-fade-gradient" background-color="#00C0FFFF" anchor-min-y="1" pref-width="100"
-                horizontal-fit="PreferredSize" spacing="5">
+    <horizontal background="panel-fade-gradient" background-color="#00C0FFFF" anchor-min-y="1" pref-width="100" horizontal-fit="PreferredSize" spacing="5">
         <text text="Videos" align="Center" font-size="6" italics="true"/>
     </horizontal>
 
     <vertical>
-        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="100"
-                    anchor-pos-y="30" ignore-layout="true">
-            <tab-selector tab-tag="video-tab" select-cell="video-tab-selected" child-expand-width="true"
-                          child-control-width="true"/>
+        <horizontal vertical-fit="PreferredSize" horizontal-fit="PreferredSize" pref-height="7" pref-width="100" anchor-pos-y="30" ignore-layout="true">
+            <tab-selector tab-tag="video-tab" select-cell="video-tab-selected" child-expand-width="true" child-control-width="true"/>
         </horizontal>
         <tab tab-name="Start Video" tags="video-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize"/>
         <tab tab-name="Quit Video" tags="video-tab" horizontal-fit="PreferredSize" vertical-fit="PreferredSize"/>
 
         <vertical spacing="-4" pref-width="100" pad-top="5">
-            <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true"
-                  show-scrollbar="true" pref-height="38"/>
-            <horizontal id="bottom-buttons-layout" background="round-rect-panel" background-color="#FFFFFFAA"
-                        spacing="2">
-                <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder"
-                        min-height="10" min-width="38"/>
-                <button id="reload-videos-button" on-click="reload-videos-clicked" text="Refresh Videos" min-height="10"
-                        min-width="38"/>
-                <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon"
-                                 preserve-aspect="true"/>
+            <list id="video-list" select-cell="video-clicked" stick-scrolling="true" align-to-center="true" show-scrollbar="true" pref-height="38"/>
+            <horizontal id="bottom-buttons-layout" background="round-rect-panel" background-color="#FFFFFFAA" spacing="2">
+                <button id="open-folder-button" on-click="open-folder-clicked" text="Open Greeting's Folder" min-height="10" min-width="38"/>
+                <button id="reload-videos-button" on-click="reload-videos-clicked" text="Refresh Videos" min-height="10" min-width="38"/>
+                <clickable-image id="delete-video-button" on-click="delete-video-clicked" src="#DeleteIcon" preserve-aspect="true"/>
             </horizontal>
         </vertical>
     </vertical>
