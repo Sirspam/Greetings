@@ -213,6 +213,9 @@ namespace Greetings.UI.ViewControllers
 		
 		public void ResetPosition()
 		{
+			_pluginConfig.FloatingScreenPosition = DefaultPosition;
+			_pluginConfig.FloatingScreenRotation = DefaultRotation;
+			
 			if (_floatingScreen == null)
 			{
 				return;
