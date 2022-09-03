@@ -7,6 +7,7 @@ using IPA.Utilities;
 using SiraUtil.Extras;
 using Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using VRUIControls;
 using Zenject;
@@ -23,9 +24,11 @@ namespace Greetings.Managers
 
 		public event Action? GreetingsShown;
 		public event Action? GreetingsHidden;
+		public event Action? StartGreetingsFinished;
 
 		private bool _noDismiss;
 		public bool SkipRequested;
+		public bool HasStartGreetingsPlayed;
 		private Action? _videoFinishedCallback;
 		private CanvasGroup? _screenSystemCanvasGroup;
 		private Vector3 _originalScreenSystemPosition;
@@ -33,82 +36,118 @@ namespace Greetings.Managers
 		private readonly PluginConfig _pluginConfig;
 		private readonly ScreenSystem _screenSystem;
 		private readonly VRInputModule _vrInputModule;
-		private readonly GreetingsUtils _greetingsUtils;
+		public readonly GreetingsUtils GreetingsUtils;
+		private readonly GameScenesManager _gameScenesManager;
 		private readonly TimeTweeningManager _timeTweeningManager;
 		private readonly FloorTextFloatingScreenController _floorTextFloatingScreenController;
 
-		public GreetingsScreenManager(PluginConfig pluginConfig, VRInputModule vrInputModule, GreetingsUtils greetingsUtils, HierarchyManager hierarchyManager, TimeTweeningManager tweeningManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
+		public GreetingsScreenManager(PluginConfig pluginConfig, VRInputModule vrInputModule, GreetingsUtils greetingsUtils, HierarchyManager hierarchyManager, GameScenesManager gameScenesManager, TimeTweeningManager tweeningManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
 		{
 			_pluginConfig = pluginConfig;
 			_vrInputModule = vrInputModule;
-			_greetingsUtils = greetingsUtils;
+			GreetingsUtils = greetingsUtils;
+			_gameScenesManager = gameScenesManager;
 			_timeTweeningManager = tweeningManager;
 			_floorTextFloatingScreenController = floorTextFloatingScreenController;
 			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
 		}
 
+		public bool IsVideoPlaying => GreetingsUtils.VideoPlayer != null && GreetingsUtils.VideoPlayer.isPlaying;
+
 		public void Initialize()
 		{
-			var gameObject = _screenSystem.gameObject;
-			_screenSystemCanvasGroup = gameObject.AddComponent<CanvasGroup>();
-			_originalScreenSystemPosition = gameObject.transform.position;
-			_greetingsUtils.CreateScreen();
+			_screenSystemCanvasGroup = _screenSystem.gameObject.AddComponent<CanvasGroup>();
+			GreetingsUtils.CreateScreen();
+
+			if (!_pluginConfig.PlayOnStart)
+			{
+				HasStartGreetingsPlayed = true;
+			}
 		}
 
 		public void Dispose()
 		{
-			if (_greetingsUtils.VideoPlayer != null)
+			if (GreetingsUtils.VideoPlayer != null)
 			{
-				_greetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
+				GreetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
+			}
+			
+			_gameScenesManager.transitionDidStartEvent -= GameScenesManagerOntransitionDidStartEvent;
+		}
+		
+		// For Multiplayer and Tournament Assistant
+		private void GameScenesManagerOntransitionDidStartEvent(float obj)
+		{
+			if (SceneManager.GetActiveScene().name == "MainMenu")
+			{
+				DismissGreetings(true);
 			}
 		}
 		
 		public void StartGreetings(GreetingsUtils.VideoType videoType, Action? callback = null, bool noDismiss = false, bool useAwaiter = false)
 		{
-			if (_pluginConfig.IsVideoPathEmpty)
+			if (_pluginConfig.IsVideoPathEmpty || GreetingsUtils.VideoPlayer!.isPlaying)
 			{
 				callback?.Invoke();
 				return;
 			}
+
+			if (!HasStartGreetingsPlayed && _pluginConfig.PlayOnStart && useAwaiter)
+			{
+				_videoFinishedCallback = () =>
+				{
+					callback?.Invoke();
+					StartGreetingsFinished?.Invoke();
+					HasStartGreetingsPlayed = true;
+				};
+			}
+			else
+			{
+				_videoFinishedCallback = callback;	
+			}
 			
-			_videoFinishedCallback = callback;
 			SkipRequested = false;
-			_greetingsUtils.CreateScreen(videoType);
+			GreetingsUtils.CreateScreen(videoType);
 			
 			_vrInputModule.enabled = false;
 			GreetingsShown?.Invoke();
+			_originalScreenSystemPosition = _screenSystem.gameObject.transform.position;
 			TweenScreenSystemAlpha(TweenType.Out, () =>
 			{
-				_greetingsUtils.VideoPlayer!.loopPointReached += VideoEnded;
+				_screenSystem.gameObject.transform.position = Vector3.negativeInfinity;
+				GreetingsUtils.VideoPlayer!.loopPointReached += VideoEnded;
 				
 				_noDismiss = noDismiss;
-				_greetingsUtils.SkipController!.StartCoroutine();
+				GreetingsUtils.SkipController!.StartCoroutine();
 				
 				if (useAwaiter)
 				{
-					_greetingsUtils.GreetingsAwaiter!.StartCoroutine();
+					GreetingsUtils.GreetingsAwaiter!.StartCoroutine();
 					return;
 				}
 
-				_greetingsUtils.ShowScreen();
+				GreetingsUtils.ShowScreen();
 			});
+			
+			_gameScenesManager.transitionDidStartEvent += GameScenesManagerOntransitionDidStartEvent;
 		}
 
 		// I love events with parameters I don't need
 		private void VideoEnded(VideoPlayer source)
 		{
-			_greetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
+			GreetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
 			VideoEnded();
 		}
 
 		public void VideoEnded()
 		{
-			_greetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
-			
+			GreetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
+
 			if (_noDismiss)
 			{
 				_videoFinishedCallback?.Invoke();
 				_videoFinishedCallback = null;
+				_gameScenesManager.transitionDidStartEvent -= GameScenesManagerOntransitionDidStartEvent;
 			}
 			else
 			{
@@ -116,19 +155,21 @@ namespace Greetings.Managers
 			}
 		}
 
-		public async void DismissGreetings(bool instant = false)
+		private async void DismissGreetings(bool instant = false)
 		{
-			if (_greetingsUtils.SkipController != null)
+			_gameScenesManager.transitionDidStartEvent -= GameScenesManagerOntransitionDidStartEvent;
+			
+			if (GreetingsUtils.SkipController != null)
 			{
-				_greetingsUtils.SkipController.enabled = false;
+				GreetingsUtils.SkipController.enabled = false;
 			}
 
-			if (_greetingsUtils.GreetingsAwaiter != null)
+			if (GreetingsUtils.GreetingsAwaiter != null)
 			{
-				_greetingsUtils.GreetingsAwaiter.enabled = false;
+				GreetingsUtils.GreetingsAwaiter.enabled = false;
 			}
 			
-			_greetingsUtils.HideScreen(!instant);
+			GreetingsUtils.HideScreen(!instant);
 			_floorTextFloatingScreenController.HideScreen();
 			GreetingsHidden?.Invoke();
 			

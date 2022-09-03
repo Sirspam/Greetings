@@ -132,16 +132,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Resources\bscinema.bundle"/>
-        <None Remove="Resources\greetingsbundle.bundle"/>
-        <None Remove="Resources\mvp.bundle"/>
-        <None Remove="Resources\PauseOrPlay.png"/>
-        <None Remove="UI\Views\GreetingsSettingsView.bsml"/>
-        <None Remove="UI\Views\ScreenControlsView.bsml"/>
-        <None Remove="UI\Views\VideoSelectionView.bsml"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="BeatSaberModdingTools.Tasks" Version="1.4.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

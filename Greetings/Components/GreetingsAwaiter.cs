@@ -19,6 +19,7 @@ namespace Greetings.Components
 		private float _maxWaitTime;
 		private int _stabilityCounter;
 		private float _waitTimeCounter;
+		private Coroutine? _awaiterCoroutine;
 
 		private SiraLog _siraLog = null!;
 		private MainCamera _mainCamera = null!;
@@ -55,7 +56,7 @@ namespace Greetings.Components
 		public void StartCoroutine()
 		{
 			enabled = true;
-			StartCoroutine(AwaiterCoroutine());
+			_awaiterCoroutine = StartCoroutine(AwaiterCoroutine());
 		}
 
 		private IEnumerator AwaiterCoroutine()
@@ -124,7 +125,7 @@ namespace Greetings.Components
 
 		private void PlayTheThing()
 		{
-			StopCoroutine(AwaiterCoroutine());
+			StopCoroutine(_awaiterCoroutine);
 			
 			_greetingsUtils.ShowScreen();
 			enabled = false;

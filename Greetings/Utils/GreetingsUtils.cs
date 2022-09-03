@@ -130,7 +130,8 @@ namespace Greetings.Utils
 				}
 			}
 			
-			VideoPlayer!.Prepare();
+			_siraLog.Info($"Preparing {Path.GetFileName(VideoPlayer.url)}");
+			VideoPlayer.Prepare();
 			VideoPlayer.prepareCompleted += PrepareCompletedFunction;
 
 			void PrepareCompletedFunction(VideoPlayer source)

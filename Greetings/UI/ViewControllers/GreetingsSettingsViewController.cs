@@ -1,9 +1,13 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components.Settings;
+using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
 using Greetings.Utils;
 using HMUI;
 using IPA.Loader;
+using SiraUtil.Logging;
 using SiraUtil.Zenject;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +19,12 @@ namespace Greetings.UI.ViewControllers
 	[ViewDefinition("Greetings.UI.Views.GreetingsSettingsView.bsml")]
 	internal class GreetingsSettingsViewController : BSMLAutomaticViewController
 	{
+		private enum RandomiserSliders
+		{
+			Min,
+			Max
+		}
+		
 		private bool _underlineActive;
 
 		[UIComponent("top-panel")] private readonly HorizontalOrVerticalLayoutGroup _topPanel = null!;
@@ -22,24 +32,29 @@ namespace Greetings.UI.ViewControllers
 		[UIComponent("face-headset-button")] private readonly Button _faceHeadsetButton = null!;
 		[UIComponent("set-upright-button")] private readonly Button _setUprightButton = null!;
 		[UIComponent("underline-text")] private readonly Transform _underlineText = null!;
+		[UIComponent("randomiser-modal-slider")] private readonly SliderSetting _randomiserModalSlider = null!;
 		[UIComponent("version-text")] private readonly CurvedTextMeshPro _versionText = null!;
+		
+		[UIParams] private readonly BSMLParserParams _parserParams = null!;
 
 		private UIUtils _uiUtils = null!;
-		private GreetingsUtils _greetingsUtils = null!;
 		private PluginConfig _pluginConfig = null!;
+		private GreetingsUtils _greetingsUtils = null!;
 		private PluginMetadata _pluginMetadata = null!;
 		private YesNoModalViewController _yesNoModalViewController = null!;
 		private RandomVideoFloatingScreenController _randomVideoFloatingScreenController = null!;
+		private SiraLog _siraLog = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, GreetingsUtils greetingsUtils, PluginConfig pluginConfig, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
+		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController, SiraLog siraLog)
 		{
 			_uiUtils = uiUtils;
-			_greetingsUtils = greetingsUtils;
 			_pluginConfig = pluginConfig;
+			_greetingsUtils = greetingsUtils;
 			_pluginMetadata = pluginMetadata.Value;
 			_yesNoModalViewController = yesNoModalViewController;
 			_randomVideoFloatingScreenController = randomVideoFloatingScreenController;
+			_siraLog = siraLog;
 		}
 
 		#region Values
@@ -192,8 +207,89 @@ namespace Greetings.UI.ViewControllers
 			}
 		}
 
+		[UIValue("randomiser-enabled")]
+		private bool RandomiserEnabled
+		{
+			get => _pluginConfig.RandomiserEnabled;
+			set
+			{
+				_pluginConfig.RandomiserEnabled = value;
+				NotifyPropertyChanged();
+				NotifyPropertyChanged(nameof(RandomiserMinButtonInteractive));
+				NotifyPropertyChanged(nameof(RandomiserMaxButtonInteractive));
+			}
+		}
+		
+		[UIValue("randomiser-min-minutes")]
+		private string RandomiserMinMinutes => MinutesFormatter(_pluginConfig.RandomiserMinMinutes);
+
+		[UIValue("randomiser-max-minutes")]
+		private string RandomiserMaxMinutes => MinutesFormatter(_pluginConfig.RandomiserMaxMinutes);
+
+		[UIValue("randomiser-min-button-interactive")]
+		private bool RandomiserMinButtonInteractive => RandomiserEnabled && _pluginConfig.RandomiserMaxMinutes != 1;
+
+		[UIValue("randomiser-max-button-interactive")]
+		private bool RandomiserMaxButtonInteractive => RandomiserEnabled && _pluginConfig.RandomiserMinMinutes != 59;
+		
 		[UIValue("version-text-value")]
 		private string VersionText => $"{_pluginMetadata.Name} v{_pluginMetadata.HVersion} by {_pluginMetadata.Author}";
+
+		#endregion
+
+		#region RandomiserModal
+
+		private string _randomiserSliderText = null!;
+
+		[UIValue("randomiser-slider-text")]
+		private string RandomiserSliderText
+		{
+			get => _randomiserSliderText;
+			set
+			{
+				_randomiserSliderText = value;
+				NotifyPropertyChanged();
+			}
+		}
+		
+		private void ShowRandomiserModal(RandomiserSliders slider)
+		{
+			_randomiserModalSlider.slider.valueDidChangeEvent -= MinMinutesSliderDidChangeEvent;
+			_randomiserModalSlider.slider.valueDidChangeEvent -= MaxMinutesSliderDidChangeEvent;
+			
+			if (slider == RandomiserSliders.Min)
+			{
+				RandomiserSliderText = "Min Minutes";
+				_randomiserModalSlider.slider.minValue = 0;
+				_randomiserModalSlider.slider.maxValue = _pluginConfig.RandomiserMaxMinutes - 1;
+				_randomiserModalSlider.slider.value = _pluginConfig.RandomiserMinMinutes;
+				_randomiserModalSlider.slider.valueDidChangeEvent += MinMinutesSliderDidChangeEvent;
+			}
+			else
+			{
+				RandomiserSliderText = "Max Minutes";
+				_randomiserModalSlider.slider.minValue = _pluginConfig.RandomiserMinMinutes + 1;
+				_randomiserModalSlider.slider.maxValue = 60;
+				_randomiserModalSlider.slider.value = _pluginConfig.RandomiserMaxMinutes;
+				_randomiserModalSlider.slider.valueDidChangeEvent += MaxMinutesSliderDidChangeEvent;
+			}
+			
+			_parserParams.EmitEvent("open-modal");
+		}
+
+		private void MinMinutesSliderDidChangeEvent(RangeValuesTextSlider slider, float value)
+		{
+			_pluginConfig.RandomiserMinMinutes = (int) Math.Round(value);
+			NotifyPropertyChanged(nameof(RandomiserMinMinutes));
+			NotifyPropertyChanged(nameof(RandomiserMaxButtonInteractive));
+		}
+		
+		private void MaxMinutesSliderDidChangeEvent(RangeValuesTextSlider slider, float value)
+		{
+			_pluginConfig.RandomiserMaxMinutes = (int) Math.Round(value);
+			NotifyPropertyChanged(nameof(RandomiserMaxMinutes));
+			NotifyPropertyChanged(nameof(RandomiserMinButtonInteractive));
+		}
 
 		#endregion
 
@@ -258,6 +354,19 @@ namespace Greetings.UI.ViewControllers
 			_uiUtils.ButtonUnderlineClick(_setUprightButton.gameObject);
 		}
 
+		[UIAction("edit-min-time-clicked")]
+		private void EditMinTimeClicked() => ShowRandomiserModal(RandomiserSliders.Min);
+		
+		[UIAction("edit-max-time-clicked")]
+		private void EditMaxTimeClicked() => ShowRandomiserModal(RandomiserSliders.Max);
+
+		
+		[UIAction("minutes-formatter")]
+		private string MinutesFormatter(int value)
+		{
+			return value == 1 ? "1 Minute" : $"{value} Minutes";
+		}
+
 		[UIAction("version-text-clicked")]
 		private void VersionTextClicked()
 		{
@@ -269,11 +378,14 @@ namespace Greetings.UI.ViewControllers
 			_yesNoModalViewController.ShowModal(_versionText.transform, $"Open {_pluginMetadata.Name}'s GitHub page?", 6,
 				() => Application.OpenURL(_pluginMetadata.PluginHomeLink!.ToString()));
 		}
-
+		
 		private void OnEnable() => _randomVideoFloatingScreenController.Interactable = false;
 
 		private void OnDisable()
 		{
+			_randomiserModalSlider.slider.valueDidChangeEvent -= MinMinutesSliderDidChangeEvent;
+			_randomiserModalSlider.slider.valueDidChangeEvent -= MaxMinutesSliderDidChangeEvent;
+			
 			if (!_pluginConfig.FloatingScreenEnabled)
 			{
 				_randomVideoFloatingScreenController.Dispose();

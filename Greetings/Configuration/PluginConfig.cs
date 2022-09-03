@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Greetings.UI.ViewControllers;
 using IPA.Config.Stores;
@@ -23,7 +22,7 @@ namespace Greetings.Configuration
 		public virtual bool PlayOnStart { get; set; } = true;
 		public virtual bool PlayOnQuit { get; set; } = false;
 		public virtual bool PlayOnce { get; set; } = true;
-		public virtual float ScreenDistance { get; set; } = 6f;
+		public virtual float ScreenDistance { get; set; } = 5.5f;
 		public virtual bool EasterEggs { get; set; } = true;
 		public virtual bool AwaitFps { get; set; } = true;
 		public virtual bool AwaitHmd { get; set; } = true;
@@ -32,13 +31,13 @@ namespace Greetings.Configuration
 		public virtual int FpsStreak { get; set; } = 5;
 		public virtual int MaxWaitTime { get; set; } = 10;
 		public virtual bool FloatingScreenEnabled { get; set; } = false;
-		public virtual bool HandleEnabled { get; set; } = true;
+		public virtual bool HandleEnabled { get; set; } = false;
 		public virtual float FloatingScreenScale { get; set; } = 1f;
 		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
 		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
 		public virtual bool RandomiserEnabled { get; set; } = false;
-		public virtual int RandomiserMinMinutes { get; set; } = 3;
-		public virtual int RandomiserMaxMinutes { get; set; } = 10;
+		public virtual int RandomiserMinMinutes { get; set; } = 5;
+		public virtual int RandomiserMaxMinutes { get; set; } = 30;
 		
 		[Ignore]
 		public bool IsVideoPathEmpty;

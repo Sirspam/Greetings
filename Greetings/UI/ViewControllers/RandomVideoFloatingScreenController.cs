@@ -8,7 +8,6 @@ using Greetings.Managers;
 using Greetings.Utils;
 using Tweening;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Greetings.UI.ViewControllers
@@ -269,11 +268,7 @@ namespace Greetings.UI.ViewControllers
 
 		private void GreetingsShown() => SetFloatingScreenActive(false);
 
-		private void GreetingsHidden()
-		{
-			SetFloatingScreenActive(true);
-			_gameScenesManager.transitionDidStartEvent -= GameScenesManagerOntransitionDidStartEvent;
-		}
+		private void GreetingsHidden() => SetFloatingScreenActive(true);
 
 		private void FloatingScreenOnHandleReleased(object sender, FloatingScreenHandleEventArgs e)
 		{
@@ -288,7 +283,6 @@ namespace Greetings.UI.ViewControllers
 			{
 				SetFloatingScreenActive(false);
 				_greetingsScreenManager.StartGreetings(GreetingsUtils.VideoType.RandomVideo);
-				_gameScenesManager.transitionDidStartEvent += GameScenesManagerOntransitionDidStartEvent;
 			}
 		}
 
@@ -297,15 +291,6 @@ namespace Greetings.UI.ViewControllers
 			if (_pluginConfig.FloatingScreenEnabled && _floatingScreen == null)
 			{
 				CreateFloatingScreen();
-			}
-		}
-
-		// For Multiplayer and Tournament Assistant
-		private void GameScenesManagerOntransitionDidStartEvent(float obj)
-		{
-			if (SceneManager.GetActiveScene().name == "MainMenu")
-			{
-				_greetingsScreenManager.DismissGreetings(true);
 			}
 		}
 
@@ -321,7 +306,6 @@ namespace Greetings.UI.ViewControllers
 			
 			_greetingsScreenManager.GreetingsShown -= GreetingsShown;
 			_greetingsScreenManager.GreetingsHidden -= GreetingsHidden;
-			_gameScenesManager.transitionDidStartEvent -= GameScenesManagerOntransitionDidStartEvent;
 		}
 	}
 }
