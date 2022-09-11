@@ -202,7 +202,7 @@ namespace Greetings.UI.ViewControllers
 			get => _pluginConfig.FloatingScreenScale;
 			set
 			{
-				_pluginConfig.FloatingScreenScale = FloatingScreenScale;
+				_pluginConfig.FloatingScreenScale = value;
 				_randomVideoFloatingScreenController.SetScale(value);
 			}
 		}
