@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Greetings.Components;
 using Greetings.Configuration;
@@ -34,12 +35,14 @@ namespace Greetings.Utils
 
 		private Vector3 _screenScale;
 		private Shader? _screenShader;
+		private string? _previousRandomVideo;
 		private AudioSource? _screenAudioSource;
 		private FloatTween? _underlineMoveTween;
 		private GameObject? _greetingsUnderline;
 		private Vector3Tween? _underlineShowTween;
 		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
+		private readonly Random _random;
 		private readonly SiraLog _siraLog;
 		private readonly DiContainer _diContainer;
 		private readonly PluginConfig _pluginConfig;
@@ -48,6 +51,7 @@ namespace Greetings.Utils
 		
 		public GreetingsUtils(SiraLog siraLog, DiContainer diContainer, PluginConfig pluginConfig, SongPreviewPlayer songPreviewPlayer, TimeTweeningManager timeTweeningManager)
 		{
+			_random = new Random();
 			_siraLog = siraLog;
 			_diContainer = diContainer;
 			_pluginConfig = pluginConfig;
@@ -124,8 +128,13 @@ namespace Greetings.Utils
 				case VideoType.RandomVideo:
 				{
 					var files = Directory.GetFiles(_pluginConfig.VideoPath);
-					var rand = new Random();
-					VideoPlayer!.url = files[rand.Next(files.Length)];
+					if (_previousRandomVideo != null)
+					{
+						files = files.Where(val => val != _previousRandomVideo).ToArray();
+					}
+					_previousRandomVideo = files[_random.Next(files.Length)];
+					VideoPlayer!.url = _previousRandomVideo;
+
 					break;
 				}
 			}
