@@ -43,10 +43,9 @@ namespace Greetings.UI.ViewControllers
 		private PluginMetadata _pluginMetadata = null!;
 		private YesNoModalViewController _yesNoModalViewController = null!;
 		private RandomVideoFloatingScreenController _randomVideoFloatingScreenController = null!;
-		private SiraLog _siraLog = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController, SiraLog siraLog)
+		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
 		{
 			_uiUtils = uiUtils;
 			_pluginConfig = pluginConfig;
@@ -54,7 +53,6 @@ namespace Greetings.UI.ViewControllers
 			_pluginMetadata = pluginMetadata.Value;
 			_yesNoModalViewController = yesNoModalViewController;
 			_randomVideoFloatingScreenController = randomVideoFloatingScreenController;
-			_siraLog = siraLog;
 		}
 
 		#region Values

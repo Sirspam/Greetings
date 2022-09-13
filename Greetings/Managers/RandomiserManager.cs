@@ -20,15 +20,19 @@ namespace Greetings.Managers
 		private Random _random = null!;
 		private SiraLog _siraLog = null!;
 		private PluginConfig _pluginConfig = null!;
+		private GameScenesManager _gameScenesManager = null!;
+		private ResultsViewController _resultsViewController = null!;
 		private GreetingsScreenManager _greetingsScreenManager = null!;
 		private GreetingsFlowCoordinator _greetingsFlowCoordinator = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, PluginConfig pluginConfig, GreetingsScreenManager greetingsScreenManager, GreetingsFlowCoordinator greetingsFlowCoordinator)
+		public void Construct(SiraLog siraLog, PluginConfig pluginConfig, GameScenesManager gameScenesManager, ResultsViewController resultsViewController, GreetingsScreenManager greetingsScreenManager, GreetingsFlowCoordinator greetingsFlowCoordinator)
 		{
 			_random = new Random();
 			_siraLog = siraLog;
 			_pluginConfig = pluginConfig;
+			_gameScenesManager = gameScenesManager;
+			_resultsViewController = resultsViewController;
 			_greetingsScreenManager = greetingsScreenManager;
 			_greetingsFlowCoordinator = greetingsFlowCoordinator;
 		}
@@ -42,6 +46,13 @@ namespace Greetings.Managers
 				SetNewGreetingsTime();
 				_timerCoroutine = StartCoroutine(TimerCoroutine());
 			});
+		}
+		
+		private IEnumerator AwaitResultsShenanigans(Action callback)
+		{
+			yield return _gameScenesManager.waitUntilSceneTransitionFinish;
+			yield return new WaitUntil(() => !_resultsViewController.isActiveAndEnabled);
+			callback.Invoke();
 		}
 
 		private void SetNewGreetingsTime()
@@ -101,6 +112,7 @@ namespace Greetings.Managers
 			else
 			{
 				SetNewGreetingsTime();
+				_timerCoroutine = StartCoroutine(TimerCoroutine());
 			}
 		}
 
@@ -108,6 +120,7 @@ namespace Greetings.Managers
 		{
 			_greetingsScreenManager.StartGreetingsFinished -= GreetingsScreenManagerOnStartGreetingsFinished;
 			SetNewGreetingsTime();
+			_timerCoroutine = StartCoroutine(TimerCoroutine());
 		}
 
 		private void OnEnable()
@@ -115,14 +128,27 @@ namespace Greetings.Managers
 			// Stops OnEnable from running when the GO is first enabled, that required logic is handled in the Awake method
 			if (!_awoken)
 			{
+				_siraLog.Info("bals ");
 				_awoken = true;
 				return;
 			}
-			
-			AddTimeFromPreviouslyActive();
-			_timerCoroutine = StartCoroutine(TimerCoroutine());
-		}
 
+			if (_gameScenesManager.isInTransition)
+			{
+				StartCoroutine(AwaitResultsShenanigans(() =>
+				{
+					AddTimeFromPreviouslyActive();
+					_timerCoroutine = StartCoroutine(TimerCoroutine());
+				}));
+			}
+			else
+			{
+				_siraLog.Info("lmao");
+				AddTimeFromPreviouslyActive();
+				_timerCoroutine = StartCoroutine(TimerCoroutine());
+			}
+		}
+		
 		private void OnDisable()
 		{
 			if (_pluginConfig.RandomiserEnabled)

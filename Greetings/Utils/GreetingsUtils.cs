@@ -229,7 +229,7 @@ namespace Greetings.Utils
 		
 		public void HideScreen(bool doTransition = true, bool reloadVideo = false)
 		{
-			if (GreetingsScreen == null || VideoPlayer == null || !GreetingsScreen.gameObject.activeSelf)
+			if (GreetingsScreen == null || VideoPlayer == null)
 			{
 				return;
 			}

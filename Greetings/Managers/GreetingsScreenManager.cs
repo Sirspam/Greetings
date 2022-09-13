@@ -86,7 +86,7 @@ namespace Greetings.Managers
 		
 		public void StartGreetings(GreetingsUtils.VideoType videoType, Action? callback = null, bool noDismiss = false, bool useAwaiter = false)
 		{
-			if (_pluginConfig.IsVideoPathEmpty || GreetingsUtils.VideoPlayer!.isPlaying)
+			if (_pluginConfig.IsVideoPathEmpty || !GreetingsUtils.VideoPlayer!.enabled || GreetingsUtils.VideoPlayer.isPlaying)
 			{
 				callback?.Invoke();
 				return;
