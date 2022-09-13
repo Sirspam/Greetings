@@ -128,7 +128,6 @@ namespace Greetings.Managers
 			// Stops OnEnable from running when the GO is first enabled, that required logic is handled in the Awake method
 			if (!_awoken)
 			{
-				_siraLog.Info("bals ");
 				_awoken = true;
 				return;
 			}
