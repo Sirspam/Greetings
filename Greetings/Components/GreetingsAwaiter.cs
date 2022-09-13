@@ -78,7 +78,7 @@ namespace Greetings.Components
 			{
 				_siraLog.Info("Awaiting HMD focus");
 				_floorTextFloatingScreenController.ChangeTextTo(FloorTextFloatingScreenController.TextChange.AwaitingHmdFocus);
-				yield return new WaitUntil(() => (_vrPlatformHelper.hasVrFocus && Math.Abs(Quaternion.Dot(_mainCamera.rotation, _greetingsUtils.GreetingsScreen!.transform.rotation)) >= 0.97f) || _fpfcSettings.Enabled);
+				yield return new WaitUntil(() => (_vrPlatformHelper.hasVrFocus && Math.Abs(Quaternion.Dot(_mainCamera.rotation, _greetingsUtils.GreetingsScreen!.transform.rotation)) >= 0.95f) || _fpfcSettings.Enabled);
 				_siraLog.Info("HMD focused");
 			}
 			
