@@ -16,7 +16,7 @@ namespace Greetings.UI.ViewControllers
 {
 	[HotReload(RelativePathToLayout = @"..\Views\GreetingsSettingsView")]
 	[ViewDefinition("Greetings.UI.Views.GreetingsSettingsView.bsml")]
-	internal class GreetingsSettingsViewController : BSMLAutomaticViewController
+	internal sealed class GreetingsSettingsViewController : BSMLAutomaticViewController
 	{
 		private enum RandomiserSliders
 		{

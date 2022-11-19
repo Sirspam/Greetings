@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Greetings.Utils
 {
-	internal class UIUtils
+	internal sealed class UIUtils
 	{
 		private Color? _defaultUnderlineColor;
 		private PanelAnimationSO? _presentPanelAnimation;
 		private PanelAnimationSO? _dismissPanelAnimation;
 
-		private readonly TimeTweeningManager _uwuTweenyManager; // Thanks once again, PixelBoom
+		private readonly TimeTweeningManager _uwuTweenyManager; // Thanks PixelBoom
 		private ColorsOverrideSettingsPanelController _colorsOverrideSettingsPanelController;
 		
 		public UIUtils(TimeTweeningManager timeTweeningManager, GameplaySetupViewController gameplaySetupViewController)

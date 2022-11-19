@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Greetings.Managers
 {
-	internal class GreetingsStartManager : IInitializable, IDisposable
+	internal sealed class GreetingsStartManager : IInitializable, IDisposable
 	{
 		private static bool _greetingsPlayed;
 		

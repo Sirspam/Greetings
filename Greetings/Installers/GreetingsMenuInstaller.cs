@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Greetings.Installers
 {
-	internal class GreetingsMenuInstaller : Installer
+	internal sealed class GreetingsMenuInstaller : Installer
 	{
 		private readonly PluginConfig _pluginConfig;
 

@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Greetings.Managers
 {
-	internal class MenuButtonManager : IInitializable, IDisposable
+	internal sealed class MenuButtonManager : IInitializable, IDisposable
 	{
 		private readonly MenuButton _menuButton;
 		private readonly PluginConfig _pluginConfig;

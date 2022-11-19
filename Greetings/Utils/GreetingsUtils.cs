@@ -15,7 +15,7 @@ using Random = System.Random;
 
 namespace Greetings.Utils
 {
-	internal class GreetingsUtils
+	internal sealed class GreetingsUtils
 	{
 		public enum VideoType
 		{

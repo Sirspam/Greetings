@@ -11,7 +11,7 @@ namespace Greetings.UI.ViewControllers
 {
 	[ViewDefinition("Greetings.UI.Views.NoVideosView.bsml")]
 	[HotReload(RelativePathToLayout = @"..\Views\NoVideosView.bsml")]
-	internal class NoVideosViewController : BSMLAutomaticViewController
+	internal sealed class NoVideosViewController : BSMLAutomaticViewController
 	{
 		private int _reloadCount;
 		public event Action? VideosAddedEvent;

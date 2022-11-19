@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Greetings.Components
 {
-	internal class SkipController : MonoBehaviour
+	internal sealed class SkipController : MonoBehaviour
 	{
 		private SiraLog _siraLog = null!;
 		private GreetingsScreenManager _greetingsScreenManager = null!;

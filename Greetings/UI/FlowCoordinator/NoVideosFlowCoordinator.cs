@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Greetings.UI.FlowCoordinator
 {
-	internal class NoVideosFlowCoordinator : HMUI.FlowCoordinator
+	internal sealed class NoVideosFlowCoordinator : HMUI.FlowCoordinator
 	{
 		private MainFlowCoordinator _mainFlowCoordinator = null!;
 		private NoVideosViewController _noVideosViewController = null!;

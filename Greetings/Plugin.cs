@@ -10,7 +10,7 @@ namespace Greetings
 {
 	[Plugin(RuntimeOptions.DynamicInit)]
 	[NoEnableDisable]
-	public class Plugin
+	public sealed class Plugin
 	{
 		[Init]
 		public Plugin(Config conf, Logger logger, Zenjector zenjector)

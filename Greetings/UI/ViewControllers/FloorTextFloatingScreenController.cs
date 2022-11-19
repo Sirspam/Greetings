@@ -11,7 +11,7 @@ namespace Greetings.UI.ViewControllers
 {
 	[ViewDefinition("Greetings.UI.Views.FloorTextView.bsml")]
 	[HotReload(RelativePathToLayout = @"..\Views\FloorTextView.bsml")]
-	internal class FloorTextFloatingScreenController : BSMLAutomaticViewController
+	internal sealed class FloorTextFloatingScreenController : BSMLAutomaticViewController
 	{
 		private bool _topTextShowing;
 		private bool _bottomTextShowing;

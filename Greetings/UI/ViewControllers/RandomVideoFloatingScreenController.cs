@@ -14,7 +14,7 @@ namespace Greetings.UI.ViewControllers
 {
 	[ViewDefinition("Greetings.UI.Views.RandomVideoView.bsml")]
 	[HotReload(RelativePathToLayout = @"..\Views\RandomVideoView.bsml")]
-	internal class RandomVideoFloatingScreenController : BSMLAutomaticViewController, IInitializable, IDisposable
+	internal sealed class RandomVideoFloatingScreenController : BSMLAutomaticViewController, IInitializable, IDisposable
 	{
 		public static Vector3 DefaultPosition = new Vector3(4.20f, 1f, 0.5f);
 		public static Quaternion DefaultRotation = Quaternion.Euler(0f, 80f, 0f);

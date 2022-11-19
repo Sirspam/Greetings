@@ -10,7 +10,7 @@ using Random = System.Random;
 
 namespace Greetings.Managers
 {
-	internal class RandomiserManager : MonoBehaviour, IDisposable
+	internal sealed class RandomiserManager : MonoBehaviour, IDisposable
 	{
 		private bool _awoken;
 		private DateTime _itsGreetinTime; // Stand back, I'm beginning to greet!

@@ -20,7 +20,7 @@ namespace Greetings.UI.ViewControllers
 {
 	[HotReload(RelativePathToLayout = @"..\Views\VideoSelectionView")]
 	[ViewDefinition("Greetings.UI.Views.VideoSelectionView.bsml")]
-	internal class VideoSelectionViewController : BSMLAutomaticViewController
+	internal sealed class VideoSelectionViewController : BSMLAutomaticViewController
 	{
 		private FileInfo _selectedFile = null!;
 		private int _selectedVideoTab;

@@ -18,7 +18,7 @@ namespace Greetings.UI.ViewControllers
 {
 	[HotReload(RelativePathToLayout = @"..\Views\ScreenControlsView")]
 	[ViewDefinition("Greetings.UI.Views.ScreenControlsView.bsml")]
-	internal class ScreenControlsViewController : BSMLAutomaticViewController
+	internal sealed class ScreenControlsViewController : BSMLAutomaticViewController
 	{
 		private bool _loop;
 		private bool _updateAvailable;

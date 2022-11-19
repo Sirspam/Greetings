@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Greetings.UI.FlowCoordinator
 {
-	internal class GreetingsFlowCoordinator : HMUI.FlowCoordinator
+	internal sealed class GreetingsFlowCoordinator : HMUI.FlowCoordinator
 	{
 		public event Action<bool>? GreetingsFlowCoordinatorActiveChangedEvent;
 

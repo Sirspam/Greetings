@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Greetings.Managers
 {
-	internal class GreetingQuitManager : IInitializable, IDisposable
+	internal sealed class GreetingQuitManager : IInitializable, IDisposable
 	{
 		private readonly PluginConfig _pluginConfig;
 		private readonly FadeInOutController _fadeInOutController;

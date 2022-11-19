@@ -14,7 +14,7 @@ using Zenject;
 
 namespace Greetings.Managers
 {
-	internal class GreetingsScreenManager : IInitializable, IDisposable
+	internal sealed class GreetingsScreenManager : IInitializable, IDisposable
 	{
 		private enum TweenType
 		{

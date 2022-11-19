@@ -12,7 +12,7 @@ using Zenject;
 
 namespace Greetings.Components
 {
-	internal class GreetingsAwaiter : MonoBehaviour
+	internal sealed class GreetingsAwaiter : MonoBehaviour
 	{
 		private int _targetFps;
 		private int _fpsStreak;
