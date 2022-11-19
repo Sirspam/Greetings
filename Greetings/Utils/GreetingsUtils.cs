@@ -128,7 +128,7 @@ namespace Greetings.Utils
 				case VideoType.RandomVideo:
 				{
 					var files = Directory.GetFiles(_pluginConfig.VideoPath);
-					if (_previousRandomVideo != null)
+					if (_previousRandomVideo != null && files.Length > 1)
 					{
 						files = files.Where(val => val != _previousRandomVideo).ToArray();
 					}
