@@ -7,7 +7,6 @@ using Greetings.Configuration;
 using Greetings.Utils;
 using HMUI;
 using IPA.Loader;
-using SiraUtil.Logging;
 using SiraUtil.Zenject;
 using UnityEngine;
 using UnityEngine.UI;

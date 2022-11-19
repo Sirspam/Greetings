@@ -142,7 +142,6 @@ namespace Greetings.Managers
 			}
 			else
 			{
-				_siraLog.Info("lmao");
 				AddTimeFromPreviouslyActive();
 				_timerCoroutine = StartCoroutine(TimerCoroutine());
 			}
