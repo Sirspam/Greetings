@@ -4,7 +4,7 @@
   "name": "Greetings",
   "author": "Sirspam",
   "version": "0.3.0",
-  "description": "Beat Saber mod for playing a video on the game's start up",
+  "description": "Beat Saber mod for playing a video on the game's start up, exit or on demand",
   "gameVersion": "1.21.0",
   "icon": "Greetings.Resources.Greetings.png",
   "dependsOn": {
