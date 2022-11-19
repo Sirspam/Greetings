@@ -40,16 +40,14 @@ namespace Greetings.UI.ViewControllers
 
 		private MainCamera _mainCamera = null!;
 		private PluginConfig _pluginConfig = null!;
-		private GameScenesManager _gameScenesManager = null!;
 		private TimeTweeningManager _timeTweeningManager = null!;
 		private GreetingsScreenManager _greetingsScreenManager = null!;
 
 		[Inject]
-		public void Construct(MainCamera mainCamera, PluginConfig pluginConfig, GameScenesManager gameScenesManager, TimeTweeningManager timeTweeningManager, GreetingsScreenManager greetingsScreenManager)
+		public void Construct(MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, GreetingsScreenManager greetingsScreenManager)
 		{
 			_mainCamera = mainCamera;
 			_pluginConfig = pluginConfig;
-			_gameScenesManager = gameScenesManager;
 			_timeTweeningManager = timeTweeningManager;
 			_greetingsScreenManager = greetingsScreenManager;
 		}
@@ -113,11 +111,11 @@ namespace Greetings.UI.ViewControllers
 				CreateFloatingScreen();
 			}
 
-			var tween = new Vector3Tween(_floatingScreen!.handle.transform.localScale, _handleScale, val => _floatingScreen.handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
+			var tween = new Vector3Tween(new Vector3(_handleScale.x, 0f), _handleScale, val => _floatingScreen!.handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
 			{
-				onStart = () => _floatingScreen.ShowHandle = true
+				onStart = () => _floatingScreen!.ShowHandle = true
 			};
-			_timeTweeningManager.KillAllTweens(_floatingScreen.handle);
+			_timeTweeningManager.KillAllTweens(_floatingScreen!.handle);
 			_timeTweeningManager.AddTween(tween, _floatingScreen.handle);
 		}
 
@@ -128,7 +126,7 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 
-			var tween = new Vector3Tween(_floatingScreen.handle.transform.localScale, new Vector3(_handleScale.x, 0f), val => _floatingScreen.handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
+			var tween = new Vector3Tween(_handleScale, new Vector3(_handleScale.x, 0f), val => _floatingScreen.handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
 			{
 				onCompleted = () => _floatingScreen.ShowHandle = false
 			};
