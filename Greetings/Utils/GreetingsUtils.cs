@@ -24,6 +24,7 @@ namespace Greetings.Utils
 			RandomVideo
 		}
 		
+		public bool _skipRequested;
 		public VideoPlayer? VideoPlayer;
 		public VideoType CurrentVideoType;
 		public GameObject? GreetingsScreen;
@@ -61,6 +62,8 @@ namespace Greetings.Utils
 		
 		public void CreateScreen()
 		{
+			_skipRequested = false;
+			
 			if (GreetingsScreen == null)
 			{
 				_siraLog.Info("Creating GreetingScreen");
@@ -147,6 +150,11 @@ namespace Greetings.Utils
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
 
+				if (_skipRequested)
+				{
+					return;
+				}
+				
 				float width = VideoPlayer.width;
 				float height = VideoPlayer.height;
 
@@ -187,6 +195,11 @@ namespace Greetings.Utils
 			async void PrepareCompletedFunction(VideoPlayer source)
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
+				
+				if (_skipRequested)
+				{
+					return;
+				}
 				
 				VideoPlayer!.StepForward();
 

@@ -27,7 +27,6 @@ namespace Greetings.Managers
 		public event Action? StartGreetingsFinished;
 
 		private bool _noDismiss;
-		public bool SkipRequested;
 		public bool HasStartGreetingsPlayed;
 		private Action? _videoFinishedCallback;
 		private CanvasGroup? _screenSystemCanvasGroup;
@@ -51,7 +50,7 @@ namespace Greetings.Managers
 			_floorTextFloatingScreenController = floorTextFloatingScreenController;
 			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
 		}
-
+		
 		public bool IsVideoPlaying => GreetingsUtils.VideoPlayer != null && GreetingsUtils.VideoPlayer.isPlaying;
 
 		public void Initialize()
@@ -106,7 +105,7 @@ namespace Greetings.Managers
 				_videoFinishedCallback = callback;	
 			}
 			
-			SkipRequested = false;
+			GreetingsUtils._skipRequested = false;
 			GreetingsUtils.CreateScreen(videoType);
 			
 			_vrInputModule.enabled = false;
