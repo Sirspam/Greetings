@@ -80,12 +80,12 @@ namespace Greetings.UI.ViewControllers
 			{
 				case 0:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.StartVideo;
-					_selectedFile = new FileInfo(_pluginConfig.VideoPath + "\\" + _videoList.data[_selectedStartVideoIndex].text + ".mp4");
+					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedStartVideoIndex].text) + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedStartVideoIndex);
 					break;
 				case 1:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.QuitVideo;
-					_selectedFile = new FileInfo(_pluginConfig.VideoPath + "\\" + _videoList.data[_selectedQuitVideoIndex].text + ".mp4");
+					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedQuitVideoIndex].text) + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedQuitVideoIndex);
 					break;
 			}
