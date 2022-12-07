@@ -48,14 +48,14 @@ namespace Greetings.UI.ViewControllers
 			Quick
 		}
 
-		private void CreateScreen()
+		public void CreateScreen()
 		{
 			if (_floatingScreen != null)
 			{
 				_floatingScreen.gameObject.SetActive(true);
 				return;
 			}
-
+			
 			_floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(105f, 50f), false, new Vector3(0f, 0.1f, 1.5f), new Quaternion(0.5f, 0f, 0f, 1f));
 			_floatingScreen.name = "GreetingsFloorTextFloatingScreen";
 

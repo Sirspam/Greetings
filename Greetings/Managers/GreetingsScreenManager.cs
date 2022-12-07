@@ -57,6 +57,7 @@ namespace Greetings.Managers
 		{
 			_screenSystemCanvasGroup = _screenSystem.gameObject.AddComponent<CanvasGroup>();
 			GreetingsUtils.CreateScreen();
+			_floorTextFloatingScreenController.CreateScreen();
 
 			if (!_pluginConfig.PlayOnStart)
 			{
@@ -107,7 +108,7 @@ namespace Greetings.Managers
 			
 			GreetingsUtils._skipRequested = false;
 			GreetingsUtils.CreateScreen(videoType);
-			
+
 			_vrInputModule.enabled = false;
 			GreetingsShown?.Invoke();
 			_originalScreenSystemPosition = _screenSystem.gameObject.transform.position;
@@ -124,7 +125,7 @@ namespace Greetings.Managers
 					GreetingsUtils.GreetingsAwaiter!.StartCoroutine();
 					return;
 				}
-
+				
 				GreetingsUtils.ShowScreen();
 			});
 			
