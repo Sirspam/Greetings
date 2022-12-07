@@ -114,6 +114,8 @@ namespace Greetings.Managers
 				SetNewGreetingsTime();
 				_timerCoroutine = StartCoroutine(TimerCoroutine());
 			}
+
+			_awoken = true;
 		}
 
 		private void GreetingsScreenManagerOnStartGreetingsFinished()
@@ -128,7 +130,6 @@ namespace Greetings.Managers
 			// Stops OnEnable from running when the GO is first enabled, that required logic is handled in the Awake method
 			if (!_awoken)
 			{
-				_awoken = true;
 				return;
 			}
 
