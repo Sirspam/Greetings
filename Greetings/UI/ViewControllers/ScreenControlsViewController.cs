@@ -71,6 +71,7 @@ namespace Greetings.UI.ViewControllers
 			if (_greetingsUtils.VideoPlayer != null)
 			{
 				_greetingsUtils.HideScreen();
+				_greetingsUtils.VideoPlayer.isLooping = false;
 				_greetingsUtils.VideoPlayer.loopPointReached -= VideoPlayer_loopPointReached;
 			}
 
