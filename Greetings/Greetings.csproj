@@ -119,16 +119,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')"/>
-        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')"/>
-        <None Include="Greetings.csproj.user" Condition="Exists('Greetings.csproj.user')"/>
+        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
+        <None Include="Directory.Build.targets" Condition="Exists('Directory.Build.targets')" />
+        <None Include="Greetings.csproj.user" Condition="Exists('Greetings.csproj.user')" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="manifest.json"/>
-        <EmbeddedResource Include="Resources\*"/>
-        <EmbeddedResource Include="Images\*.png"/>
-        <EmbeddedResource Include="UI\Views\*.bsml"/>
+        <EmbeddedResource Include="manifest.json" />
+        <EmbeddedResource Include="Resources\*" />
+        <EmbeddedResource Include="Images\*.png" />
+        <EmbeddedResource Include="UI\Views\*.bsml" />
     </ItemGroup>
 
     <ItemGroup>

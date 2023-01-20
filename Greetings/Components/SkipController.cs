@@ -39,7 +39,7 @@ namespace Greetings.Components
 			}
 			
 			_siraLog.Info("Skip requested");
-			_greetingsScreenManager.GreetingsUtils._skipRequested = true;
+			_greetingsScreenManager.GreetingsUtils.SkipRequested = true;
 			_greetingsScreenManager.VideoEnded();
 			
 			// Terrible fix to the Greetings screen not disappearing correctly if skipped at a frame specific time

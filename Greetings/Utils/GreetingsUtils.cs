@@ -24,7 +24,7 @@ namespace Greetings.Utils
 			RandomVideo
 		}
 		
-		public bool _skipRequested;
+		public bool SkipRequested;
 		public VideoPlayer? VideoPlayer;
 		public VideoType CurrentVideoType;
 		public GameObject? GreetingsScreen;
@@ -62,7 +62,7 @@ namespace Greetings.Utils
 		
 		public void CreateScreen()
 		{
-			_skipRequested = false;
+			SkipRequested = false;
 			
 			if (GreetingsScreen == null)
 			{
@@ -150,7 +150,7 @@ namespace Greetings.Utils
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
 
-				if (_skipRequested)
+				if (SkipRequested)
 				{
 					return;
 				}
@@ -196,7 +196,7 @@ namespace Greetings.Utils
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
 				
-				if (_skipRequested)
+				if (SkipRequested)
 				{
 					return;
 				}

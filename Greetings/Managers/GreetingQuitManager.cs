@@ -50,7 +50,7 @@ namespace Greetings.Managers
 						? GreetingsUtils.VideoType.RandomVideo
 						: GreetingsUtils.VideoType.QuitVideo, () =>
 				{
-					if (_greetingsScreenManager.GreetingsUtils._skipRequested)
+					if (_greetingsScreenManager.GreetingsUtils.SkipRequested)
 					{
 						QuitButtonAction();
 					}

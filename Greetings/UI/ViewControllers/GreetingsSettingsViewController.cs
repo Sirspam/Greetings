@@ -4,6 +4,7 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.ViewControllers;
 using Greetings.Configuration;
+using Greetings.Managers;
 using Greetings.Utils;
 using HMUI;
 using IPA.Loader;
@@ -40,16 +41,18 @@ namespace Greetings.UI.ViewControllers
 		private PluginConfig _pluginConfig = null!;
 		private GreetingsUtils _greetingsUtils = null!;
 		private PluginMetadata _pluginMetadata = null!;
+		private EasterEggsManager _easterEggManager = null!;
 		private YesNoModalViewController _yesNoModalViewController = null!;
 		private RandomVideoFloatingScreenController _randomVideoFloatingScreenController = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
+		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, EasterEggsManager easterEggsManager, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
 		{
 			_uiUtils = uiUtils;
 			_pluginConfig = pluginConfig;
 			_greetingsUtils = greetingsUtils;
 			_pluginMetadata = pluginMetadata.Value;
+			_easterEggManager = easterEggsManager;
 			_yesNoModalViewController = yesNoModalViewController;
 			_randomVideoFloatingScreenController = randomVideoFloatingScreenController;
 		}
@@ -125,7 +128,24 @@ namespace Greetings.UI.ViewControllers
 		private bool EasterEggs
 		{
 			get => _pluginConfig.EasterEggs;
-			set => _pluginConfig.EasterEggs = value;
+			set
+			{
+				if (_pluginConfig.EasterEggs == value)
+				{
+					return;
+				}
+
+				
+				_pluginConfig.EasterEggs = value;
+				if (value)
+				{
+					_easterEggManager.Initialize();
+				}
+				else
+				{
+					_easterEggManager.Dispose();
+				}
+			}
 		}
 
 		[UIValue("await-fps")]

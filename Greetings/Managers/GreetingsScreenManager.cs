@@ -106,7 +106,7 @@ namespace Greetings.Managers
 				_videoFinishedCallback = callback;	
 			}
 			
-			GreetingsUtils._skipRequested = false;
+			GreetingsUtils.SkipRequested = false;
 			GreetingsUtils.CreateScreen(videoType);
 
 			_vrInputModule.enabled = false;
