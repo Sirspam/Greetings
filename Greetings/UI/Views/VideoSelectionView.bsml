@@ -1,5 +1,4 @@
-﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
     <horizontal background="panel-fade-gradient" background-color="#00C0FFFF" anchor-min-y="1" pref-width="100" horizontal-fit="PreferredSize" spacing="5">
         <text text="Videos" align="Center" font-size="6" italics="true"/>
     </horizontal>
