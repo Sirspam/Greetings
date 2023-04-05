@@ -82,11 +82,13 @@ namespace Greetings.UI.ViewControllers
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.StartVideo;
 					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedStartVideoIndex].text) + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedStartVideoIndex);
+					_videoList.tableView.ScrollToCellWithIdx(_selectedStartVideoIndex, TableView.ScrollPositionType.Center, false);
 					break;
 				case 1:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.QuitVideo;
 					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedQuitVideoIndex].text) + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedQuitVideoIndex);
+					_videoList.tableView.ScrollToCellWithIdx(_selectedQuitVideoIndex, TableView.ScrollPositionType.Center, false);
 					break;
 			}
 			_greetingsUtils.HideScreen(reloadVideo: true);
@@ -230,6 +232,7 @@ namespace Greetings.UI.ViewControllers
 
 			_videoList.data = data;
 			_videoList.tableView.SelectCellWithIdx(selectIndex);
+			_videoList.tableView.ScrollToCellWithIdx(selectIndex, TableView.ScrollPositionType.Center, false);
 			
 			// List is moved down a bit until refreshed, for whatever reason
 			if (firstActivation)
