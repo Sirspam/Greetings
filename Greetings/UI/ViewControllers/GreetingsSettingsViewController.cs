@@ -31,6 +31,7 @@ namespace Greetings.UI.ViewControllers
 		[UIComponent("reset-position-button")] private readonly Button _resetPositionButton = null!;
 		[UIComponent("face-headset-button")] private readonly Button _faceHeadsetButton = null!;
 		[UIComponent("set-upright-button")] private readonly Button _setUprightButton = null!;
+		[UIComponent("change-image-button")] private readonly Button _changeImageButton = null!;
 		[UIComponent("underline-text")] private readonly Transform _underlineText = null!;
 		[UIComponent("randomiser-modal-slider")] private readonly SliderSetting _randomiserModalSlider = null!;
 		[UIComponent("version-text")] private readonly CurvedTextMeshPro _versionText = null!;
@@ -43,10 +44,11 @@ namespace Greetings.UI.ViewControllers
 		private PluginMetadata _pluginMetadata = null!;
 		private EasterEggsManager _easterEggManager = null!;
 		private YesNoModalViewController _yesNoModalViewController = null!;
+		private ImageSelectionModalController _imageSelectionModalController = null!;
 		private RandomVideoFloatingScreenController _randomVideoFloatingScreenController = null!;
 
 		[Inject]
-		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, EasterEggsManager easterEggsManager, YesNoModalViewController yesNoModalViewController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
+		public void Construct(UIUtils uiUtils, PluginConfig pluginConfig, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> pluginMetadata, EasterEggsManager easterEggsManager, YesNoModalViewController yesNoModalViewController, ImageSelectionModalController imageSelectionModalController, RandomVideoFloatingScreenController randomVideoFloatingScreenController)
 		{
 			_uiUtils = uiUtils;
 			_pluginConfig = pluginConfig;
@@ -54,6 +56,7 @@ namespace Greetings.UI.ViewControllers
 			_pluginMetadata = pluginMetadata.Value;
 			_easterEggManager = easterEggsManager;
 			_yesNoModalViewController = yesNoModalViewController;
+			_imageSelectionModalController = imageSelectionModalController;
 			_randomVideoFloatingScreenController = randomVideoFloatingScreenController;
 		}
 
@@ -369,6 +372,13 @@ namespace Greetings.UI.ViewControllers
 		{
 			_randomVideoFloatingScreenController.SetUpright();
 			_uiUtils.ButtonUnderlineClick(_setUprightButton.gameObject);
+		}
+
+		[UIAction("change-image")]
+		private void ChangeImage()
+		{
+			_imageSelectionModalController.ShowModal(_changeImageButton.transform);
+			_uiUtils.ButtonUnderlineClick(_changeImageButton.gameObject);
 		}
 
 		[UIAction("edit-min-time-clicked")]

@@ -38,6 +38,7 @@ namespace Greetings.Installers
 			Container.Bind<ScreenControlsViewController>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<VideoSelectionViewController>().FromNewComponentAsViewController().AsSingle();
 			Container.Bind<YesNoModalViewController>().AsSingle();
+			Container.Bind<ImageSelectionModalController>().AsSingle();
 		}
 	}
 }

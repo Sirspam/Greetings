@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.FloatingScreen;
@@ -25,6 +28,7 @@ namespace Greetings.UI.ViewControllers
 		private Vector3 _floatingScreenScale;
 		private FloatingScreen? _floatingScreen;
 		private Vector3 _originalFloatingScreenScale;
+		private BeatSaberUI.ScaleOptions _scaleOptions;
 
 		[UIComponent("button")] private readonly ClickableImage _imageButton = null!;
 
@@ -50,6 +54,10 @@ namespace Greetings.UI.ViewControllers
 			_pluginConfig = pluginConfig;
 			_timeTweeningManager = timeTweeningManager;
 			_greetingsScreenManager = greetingsScreenManager;
+			_scaleOptions.ShouldScale = true;
+			_scaleOptions.MaintainRatio = true;
+			_scaleOptions.Height = 128;
+			_scaleOptions.Width = 128;
 		}
 
 		private void CreateFloatingScreen()
@@ -264,6 +272,13 @@ namespace Greetings.UI.ViewControllers
 			_pluginConfig.FloatingScreenRotation = newRotation;
 		}
 
+		public void SetImage(string? fileName)
+		{
+			_imageButton.SetImage(fileName is null
+				? "Greetings.Resources.Greetings.png"
+				: Path.Combine(Plugin.FloatingScreenImagesPath, fileName), false, _scaleOptions, ShowFloatingScreen);
+		}
+
 		private void GreetingsShown() => SetFloatingScreenActive(false);
 
 		private void GreetingsHidden() => SetFloatingScreenActive(true);
@@ -274,6 +289,13 @@ namespace Greetings.UI.ViewControllers
 			_pluginConfig.FloatingScreenRotation = e.Rotation;
 		}
 
+		[UIAction("#post-parse")]
+		private void PostParse()
+		{
+			_imageButton.material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlowRoundEdge");
+			SetImage(_pluginConfig.FloatingScreenImage);
+		}
+		
 		[UIAction("clicked")]
 		private void Clicked()
 		{

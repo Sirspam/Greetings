@@ -1,9 +1,11 @@
-﻿using Greetings.Configuration;
+﻿using System.IO;
+using Greetings.Configuration;
 using Greetings.Installers;
 using IPA;
 using IPA.Config;
 using IPA.Config.Stores;
 using IPA.Logging;
+using IPA.Utilities;
 using SiraUtil.Zenject;
 
 namespace Greetings
@@ -12,6 +14,9 @@ namespace Greetings
 	[NoEnableDisable]
 	public sealed class Plugin
 	{
+		public static string BaseVideoPath = Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
+		public static string FloatingScreenImagesPath = Path.Combine(BaseVideoPath, "FloatingScreen Images");
+
 		[Init]
 		public Plugin(Config conf, Logger logger, Zenjector zenjector)
 		{

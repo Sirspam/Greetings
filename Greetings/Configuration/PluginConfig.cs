@@ -14,7 +14,7 @@ namespace Greetings.Configuration
 {
 	internal class PluginConfig
 	{
-		public virtual string VideoPath { get; set; } = BaseGameVideoPath;
+		public virtual string VideoPath { get; set; } = Plugin.BaseVideoPath;
 		public virtual string? SelectedStartVideo { get; set; }
 		public virtual string? SelectedQuitVideo { get; set; }
 		public virtual bool RandomStartVideo { get; set; } = false;
@@ -35,6 +35,7 @@ namespace Greetings.Configuration
 		public virtual float FloatingScreenScale { get; set; } = 1f;
 		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
 		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
+		public virtual string? FloatingScreenImage { get; set; } = null; // Uses mod icon if null
 		public virtual bool RandomiserEnabled { get; set; } = false;
 		public virtual int RandomiserMinMinutes { get; set; } = 5;
 		public virtual int RandomiserMaxMinutes { get; set; } = 30;
@@ -82,15 +83,14 @@ namespace Greetings.Configuration
 		{
 			if (!Directory.Exists(VideoPath))
 			{
-				VideoPath = BaseGameVideoPath;
+				VideoPath = Plugin.BaseVideoPath;
 			}
 			
 			Directory.CreateDirectory(VideoPath);
+			Directory.CreateDirectory(Plugin.FloatingScreenImagesPath);
 
 			CheckIfVideoPathEmpty();
 		}
-		
-		private static string BaseGameVideoPath => Path.Combine(UnityGame.UserDataPath, nameof(Greetings));
 
 		private static int GetDefaultTargetFps()
 		{

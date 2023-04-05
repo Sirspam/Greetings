@@ -59,6 +59,7 @@
                     <button id="face-headset-button" text="Face Headset" on-click="face-headset" interactable="~floating-screen-enabled" pref-width="28" pref-height="8"/>
                     <button id="set-upright-button" text="Set Upright" on-click="set-upright" interactable="~floating-screen-enabled" pref-width="28" pref-height="8"/>
                 </horizontal>
+                <button id="change-image-button" text="Change Image" on-click="change-image" interactable="~floating-screen-enabled" pref-width="90" pref-height="8"/>
             </vertical>
         </tab>
         
