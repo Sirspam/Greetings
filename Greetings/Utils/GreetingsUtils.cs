@@ -201,6 +201,7 @@ namespace Greetings.Utils
 					return;
 				}
 				
+				VideoPlayer!.Pause();
 				VideoPlayer!.StepForward();
 
 				// Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways

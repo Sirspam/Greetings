@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using Greetings.UI.ViewControllers;
 using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
-using IPA.Utilities;
 using UnityEngine;
 using UnityEngine.XR;
 
