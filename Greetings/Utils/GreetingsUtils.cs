@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,6 +42,7 @@ namespace Greetings.Utils
 		private FloatTween? _underlineMoveTween;
 		private GameObject? _greetingsUnderline;
 		private Vector3Tween? _underlineShowTween;
+		private List<FileInfo> _videoList = new List<FileInfo>();
 		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
 		private readonly Random _random;
@@ -58,6 +60,8 @@ namespace Greetings.Utils
 			_pluginConfig = pluginConfig;
 			_songPreviewPlayer = songPreviewPlayer;
 			_timeTweeningManager = timeTweeningManager;
+
+			PopulateVideoList();
 		}
 		
 		public void CreateScreen()
@@ -130,12 +134,12 @@ namespace Greetings.Utils
 				default:
 				case VideoType.RandomVideo:
 				{
-					var files = Directory.GetFiles(_pluginConfig.VideoPath);
-					if (_previousRandomVideo != null && files.Length > 1)
+					List<FileInfo> filteredList = _videoList;
+					if (_previousRandomVideo != null && _videoList.Count > 1)
 					{
-						files = files.Where(val => val != _previousRandomVideo).ToArray();
+						filteredList = _videoList.Where(val => val.FullName != _previousRandomVideo).ToList();
 					}
-					_previousRandomVideo = files[_random.Next(files.Length)];
+					_previousRandomVideo = filteredList[_random.Next(filteredList.Count)].FullName;
 					VideoPlayer!.url = _previousRandomVideo;
 
 					break;
@@ -437,6 +441,26 @@ namespace Greetings.Utils
 				};
 				_timeTweeningManager.AddTween(tween, _greetingsUnderline);
 			}
+		}
+
+		public List<FileInfo> PopulateVideoList()
+		{
+			_videoList.Clear();
+			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
+			foreach (var file in files)
+			{
+				if (file.Length > 100000000)
+				{
+					// Had issues with the video player's prepare event just not being invoked if the video is too large.
+					// No clue why it happens, I doubt anyone will be trying to watch a 4k movie or something with Greeting's tiny ass screen
+					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
+					continue;
+				}
+				
+				_videoList.Add(file);
+			}
+
+			return _videoList;
 		}
 	}
 }

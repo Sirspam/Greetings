@@ -168,17 +168,9 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 
-			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
+			var files = _greetingsUtils.PopulateVideoList();
 			foreach (var file in files)
 			{
-				if (file.Length > 100000000)
-				{
-					// Had issues with the video player's prepare event just not being invoked if the video is too large.
-					// No clue why it happens, I doubt anyone will be trying to watch a 4k movie or something with Greeting's tiny ass screen
-					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
-					continue;
-				}
-
 				if (file.Name == _pluginConfig.SelectedStartVideo)
 				{
 					_selectedStartVideoIndex = index;
