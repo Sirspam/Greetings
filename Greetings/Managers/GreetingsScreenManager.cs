@@ -142,6 +142,7 @@ namespace Greetings.Managers
 		public void VideoEnded()
 		{
 			GreetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
+			GreetingsUtils.VideoPlayer!.Pause();
 
 			if (_noDismiss)
 			{
@@ -178,6 +179,10 @@ namespace Greetings.Managers
 			TweenScreenSystemAlpha(TweenType.In, () =>
 			{
 				_vrInputModule.enabled = true;
+				if (GreetingsUtils.VideoPlayer != null)
+				{
+					GreetingsUtils.VideoPlayer.Stop();
+				}
 
 				if (_videoFinishedCallback != null)
 				{
