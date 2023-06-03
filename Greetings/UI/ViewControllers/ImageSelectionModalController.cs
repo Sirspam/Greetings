@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -44,16 +45,16 @@ namespace Greetings.UI.ViewControllers
 			}
 		}
 
-		public void ShowModal(Transform parentTransform)
+		public async Task ShowModal(Transform parentTransform)
 		{
 			Parse(parentTransform);
 			_parserParams.EmitEvent("close-modal");
 			_parserParams.EmitEvent("open-modal");
 			_customListTableData.tableView.ClearSelection();
-			PopulateList();
+			await PopulateList();
 		}
 
-		private void PopulateList()
+		private async Task PopulateList()
 		{
 			var selectedIndex = 0;
 			var iteration = 0;
@@ -70,8 +71,8 @@ namespace Greetings.UI.ViewControllers
 					selectedIndex = iteration;
 				}
 				
-				// TODO: Change to use BSML's image downscaling method whenever the PR to make it public gets merged and released
-				data.Add(new CustomListTableData.CustomCellInfo(fileName, icon: Utilities.LoadSpriteRaw(File.ReadAllBytes(file))));
+				var downscaledImageBytes = await Task.Run(() => BeatSaberUI.DownscaleImage(File.ReadAllBytes(file), 128, 128));
+				data.Add(new CustomListTableData.CustomCellInfo(fileName, icon: Utilities.LoadSpriteRaw(downscaledImageBytes)));
 			}
 			
 			

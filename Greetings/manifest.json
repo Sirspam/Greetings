@@ -5,11 +5,11 @@
   "author": "Sirspam",
   "version": "0.3.1",
   "description": "Beat Saber mod for playing a video on the game's start up, exit or on demand",
-  "gameVersion": "1.29.4",
+  "gameVersion": "1.30.0",
   "icon": "Greetings.Resources.Greetings.png",
   "dependsOn": {
-    "BSIPA": "^4.2.2",
-    "BeatSaberMarkupLanguage": "^1.6.3",
+    "BSIPA": "^4.3.0",
+    "BeatSaberMarkupLanguage": "^1.7.0",
     "SiraUtil": "^3.0.6"
   },
   "loadAfter": [

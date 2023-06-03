@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
@@ -375,9 +376,9 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		[UIAction("change-image")]
-		private void ChangeImage()
+		private async Task ChangeImage()
 		{
-			_imageSelectionModalController.ShowModal(_changeImageButton.transform);
+			await _imageSelectionModalController.ShowModal(_changeImageButton.transform);
 			_uiUtils.ButtonUnderlineClick(_changeImageButton.gameObject);
 		}
 
