@@ -84,6 +84,11 @@ namespace Greetings.Configuration
 			{
 				VideoPath = Plugin.BaseVideoPath;
 			}
+
+			if (FloatingScreenImage is not null && !File.Exists(FloatingScreenImage))
+			{
+				FloatingScreenImage = null;
+			}
 			
 			Directory.CreateDirectory(VideoPath);
 			Directory.CreateDirectory(Plugin.FloatingScreenImagesPath);
