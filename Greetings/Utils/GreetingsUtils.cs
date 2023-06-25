@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,7 +25,7 @@ namespace Greetings.Utils
 			RandomVideo
 		}
 		
-		public bool _skipRequested;
+		public bool SkipRequested;
 		public VideoPlayer? VideoPlayer;
 		public VideoType CurrentVideoType;
 		public GameObject? GreetingsScreen;
@@ -41,6 +42,7 @@ namespace Greetings.Utils
 		private FloatTween? _underlineMoveTween;
 		private GameObject? _greetingsUnderline;
 		private Vector3Tween? _underlineShowTween;
+		private List<FileInfo> _videoList = new List<FileInfo>();
 		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
 		private readonly Random _random;
@@ -58,11 +60,13 @@ namespace Greetings.Utils
 			_pluginConfig = pluginConfig;
 			_songPreviewPlayer = songPreviewPlayer;
 			_timeTweeningManager = timeTweeningManager;
+
+			PopulateVideoList();
 		}
 		
 		public void CreateScreen()
 		{
-			_skipRequested = false;
+			SkipRequested = false;
 			
 			if (GreetingsScreen == null)
 			{
@@ -130,12 +134,12 @@ namespace Greetings.Utils
 				default:
 				case VideoType.RandomVideo:
 				{
-					var files = Directory.GetFiles(_pluginConfig.VideoPath);
-					if (_previousRandomVideo != null && files.Length > 1)
+					List<FileInfo> filteredList = _videoList;
+					if (_previousRandomVideo != null && _videoList.Count > 1)
 					{
-						files = files.Where(val => val != _previousRandomVideo).ToArray();
+						filteredList = _videoList.Where(val => val.FullName != _previousRandomVideo).ToList();
 					}
-					_previousRandomVideo = files[_random.Next(files.Length)];
+					_previousRandomVideo = filteredList[_random.Next(filteredList.Count)].FullName;
 					VideoPlayer!.url = _previousRandomVideo;
 
 					break;
@@ -150,7 +154,7 @@ namespace Greetings.Utils
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
 
-				if (_skipRequested)
+				if (SkipRequested)
 				{
 					return;
 				}
@@ -196,11 +200,12 @@ namespace Greetings.Utils
 			{
 				VideoPlayer.prepareCompleted -= PrepareCompletedFunction;
 				
-				if (_skipRequested)
+				if (SkipRequested)
 				{
 					return;
 				}
 				
+				VideoPlayer!.Pause();
 				VideoPlayer!.StepForward();
 
 				// Sometimes greetings tries to start before the menu music starts to play, so fade out won't work and the background music will come in anyways
@@ -436,6 +441,18 @@ namespace Greetings.Utils
 				};
 				_timeTweeningManager.AddTween(tween, _greetingsUnderline);
 			}
+		}
+
+		public List<FileInfo> PopulateVideoList()
+		{
+			_videoList.Clear();
+			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
+			foreach (var file in files)
+			{
+				_videoList.Add(file);
+			}
+
+			return _videoList;
 		}
 	}
 }

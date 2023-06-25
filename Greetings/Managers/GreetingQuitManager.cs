@@ -26,7 +26,7 @@ namespace Greetings.Managers
 		{
 			_mainMenuViewController.didActivateEvent += MainMenuViewControllerOndidActivateEvent;
 		}
-		
+
 		public void Dispose()
 		{
 			_mainMenuViewController.didActivateEvent -= MainMenuViewControllerOndidActivateEvent;
@@ -35,7 +35,7 @@ namespace Greetings.Managers
 		private void MainMenuViewControllerOndidActivateEvent(bool firstactivation, bool addedtohierarchy, bool screensystemenabling)
 		{
 			_mainMenuViewController.didActivateEvent -= MainMenuViewControllerOndidActivateEvent;
-			
+
 			var quitButton = _mainMenuViewController.GetField<Button, MainMenuViewController>("_quitButton");
 			quitButton.onClick.RemoveAllListeners();
 			quitButton.onClick.AddListener(OnClickListener);
@@ -45,18 +45,15 @@ namespace Greetings.Managers
 		{
 			if (_pluginConfig.PlayOnQuit && _pluginConfig.SelectedQuitVideo != null)
 			{
-				_greetingsScreenManager.StartGreetings(
-					_pluginConfig.RandomQuitVideo
-						? GreetingsUtils.VideoType.RandomVideo
-						: GreetingsUtils.VideoType.QuitVideo, () =>
+				_greetingsScreenManager.StartGreetings(_pluginConfig.RandomQuitVideo ? GreetingsUtils.VideoType.RandomVideo : GreetingsUtils.VideoType.QuitVideo, () =>
 				{
-					if (_greetingsScreenManager.GreetingsUtils._skipRequested)
+					if (_greetingsScreenManager.GreetingsUtils.SkipRequested)
 					{
 						QuitButtonAction();
 					}
 					else
 					{
-						_fadeInOutController.FadeOut(QuitButtonAction);	
+						_fadeInOutController.FadeOut(QuitButtonAction);
 					}
 				}, true);
 			}
@@ -66,6 +63,6 @@ namespace Greetings.Managers
 			}
 		}
 
-		private void QuitButtonAction() => _mainMenuViewController.HandleMenuButton(MainMenuViewController.MenuButton.Quit);
+		private void QuitButtonAction() => _mainMenuViewController.InvokeMethod<object, MainMenuViewController>("HandleMenuButton", MainMenuViewController.MenuButton.Quit);
 	}
 }

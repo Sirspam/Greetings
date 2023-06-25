@@ -1,5 +1,4 @@
-﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
     <vertical child-expand-width="true" anchor-pos-y="5" horizontal-fit="PreferredSize" vertical-fit="PreferredSize" pad="2" background="round-rect-panel" background-color="#FFFFFFAA">
         <vertical pref-width="110">
             <text text="~no-videos-text" font-size="7" font-align="Center" font-color="red"/>

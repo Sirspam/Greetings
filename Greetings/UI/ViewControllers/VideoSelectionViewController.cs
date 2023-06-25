@@ -82,11 +82,13 @@ namespace Greetings.UI.ViewControllers
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.StartVideo;
 					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedStartVideoIndex].text) + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedStartVideoIndex);
+					_videoList.tableView.ScrollToCellWithIdx(_selectedStartVideoIndex, TableView.ScrollPositionType.Center, false);
 					break;
 				case 1:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.QuitVideo;
 					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedQuitVideoIndex].text) + ".mp4");
 					_videoList.tableView.SelectCellWithIdx(_selectedQuitVideoIndex);
+					_videoList.tableView.ScrollToCellWithIdx(_selectedQuitVideoIndex, TableView.ScrollPositionType.Center, false);
 					break;
 			}
 			_greetingsUtils.HideScreen(reloadVideo: true);
@@ -166,17 +168,9 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 
-			var files = new DirectoryInfo(_pluginConfig.VideoPath).GetFiles("*.mp4");
+			var files = _greetingsUtils.PopulateVideoList();
 			foreach (var file in files)
 			{
-				if (file.Length > 100000000)
-				{
-					// Had issues with the video player's prepare event just not being invoked if the video is too large.
-					// No clue why it happens, I doubt anyone will be trying to watch a 4k movie or something with Greeting's tiny ass screen
-					_siraLog.Warn($"Ignoring {file.Name} as it's above 100 MB");
-					continue;
-				}
-
 				if (file.Name == _pluginConfig.SelectedStartVideo)
 				{
 					_selectedStartVideoIndex = index;
@@ -230,6 +224,7 @@ namespace Greetings.UI.ViewControllers
 
 			_videoList.data = data;
 			_videoList.tableView.SelectCellWithIdx(selectIndex);
+			_videoList.tableView.ScrollToCellWithIdx(selectIndex, TableView.ScrollPositionType.Center, false);
 			
 			// List is moved down a bit until refreshed, for whatever reason
 			if (firstActivation)
@@ -241,11 +236,13 @@ namespace Greetings.UI.ViewControllers
 
 		private static string GetFileSize(long size)
 		{
-			if (size > 1000000)
-				return $"{Math.Round((double) size / 1024 / 1024, 0)} MB";
-			if (size > 1000)
-				return $"{Math.Round((double) size / 1024, 0)} KB";
-			return $"{size} Bytes";
+			return size switch
+			{
+				> 1000000000 => $"{Math.Round((double) size / 1024 / 1024 / 1024, 0)} GB",
+				> 1000000 => $"{Math.Round((double) size / 1024 / 1024, 0)} MB",
+				> 1000 => $"{Math.Round((double) size / 1024, 0)} KB",
+				_ => $"{size} Bytes"
+			};
 		}
 	}
 }
