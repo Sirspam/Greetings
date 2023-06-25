@@ -236,11 +236,13 @@ namespace Greetings.UI.ViewControllers
 
 		private static string GetFileSize(long size)
 		{
-			if (size > 1000000)
-				return $"{Math.Round((double) size / 1024 / 1024, 0)} MB";
-			if (size > 1000)
-				return $"{Math.Round((double) size / 1024, 0)} KB";
-			return $"{size} Bytes";
+			return size switch
+			{
+				> 1000000000 => $"{Math.Round((double) size / 1024 / 1024 / 1024, 0)} GB",
+				> 1000000 => $"{Math.Round((double) size / 1024 / 1024, 0)} MB",
+				> 1000 => $"{Math.Round((double) size / 1024, 0)} KB",
+				_ => $"{size} Bytes"
+			};
 		}
 	}
 }
