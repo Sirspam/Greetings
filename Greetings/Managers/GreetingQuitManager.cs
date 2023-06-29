@@ -35,8 +35,8 @@ namespace Greetings.Managers
 		private void MainMenuViewControllerOndidActivateEvent(bool firstactivation, bool addedtohierarchy, bool screensystemenabling)
 		{
 			_mainMenuViewController.didActivateEvent -= MainMenuViewControllerOndidActivateEvent;
-
-			var quitButton = _mainMenuViewController.GetField<Button, MainMenuViewController>("_quitButton");
+			
+			var quitButton = _mainMenuViewController._quitButton;
 			quitButton.onClick.RemoveAllListeners();
 			quitButton.onClick.AddListener(OnClickListener);
 		}

@@ -24,7 +24,7 @@ namespace Greetings.UI.FlowCoordinator
 			_greetingsSettingsViewController = greetingsSettingsViewController;
 		}
 
-		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+		public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 		{
 			GreetingsFlowCoordinatorActiveChangedEvent?.Invoke(true);
 			
@@ -34,12 +34,12 @@ namespace Greetings.UI.FlowCoordinator
 			ProvideInitialViewControllers(_screenControlsViewController, _videoSelectionViewController, _greetingsSettingsViewController);
 		}
 
-		protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+		public override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
 		{
 			base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
 			GreetingsFlowCoordinatorActiveChangedEvent?.Invoke(false);
 		}
 
-		protected override void BackButtonWasPressed(ViewController topViewController) => _mainFlowCoordinator.DismissFlowCoordinator(this);
+		public override void BackButtonWasPressed(ViewController topViewController) => _mainFlowCoordinator.DismissFlowCoordinator(this);
 	}
 }

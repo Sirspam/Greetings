@@ -22,7 +22,7 @@ namespace Greetings.Managers
 		{
 			_random = new Random();
 			_pluginConfig = pluginConfig;
-			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
+			_screenSystem = hierarchyManager._screenSystem;
 			_greetingsScreenManager = greetingsScreenManager;
 		}
 

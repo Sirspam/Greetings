@@ -48,7 +48,7 @@ namespace Greetings.Managers
 			_gameScenesManager = gameScenesManager;
 			_timeTweeningManager = tweeningManager;
 			_floorTextFloatingScreenController = floorTextFloatingScreenController;
-			_screenSystem = hierarchyManager.GetField<ScreenSystem, HierarchyManager>("_screenSystem");
+			_screenSystem = hierarchyManager._screenSystem;
 		}
 		
 		public bool IsVideoPlaying => GreetingsUtils.VideoPlayer != null && GreetingsUtils.VideoPlayer.isPlaying;

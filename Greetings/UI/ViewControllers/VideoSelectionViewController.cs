@@ -67,8 +67,8 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("#post-parse")]
 		private void PostParse()
 		{
-			_deleteVideoButton.SetField<ImageView, float>("_skew", 0.2f);
-			_bottomButtonsLayout.GetComponent<ImageView>().SetField("_skew", 0.18f);
+			_deleteVideoButton._skew = 0.2f;
+			_bottomButtonsLayout.GetComponent<ImageView>()._skew = 0.18f;
 		}
 
 		[UIAction("video-tab-selected")]

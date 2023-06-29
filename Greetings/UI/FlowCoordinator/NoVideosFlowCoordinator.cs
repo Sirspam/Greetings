@@ -18,8 +18,8 @@ namespace Greetings.UI.FlowCoordinator
 			_noVideosViewController = noVideosViewController;
 			_greetingsFlowCoordinator = greetingsFlowCoordinator;
 		}
-		
-		protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+
+		public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
 		{
 			SetTitle(nameof(Greetings));
 			showBackButton = true;
@@ -27,8 +27,8 @@ namespace Greetings.UI.FlowCoordinator
 			ProvideInitialViewControllers(_noVideosViewController);
 			_noVideosViewController.VideosAddedEvent += NoVideosViewControllerOnVideosAddedEvent;
 		}
-		
-		protected override void BackButtonWasPressed(ViewController topViewController) => _mainFlowCoordinator.DismissFlowCoordinator(this);
+
+		public override void BackButtonWasPressed(ViewController topViewController) => _mainFlowCoordinator.DismissFlowCoordinator(this);
 
 		private void NoVideosViewControllerOnVideosAddedEvent()
 		{

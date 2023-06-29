@@ -93,7 +93,7 @@ namespace Greetings.Utils
 				VideoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
 				_screenAudioSource = VideoPlayer.gameObject.AddComponent<AudioSource>();
 				VideoPlayer.SetTargetAudioSource(0, _screenAudioSource);
-				_screenAudioSource.outputAudioMixerGroup = _songPreviewPlayer.GetField<AudioSource, SongPreviewPlayer>("_audioSourcePrefab").outputAudioMixerGroup;
+				_screenAudioSource.outputAudioMixerGroup = _songPreviewPlayer._audioSourcePrefab.outputAudioMixerGroup;
 				_screenAudioSource.mute = true;
 
 				SkipController = _diContainer.InstantiateComponent<SkipController>(GreetingsScreen);
