@@ -11,6 +11,8 @@ namespace Greetings.Managers
 	// I'll put other funny things here when I think of them
 	internal sealed class EasterEggsManager : IInitializable, IDisposable
 	{
+		private float? _originalYScale;
+		
 		private readonly Random _random;
 		private readonly PluginConfig _pluginConfig;
 		private readonly ScreenSystem _screenSystem;
@@ -35,8 +37,11 @@ namespace Greetings.Managers
 		public void Dispose()
 		{
 			_greetingsScreenManager.GreetingsHidden -= AprilFoolsEasterEgg;
-			
-			SetScreenSystemYScale(1.5f);
+
+			if (_originalYScale is not null)
+			{
+				SetScreenSystemYScale((float) _originalYScale);
+			}
 		}
 		
 		// Hey don't look at this if it's before April
@@ -47,14 +52,16 @@ namespace Greetings.Managers
 		{
 			const float max = 2.5f;
 			const float min = 0.5f;
-
-			SetScreenSystemYScale((float) (_random.NextDouble() * (max - min) + min));
+			
+			SetScreenSystemYScale((float) _random.NextDouble() * (max - min) + min);
 		}
 
 		private void SetScreenSystemYScale(float yScale)
 		{
 			var transform = _screenSystem.transform;
 			var localScale = transform.localScale;
+			_originalYScale ??= localScale.y;
+			
 			transform.localScale = new Vector3(localScale.x, yScale, localScale.z);
 		}
 	}
