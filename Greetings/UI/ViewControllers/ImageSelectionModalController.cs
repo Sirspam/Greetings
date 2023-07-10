@@ -58,8 +58,8 @@ namespace Greetings.UI.ViewControllers
 		{
 			var selectedIndex = 0;
 			var iteration = 0;
-			var data = new List<CustomListTableData.CustomCellInfo> {new CustomListTableData.CustomCellInfo("Greetings Icon")};
-			Utilities.GetData("Greetings.Resources.Greetings.png", bytes => data[0].icon = Utilities.LoadSpriteRaw(bytes));
+			var data = new List<CustomListTableData.CustomCellInfo> {new ("Greetings Icon")};
+			data[0].icon = Utilities.LoadSpriteRaw(await Utilities.GetResourceAsync(Assembly.GetExecutingAssembly(), "Greetings.Resources.Greetings.png"));
 			
 			var files = Directory.GetFiles(Plugin.FloatingScreenImagesPath).Where(file => file.EndsWith(".png") || file.EndsWith(".jpeg") || file.EndsWith(".jpg")).ToArray();
 			foreach (var file in files)
