@@ -120,7 +120,6 @@
         </Reference>
         <Reference Include="Tweening">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
-            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>
