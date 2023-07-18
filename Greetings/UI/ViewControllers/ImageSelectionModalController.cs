@@ -45,16 +45,16 @@ namespace Greetings.UI.ViewControllers
 			}
 		}
 
-		public async Task ShowModal(Transform parentTransform)
+		public void ShowModal(Transform parentTransform)
 		{
 			Parse(parentTransform);
 			_parserParams.EmitEvent("close-modal");
 			_parserParams.EmitEvent("open-modal");
 			_customListTableData.tableView.ClearSelection();
-			await PopulateList();
+			PopulateList();
 		}
 
-		private async Task PopulateList()
+		private void PopulateList()
 		{
 			var selectedIndex = 0;
 			var iteration = 0;
@@ -71,8 +71,8 @@ namespace Greetings.UI.ViewControllers
 					selectedIndex = iteration;
 				}
 				
-				var downscaledImageBytes = await Task.Run(() => BeatSaberUI.DownscaleImage(File.ReadAllBytes(file), 128, 128));
-				data.Add(new CustomListTableData.CustomCellInfo(fileName, icon: Utilities.LoadSpriteRaw(downscaledImageBytes)));
+				// This downscales the image on the main branch. Can't do it for 1.29.1 because of BSML.
+				data.Add(new CustomListTableData.CustomCellInfo(fileName, icon: Utilities.LoadSpriteRaw(File.ReadAllBytes(file))));
 			}
 			
 			

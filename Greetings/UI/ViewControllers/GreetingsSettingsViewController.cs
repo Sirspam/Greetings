@@ -376,9 +376,9 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		[UIAction("change-image")]
-		private async Task ChangeImage()
+		private void ChangeImage()
 		{
-			await _imageSelectionModalController.ShowModal(_changeImageButton.transform);
+			_imageSelectionModalController.ShowModal(_changeImageButton.transform);
 			_uiUtils.ButtonUnderlineClick(_changeImageButton.gameObject);
 		}
 

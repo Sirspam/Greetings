@@ -11,16 +11,16 @@ namespace Greetings.Components
 	internal sealed class SkipController : MonoBehaviour
 	{
 		private SiraLog _siraLog = null!;
-		private IVRPlatformHelper _vrPlatformHelper = null!;
 		private GreetingsScreenManager _greetingsScreenManager = null!;
+		private VRControllersInputManager _vrControllersInputManager = null!;
 		private FloorTextFloatingScreenController _floorTextFloatingScreenController = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, IVRPlatformHelper vrPlatformHelper, GreetingsScreenManager greetingsScreenManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
+		public void Construct(SiraLog siraLog, GreetingsScreenManager greetingsScreenManager, VRControllersInputManager vrControllersInputManager, FloorTextFloatingScreenController floorTextFloatingScreenController)
 		{
 			_siraLog = siraLog;
-			_vrPlatformHelper = vrPlatformHelper;
 			_greetingsScreenManager = greetingsScreenManager;
+			_vrControllersInputManager = vrControllersInputManager;
 			_floorTextFloatingScreenController = floorTextFloatingScreenController;
 		}
 
@@ -33,7 +33,7 @@ namespace Greetings.Components
 
 		private IEnumerator AwaitKeyCoroutine()
 		{
-			while (_vrPlatformHelper.GetTriggerValue(XRNode.LeftHand) <= 0.8f && _vrPlatformHelper.GetTriggerValue(XRNode.RightHand) <= 0.8f && !Input.GetKeyDown(KeyCode.Mouse0))
+			while (_vrControllersInputManager.TriggerValue(XRNode.LeftHand) <= 0.8f && _vrControllersInputManager.TriggerValue(XRNode.RightHand) <= 0.8f && !Input.GetKeyDown(KeyCode.Mouse0))
 			{
 				yield return null;
 			}
