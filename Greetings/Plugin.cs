@@ -20,6 +20,9 @@ namespace Greetings
 		[Init]
 		public Plugin(Config conf, Logger logger, Zenjector zenjector)
 		{
+			Directory.CreateDirectory(BaseVideoPath);
+			Directory.CreateDirectory(Plugin.FloatingScreenImagesPath);
+			
 			zenjector.UseLogger(logger);
 			zenjector.UseMetadataBinder<Plugin>();
 			zenjector.UseSiraSync();
