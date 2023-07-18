@@ -89,9 +89,6 @@ namespace Greetings.Configuration
 			{
 				FloatingScreenImage = null;
 			}
-			
-			Directory.CreateDirectory(VideoPath);
-			Directory.CreateDirectory(Plugin.FloatingScreenImagesPath);
 
 			CheckIfVideoPathEmpty();
 		}
