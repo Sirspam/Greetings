@@ -127,7 +127,6 @@
     <ItemGroup>
         <EmbeddedResource Include="manifest.json" />
         <EmbeddedResource Include="Resources\*" />
-        <EmbeddedResource Include="Images\*.png" />
         <EmbeddedResource Include="UI\Views\*.bsml" />
     </ItemGroup>
 
