@@ -47,6 +47,7 @@ namespace Greetings.UI.ViewControllers
 				
 				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.ImageSelectionModalView.bsml"), parentTransform.gameObject, this);
 				_modalView.name = "GreetingsImageSelectionModal";
+
 				_parsed = true;
 			}
 		}
@@ -57,7 +58,6 @@ namespace Greetings.UI.ViewControllers
 			_parserParams.EmitEvent("close-modal");
 			_parserParams.EmitEvent("open-modal");
 			
-			_customListTableData!.tableView.ReloadData();
 			_customListTableData.tableView.ClearSelection();
 
 			for (var i = 0; i < _files.Count; i++)
@@ -71,9 +71,12 @@ namespace Greetings.UI.ViewControllers
 		}
 		
 		[UIAction("#post-parse")]
-		private void PostParse()
+		private async void PostParse()
 		{
 			_customListTableData.tableView.SetDataSource(this, true);
+			
+			await SiraUtil.Extras.Utilities.PauseChamp;	
+			_customListTableData!.tableView.ReloadData();
 		}
 		
 		[UIAction("cell-selected")]
