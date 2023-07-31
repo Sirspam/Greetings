@@ -278,7 +278,7 @@ namespace Greetings.UI.ViewControllers
 		{
 			_imageButton.SetImage(fileName is null
 				? "Greetings.Resources.Greetings.png"
-				: Path.Combine(Plugin.FloatingScreenImagesPath, fileName), false, _scaleOptions, ShowFloatingScreen);
+				: Path.Combine(Plugin.FloatingScreenImagesPath, fileName), false, _scaleOptions);
 		}
 
 		private void GreetingsShown() => SetFloatingScreenActive(false);
