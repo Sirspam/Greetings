@@ -21,7 +21,7 @@ namespace Greetings
 		public Plugin(Config conf, Logger logger, Zenjector zenjector)
 		{
 			Directory.CreateDirectory(BaseVideoPath);
-			Directory.CreateDirectory(Plugin.FloatingScreenImagesPath);
+			Directory.CreateDirectory(FloatingScreenImagesPath);
 			
 			zenjector.UseLogger(logger);
 			zenjector.UseMetadataBinder<Plugin>();

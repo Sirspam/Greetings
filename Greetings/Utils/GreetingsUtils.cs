@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Greetings.Components;
 using Greetings.Configuration;
-using IPA.Utilities;
 using SiraUtil.Extras;
 using SiraUtil.Logging;
 using Tweening;
@@ -42,7 +41,7 @@ namespace Greetings.Utils
 		private FloatTween? _underlineMoveTween;
 		private GameObject? _greetingsUnderline;
 		private Vector3Tween? _underlineShowTween;
-		private List<FileInfo> _videoList = new List<FileInfo>();
+		private readonly List<FileInfo> _videoList = new();
 		private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
 		private readonly Random _random;
@@ -134,7 +133,7 @@ namespace Greetings.Utils
 				default:
 				case VideoType.RandomVideo:
 				{
-					List<FileInfo> filteredList = _videoList;
+					var filteredList = _videoList;
 					if (_previousRandomVideo != null && _videoList.Count > 1)
 					{
 						filteredList = _videoList.Where(val => val.FullName != _previousRandomVideo).ToList();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -19,7 +18,7 @@ namespace Greetings.UI.ViewControllers
 	internal sealed class ImageSelectionModalController : TableView.IDataSource
 	{
 		private bool _parsed;
-		private List<string> _files = new(){"Greetings Icon"};
+		private readonly List<string> _files = new(){"Greetings Icon"};
 		
 		[UIComponent("modal")] private readonly ModalView _modalView = null!;
 
@@ -61,7 +60,7 @@ namespace Greetings.UI.ViewControllers
 			_customListTableData!.tableView.ReloadData();
 			_customListTableData.tableView.ClearSelection();
 
-			for (int i = 0; i < _files.Count; i++)
+			for (var i = 0; i < _files.Count; i++)
 			{
 				if (_files[i] == _pluginConfig.FloatingScreenImage)
 				{
