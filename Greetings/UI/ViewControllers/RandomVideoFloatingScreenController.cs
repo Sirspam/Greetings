@@ -44,14 +44,16 @@ namespace Greetings.UI.ViewControllers
 
 		private MainCamera _mainCamera = null!;
 		private PluginConfig _pluginConfig = null!;
+		private MaterialGrabber _materialGrabber = null!;
 		private TimeTweeningManager _timeTweeningManager = null!;
 		private GreetingsScreenManager _greetingsScreenManager = null!;
 
 		[Inject]
-		public void Construct(MainCamera mainCamera, PluginConfig pluginConfig, TimeTweeningManager timeTweeningManager, GreetingsScreenManager greetingsScreenManager)
+		public void Construct(MainCamera mainCamera, PluginConfig pluginConfig, MaterialGrabber materialGrabber, TimeTweeningManager timeTweeningManager, GreetingsScreenManager greetingsScreenManager)
 		{
 			_mainCamera = mainCamera;
 			_pluginConfig = pluginConfig;
+			_materialGrabber = materialGrabber;
 			_timeTweeningManager = timeTweeningManager;
 			_greetingsScreenManager = greetingsScreenManager;
 			_scaleOptions.ShouldScale = true;
@@ -292,7 +294,7 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("#post-parse")]
 		private void PostParse()
 		{
-			_imageButton.material = Resources.FindObjectsOfTypeAll<Material>().Last(x => x.name == "UINoGlowRoundEdge");
+			_imageButton.material = _materialGrabber.NoGlowRoundEdge;
 			SetImage(_pluginConfig.FloatingScreenImage);
 		}
 		

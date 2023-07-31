@@ -1,7 +1,7 @@
 ﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
-    <modal id="modal" show-event="open-modal" hide-event="close-modal" click-off-closes="true" size-delta-x="28" size-delta-y="50">
-        <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-x="-3">
-            <list id="image-list" select-cell="cell-selected" pref-width="20" pref-height="48" list-style="Box" cell-size="20" visible-cells="2" stick-scrolling="true" show-scrollbar="true"/>
+    <modal id="modal" show-event="open-modal" hide-event="close-modal" click-off-closes="true" size-delta-x="28" size-delta-y="44">
+        <vertical horizontal-fit="PreferredSize" vertical-fit="PreferredSize" anchor-pos-x="-3" anchor-pos-y="-0.5">
+            <list id="image-list" select-cell="cell-selected" pref-width="20" pref-height="42" list-style="Box" visible-cells="2" stick-scrolling="true" show-scrollbar="true"/>
         </vertical>
     </modal>
 </bg>
