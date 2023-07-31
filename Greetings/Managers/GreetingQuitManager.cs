@@ -2,6 +2,7 @@
 using Greetings.Configuration;
 using Greetings.Utils;
 using IPA.Utilities;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Greetings.Managers
