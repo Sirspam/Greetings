@@ -21,6 +21,7 @@ namespace Greetings.Installers
 			Container.BindInstance(_pluginConfig).AsSingle();
 			Container.Bind<UIUtils>().AsSingle();
 			Container.Bind<GreetingsUtils>().AsSingle();
+			Container.Bind<MaterialGrabber>().AsSingle();
 			
 			Container.BindInterfacesAndSelfTo<GreetingsScreenManager>().AsSingle();
 			Container.BindInterfacesTo<GreetingsStartManager>().AsSingle();
