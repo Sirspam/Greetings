@@ -217,60 +217,86 @@ namespace Greetings.UI.ViewControllers
 			_floatingScreenScale = _originalFloatingScreenScale * value;
 			_floatingScreen!.transform.localScale = _floatingScreenScale;
 		}
-		
-		public void ResetPosition()
-		{
-			_pluginConfig.FloatingScreenPosition = DefaultPosition;
-			_pluginConfig.FloatingScreenRotation = DefaultRotation;
-			
-			if (_floatingScreen == null)
-			{
-				return;
-			}
-			
-			_timeTweeningManager.KillAllTweens(_floatingScreen);
-			var screenTransform = _floatingScreen.gameObject.transform;
-			var oldPosition = screenTransform.position;
-			var oldRotation = screenTransform.rotation;
-			var time = (float) Math.Sqrt(Vector3.Distance(oldPosition, DefaultPosition) / 2);
-			if (time < 0.5f)
-			{
-				time = (float) Math.Sqrt(Quaternion.Angle(oldRotation, DefaultRotation) / 100); // Still should probably change this
-			}
-			var positionTween = new FloatTween(0f, 1f, val => screenTransform.position = Vector3.Lerp(oldPosition, DefaultPosition, val), time, EaseType.OutQuart);
-			var rotationTween = new FloatTween(0f, 1f, val => screenTransform.rotation = Quaternion.Lerp(oldRotation, DefaultRotation, val), time, EaseType.OutQuart);
-			_timeTweeningManager.AddTween(positionTween, _floatingScreen);
-			_timeTweeningManager.AddTween(rotationTween, _floatingScreen);
-		}
+
+		public void ResetPosition() => TweenToPosition(DefaultPosition, DefaultRotation, true);
 
 		public void SetUpright()
 		{
-			if (_floatingScreen == null)
+			if (_floatingScreen != null)
 			{
-				return;
+				TweenToPosition(null, Quaternion.Euler(0f, _floatingScreen.gameObject.transform.rotation.eulerAngles.y, 0f), true);
 			}
-			
-			_timeTweeningManager.KillAllTweens(_floatingScreen);
-			var previousRotation = _floatingScreen.gameObject.transform.rotation;
-			var newRotation = Quaternion.Euler(0f, previousRotation.eulerAngles.y, 0f);
-			var tween = new FloatTween(0f, 1f, val => _floatingScreen.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
-			_timeTweeningManager.AddTween(tween, _floatingScreen);
-			_pluginConfig.FloatingScreenRotation = newRotation;
 		}
 
 		public void FaceHeadset()
 		{
+			if (_floatingScreen != null)
+			{
+				TweenToPosition(null, Quaternion.LookRotation(_floatingScreen.gameObject.transform.position - _mainCamera.transform.position), true);
+			}
+		}
+
+		public void TweenToPosition(Vector3? newPosition, Quaternion? newRotation, bool saveToConfig)
+		{
+			if (_floatingScreen == null || (newPosition is null && newRotation is null))
+			{
+				return;
+			}
+
+			var transform = _floatingScreen.transform;
+			var position = transform.position;
+			var rotation = transform.rotation;
+			
+			if (newPosition is not null)
+			{
+				position = (Vector3) newPosition;
+			}
+
+			if (newRotation is not null)
+			{
+				rotation = (Quaternion) newRotation;
+			}
+			
+			TweenToPosition(position, rotation, saveToConfig);
+		}
+		
+		public void TweenToPosition(Vector3 newPosition, Quaternion newRotation, bool saveToConfig)
+		{
 			if (_floatingScreen == null)
 			{
 				return;
 			}
 			
+			var transform = _floatingScreen.gameObject.transform;
+			var startPosition = transform.position;
+			var startRotation = transform.rotation;
+
 			_timeTweeningManager.KillAllTweens(_floatingScreen);
-			var rootTransform = _floatingScreen.gameObject.transform;
-			var previousRotation = rootTransform.rotation;
-			var newRotation = Quaternion.LookRotation(rootTransform.position - _mainCamera.transform.position);
-			var tween = new FloatTween(0f, 1f, val => _floatingScreen.gameObject.transform.rotation = Quaternion.Lerp(previousRotation, newRotation, val), 0.5f, EaseType.OutQuart);
-			_timeTweeningManager.AddTween(tween, _floatingScreen);
+			if (startPosition == newPosition && startRotation == newRotation)
+			{
+				return;
+			}
+
+			var maxDuration = 1.2f;
+			var positionDuration = maxDuration / Vector3.Distance(startPosition, newPosition);
+			var rotationDuration = maxDuration / Quaternion.Angle(startRotation, newRotation);
+			var duration = Mathf.Max(positionDuration, rotationDuration);
+			// min time
+			duration = Mathf.Max(duration, 0.85f);
+			// max time
+			duration = Mathf.Min(duration, maxDuration);
+
+			var positionTween = new FloatTween(0f, 1f, val => transform.position = Vector3.Lerp(startPosition, newPosition, val), duration, EaseType.OutQuad);
+			var rotationTween = new FloatTween(0f, 1f, val => transform.rotation = Quaternion.Lerp(startRotation, newRotation, val), duration, EaseType.OutCubic);
+			_timeTweeningManager.AddTween(positionTween, _floatingScreen);
+			_timeTweeningManager.AddTween(rotationTween, _floatingScreen);
+
+			if (!saveToConfig)
+			{
+				return;
+			}
+
+			_pluginConfig.FloatingScreenPosition = newPosition;
 			_pluginConfig.FloatingScreenRotation = newRotation;
 		}
 
