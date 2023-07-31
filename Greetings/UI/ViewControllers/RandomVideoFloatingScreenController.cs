@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -19,7 +18,7 @@ namespace Greetings.UI.ViewControllers
 	[HotReload(RelativePathToLayout = @"..\Views\RandomVideoView.bsml")]
 	internal sealed class RandomVideoFloatingScreenController : BSMLAutomaticViewController, IInitializable, IDisposable
 	{
-		public static Vector3 DefaultPosition = new Vector3(4.20f, 1f, 0.5f);
+		public static Vector3 DefaultPosition = new(4.20f, 1f, 0.5f);
 		public static Quaternion DefaultRotation = Quaternion.Euler(0f, 80f, 0f);
 
 		private bool _interactable = true;

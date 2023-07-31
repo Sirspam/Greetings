@@ -34,7 +34,7 @@ namespace Greetings.Configuration
 		public virtual float FloatingScreenScale { get; set; } = 1f;
 		public virtual Vector3 FloatingScreenPosition { get; set; } = RandomVideoFloatingScreenController.DefaultPosition;
 		public virtual Quaternion FloatingScreenRotation { get; set; } = RandomVideoFloatingScreenController.DefaultRotation;
-		public virtual string? FloatingScreenImage { get; set; } = null; // Uses mod icon if null
+		public virtual string? FloatingScreenImage { get; set; } // Uses mod icon if null
 		public virtual bool RandomiserEnabled { get; set; } = false;
 		public virtual int RandomiserMinMinutes { get; set; } = 5;
 		public virtual int RandomiserMaxMinutes { get; set; } = 30;

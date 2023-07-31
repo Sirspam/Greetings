@@ -3,7 +3,6 @@ using Greetings.Configuration;
 using Greetings.UI.ViewControllers;
 using Greetings.Utils;
 using HMUI;
-using IPA.Utilities;
 using SiraUtil.Extras;
 using Tweening;
 using UnityEngine;
@@ -131,8 +130,7 @@ namespace Greetings.Managers
 			
 			_gameScenesManager.transitionDidStartEvent += GameScenesManagerOntransitionDidStartEvent;
 		}
-
-		// I love events with parameters I don't need
+		
 		private void VideoEnded(VideoPlayer source)
 		{
 			GreetingsUtils.VideoPlayer!.loopPointReached -= VideoEnded;
