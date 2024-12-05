@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -10,6 +11,7 @@ using BeatSaberMarkupLanguage.Parser;
 using Greetings.Configuration;
 using Greetings.Utils;
 using HMUI;
+using IPA.Utilities.Async;
 using SiraUtil.Logging;
 using UnityEngine;
 
@@ -45,7 +47,7 @@ namespace Greetings.UI.ViewControllers
 			{
 				_files.AddRange(Directory.GetFiles(Plugin.FloatingScreenImagesPath).Where(file => file.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".apng", StringComparison.OrdinalIgnoreCase)).ToList());
 				
-				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.ImageSelectionModalView.bsml"), parentTransform.gameObject, this);
+				BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.ImageSelectionModalView.bsml"), parentTransform.gameObject, this);
 				_modalView.name = "GreetingsImageSelectionModal";
 
 				_parsed = true;
@@ -58,13 +60,13 @@ namespace Greetings.UI.ViewControllers
 			_parserParams.EmitEvent("close-modal");
 			_parserParams.EmitEvent("open-modal");
 			
-			_customListTableData.tableView.ClearSelection();
+			_customListTableData.TableView.ClearSelection();
 
 			for (var i = 0; i < _files.Count; i++)
 			{
 				if (_files[i] == _pluginConfig.FloatingScreenImage)
 				{
-					_customListTableData.tableView.ScrollToCellWithIdx(i, TableView.ScrollPositionType.Beginning, false);
+					_customListTableData.TableView.ScrollToCellWithIdx(i, TableView.ScrollPositionType.Beginning, false);
 					break;
 				}
 			}
@@ -73,26 +75,26 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("#post-parse")]
 		private async void PostParse()
 		{
-			_customListTableData.tableView.SetDataSource(this, true);
+			_customListTableData.TableView.SetDataSource(this, true);
 			
 			await SiraUtil.Extras.Utilities.PauseChamp;	
-			_customListTableData!.tableView.ReloadData();
+			_customListTableData!.TableView.ReloadData();
 		}
 		
 		[UIAction("cell-selected")]
-		private void CellSelected(TableView tableView, int index)
+		private async Task CellSelected(TableView tableView, int index)
 		{
 			var file = _files[index];
 			
 			if (file == "Greetings Icon")
 			{
 				_pluginConfig.FloatingScreenImage = null;
-				_randomVideoFloatingScreenController.SetImage(null);
+				await _randomVideoFloatingScreenController.SetImage(null);
 			}
 			else
 			{
 				_pluginConfig.FloatingScreenImage = file;
-				_randomVideoFloatingScreenController.SetImage(file);
+				await _randomVideoFloatingScreenController.SetImage(file);
 			}
 			
 			BeatSaberUI.BasicUIAudioManager.HandleButtonClickEvent();
@@ -102,12 +104,12 @@ namespace Greetings.UI.ViewControllers
 
 		private ImageSelectionCellController GetCell()
 		{
-			var tableCell = _customListTableData.tableView.DequeueReusableCellForIdentifier(ReuseId);
+			var tableCell = _customListTableData.TableView.DequeueReusableCellForIdentifier(ReuseId);
 
 			if (tableCell is null)
 			{
 				var imageCell = new GameObject(nameof(ImageSelectionCellController), typeof(Touchable)).AddComponent<ImageSelectionCellController>();
-				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.ImageSelectionCellView.bsml"), imageCell.gameObject, imageCell);
+				BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.ImageSelectionCellView.bsml"), imageCell.gameObject, imageCell);
 				imageCell.Construct(_materialGrabber);
 				imageCell.interactable = true;
 				imageCell.reuseIdentifier = ReuseId;
@@ -118,7 +120,7 @@ namespace Greetings.UI.ViewControllers
 			return (ImageSelectionCellController) tableCell;
 		}
 
-		public float CellSize()
+		public float CellSize(int idx)
 		{
 			return 21f;
 		}
@@ -130,7 +132,9 @@ namespace Greetings.UI.ViewControllers
 
 		public TableCell CellForIdx(TableView tableView, int idx)
 		{
-			return GetCell().PopulateCell(_files[idx]);
+			var cell = GetCell();
+			UnityMainThreadTaskScheduler.Factory.StartNew(async () => await cell.PopulateCell(_files[idx]));
+			return cell;
 		}
 	}
 }

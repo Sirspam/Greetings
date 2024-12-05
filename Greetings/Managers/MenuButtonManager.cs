@@ -23,9 +23,9 @@ namespace Greetings.Managers
 			_greetingsFlowCoordinator = greetingsFlowCoordinator;
 		}
 
-		public void Initialize() => MenuButtons.instance.RegisterButton(_menuButton);
+		public void Initialize() => MenuButtons.Instance.RegisterButton(_menuButton);
 
-		public void Dispose() => MenuButtons.instance.UnregisterButton(_menuButton);
+		public void Dispose() => MenuButtons.Instance.UnregisterButton(_menuButton);
 
 		private void MenuButtonClicked()
 		{

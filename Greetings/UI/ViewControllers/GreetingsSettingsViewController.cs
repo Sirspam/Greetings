@@ -274,24 +274,24 @@ namespace Greetings.UI.ViewControllers
 		
 		private void ShowRandomiserModal(RandomiserSliders slider)
 		{
-			_randomiserModalSlider.slider.valueDidChangeEvent -= MinMinutesSliderDidChangeEvent;
-			_randomiserModalSlider.slider.valueDidChangeEvent -= MaxMinutesSliderDidChangeEvent;
+			_randomiserModalSlider.Slider.valueDidChangeEvent -= MinMinutesSliderDidChangeEvent;
+			_randomiserModalSlider.Slider.valueDidChangeEvent -= MaxMinutesSliderDidChangeEvent;
 			
 			if (slider == RandomiserSliders.Min)
 			{
 				RandomiserSliderText = "Min Minutes";
-				_randomiserModalSlider.slider.minValue = 0;
-				_randomiserModalSlider.slider.maxValue = _pluginConfig.RandomiserMaxMinutes - 1;
-				_randomiserModalSlider.slider.value = _pluginConfig.RandomiserMinMinutes;
-				_randomiserModalSlider.slider.valueDidChangeEvent += MinMinutesSliderDidChangeEvent;
+				_randomiserModalSlider.Slider.minValue = 0;
+				_randomiserModalSlider.Slider.maxValue = _pluginConfig.RandomiserMaxMinutes - 1;
+				_randomiserModalSlider.Slider.value = _pluginConfig.RandomiserMinMinutes;
+				_randomiserModalSlider.Slider.valueDidChangeEvent += MinMinutesSliderDidChangeEvent;
 			}
 			else
 			{
 				RandomiserSliderText = "Max Minutes";
-				_randomiserModalSlider.slider.minValue = _pluginConfig.RandomiserMinMinutes + 1;
-				_randomiserModalSlider.slider.maxValue = 60;
-				_randomiserModalSlider.slider.value = _pluginConfig.RandomiserMaxMinutes;
-				_randomiserModalSlider.slider.valueDidChangeEvent += MaxMinutesSliderDidChangeEvent;
+				_randomiserModalSlider.Slider.minValue = _pluginConfig.RandomiserMinMinutes + 1;
+				_randomiserModalSlider.Slider.maxValue = 60;
+				_randomiserModalSlider.Slider.value = _pluginConfig.RandomiserMaxMinutes;
+				_randomiserModalSlider.Slider.valueDidChangeEvent += MaxMinutesSliderDidChangeEvent;
 			}
 			
 			_parserParams.EmitEvent("open-modal");
@@ -410,8 +410,8 @@ namespace Greetings.UI.ViewControllers
 
 		private void OnDisable()
 		{
-			_randomiserModalSlider.slider.valueDidChangeEvent -= MinMinutesSliderDidChangeEvent;
-			_randomiserModalSlider.slider.valueDidChangeEvent -= MaxMinutesSliderDidChangeEvent;
+			_randomiserModalSlider.Slider.valueDidChangeEvent -= MinMinutesSliderDidChangeEvent;
+			_randomiserModalSlider.Slider.valueDidChangeEvent -= MaxMinutesSliderDidChangeEvent;
 			
 			if (!_pluginConfig.FloatingScreenEnabled)
 			{

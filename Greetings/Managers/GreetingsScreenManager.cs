@@ -75,7 +75,7 @@ namespace Greetings.Managers
 		}
 		
 		// For Multiplayer and Tournament Assistant
-		private void GameScenesManagerOntransitionDidStartEvent(float obj)
+		private void GameScenesManagerOntransitionDidStartEvent(GameScenesManager.SceneTransitionType sceneTransitionType, float obj)
 		{
 			if (SceneManager.GetActiveScene().name == "MainMenu")
 			{

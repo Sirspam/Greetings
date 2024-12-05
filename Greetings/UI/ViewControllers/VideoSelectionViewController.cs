@@ -66,8 +66,9 @@ namespace Greetings.UI.ViewControllers
 		[UIAction("#post-parse")]
 		private void PostParse()
 		{
-			_deleteVideoButton._skew = 0.2f;
-			_bottomButtonsLayout.GetComponent<ImageView>()._skew = 0.18f;
+			// TODO: To skew or not to skew
+			// _deleteVideoButton._skew = 0.2f;
+			// _bottomButtonsLayout.GetComponent<ImageView>()._skew = 0.18f;
 		}
 
 		[UIAction("video-tab-selected")]
@@ -79,15 +80,15 @@ namespace Greetings.UI.ViewControllers
 			{
 				case 0:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.StartVideo;
-					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedStartVideoIndex].text) + ".mp4");
-					_videoList.tableView.SelectCellWithIdx(_selectedStartVideoIndex);
-					_videoList.tableView.ScrollToCellWithIdx(_selectedStartVideoIndex, TableView.ScrollPositionType.Center, false);
+					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.Data[_selectedStartVideoIndex].Text) + ".mp4");
+					_videoList.TableView.SelectCellWithIdx(_selectedStartVideoIndex);
+					_videoList.TableView.ScrollToCellWithIdx(_selectedStartVideoIndex, TableView.ScrollPositionType.Center, false);
 					break;
 				case 1:
 					_greetingsUtils.CurrentVideoType = GreetingsUtils.VideoType.QuitVideo;
-					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.data[_selectedQuitVideoIndex].text) + ".mp4");
-					_videoList.tableView.SelectCellWithIdx(_selectedQuitVideoIndex);
-					_videoList.tableView.ScrollToCellWithIdx(_selectedQuitVideoIndex, TableView.ScrollPositionType.Center, false);
+					_selectedFile = new FileInfo(Path.Combine(_pluginConfig.VideoPath, _videoList.Data[_selectedQuitVideoIndex].Text) + ".mp4");
+					_videoList.TableView.SelectCellWithIdx(_selectedQuitVideoIndex);
+					_videoList.TableView.ScrollToCellWithIdx(_selectedQuitVideoIndex, TableView.ScrollPositionType.Center, false);
 					break;
 			}
 			_greetingsUtils.HideScreen(reloadVideo: true);
@@ -97,7 +98,7 @@ namespace Greetings.UI.ViewControllers
 		// ReSharper disable once UnusedParameter.Local
 		private void VideoClicked(TableView? tableView, int index)
 		{
-			var fileName = _videoList.data[index].text + ".mp4";
+			var fileName = _videoList.Data[index].Text + ".mp4";
 			_selectedFile = new FileInfo(_pluginConfig.VideoPath + "\\" + fileName);
 			switch (_selectedVideoTab)
 			{
@@ -221,16 +222,16 @@ namespace Greetings.UI.ViewControllers
 			}
 			
 
-			_videoList.data = data;
-			_videoList.tableView.SelectCellWithIdx(selectIndex);
-			_videoList.tableView.ScrollToCellWithIdx(selectIndex, TableView.ScrollPositionType.Center, false);
+			_videoList.Data = data;
+			_videoList.TableView.SelectCellWithIdx(selectIndex);
+			_videoList.TableView.ScrollToCellWithIdx(selectIndex, TableView.ScrollPositionType.Center, false);
 			
 			// List is moved down a bit until refreshed, for whatever reason
 			if (firstActivation)
 			{
 				await SiraUtil.Extras.Utilities.PauseChamp;	
 			}
-			_videoList.tableView.ReloadData();
+			_videoList.TableView.ReloadData();
 		}
 
 		private static string GetFileSize(long size)

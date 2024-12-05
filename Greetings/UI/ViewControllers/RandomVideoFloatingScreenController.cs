@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
@@ -69,8 +70,8 @@ namespace Greetings.UI.ViewControllers
 			_originalFloatingScreenScale = _floatingScreen.transform.localScale;
 			_floatingScreenScale = _originalFloatingScreenScale;
 			SetScale(_pluginConfig.FloatingScreenScale);
-			_floatingScreen.handle.transform.localPosition = new Vector3(-_floatingScreen.ScreenSize.x / 1.9f, 0, 0f);
-			_handleScale = _floatingScreen.handle.transform.localScale;
+			_floatingScreen.Handle.transform.localPosition = new Vector3(-_floatingScreen.ScreenSize.x / 1.9f, 0, 0f);
+			_handleScale = _floatingScreen.Handle.transform.localScale;
 			_floatingScreen.ShowHandle = _pluginConfig.HandleEnabled;
 
 			_floatingScreen.SetRootViewController(this, AnimationType.None);
@@ -120,12 +121,12 @@ namespace Greetings.UI.ViewControllers
 				CreateFloatingScreen();
 			}
 
-			var tween = new Vector3Tween(new Vector3(_handleScale.x, 0f), _handleScale, val => _floatingScreen!.handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
+			var tween = new Vector3Tween(new Vector3(_handleScale.x, 0f), _handleScale, val => _floatingScreen!.Handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
 			{
 				onStart = () => _floatingScreen!.ShowHandle = true
 			};
-			_timeTweeningManager.KillAllTweens(_floatingScreen!.handle);
-			_timeTweeningManager.AddTween(tween, _floatingScreen.handle);
+			_timeTweeningManager.KillAllTweens(_floatingScreen!.Handle);
+			_timeTweeningManager.AddTween(tween, _floatingScreen.Handle);
 		}
 
 		private void HideHandle()
@@ -135,12 +136,12 @@ namespace Greetings.UI.ViewControllers
 				return;
 			}
 
-			var tween = new Vector3Tween(_handleScale, new Vector3(_handleScale.x, 0f), val => _floatingScreen.handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
+			var tween = new Vector3Tween(_handleScale, new Vector3(_handleScale.x, 0f), val => _floatingScreen.Handle.transform.localScale = val, 0.35f, EaseType.OutQuart)
 			{
 				onCompleted = () => _floatingScreen.ShowHandle = false
 			};
-			_timeTweeningManager.KillAllTweens(_floatingScreen.handle);
-			_timeTweeningManager.AddTween(tween, _floatingScreen.handle);
+			_timeTweeningManager.KillAllTweens(_floatingScreen.Handle);
+			_timeTweeningManager.AddTween(tween, _floatingScreen.Handle);
 		}
 
 		public void SetFloatingScreenActive(bool value)
@@ -299,9 +300,9 @@ namespace Greetings.UI.ViewControllers
 			_pluginConfig.FloatingScreenRotation = newRotation;
 		}
 
-		public void SetImage(string? fileName)
+		public async Task SetImage(string? fileName)
 		{
-			_imageButton.SetImage(fileName is null
+			await _imageButton.SetImageAsync(fileName is null
 				? "Greetings.Resources.Greetings.png"
 				: Path.Combine(Plugin.FloatingScreenImagesPath, fileName), false, _scaleOptions);
 		}
@@ -317,10 +318,10 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		[UIAction("#post-parse")]
-		private void PostParse()
+		private async Task PostParse()
 		{
 			_imageButton.material = _materialGrabber.NoGlowRoundEdge;
-			SetImage(_pluginConfig.FloatingScreenImage);
+			await SetImage(_pluginConfig.FloatingScreenImage);
 		}
 		
 		[UIAction("clicked")]

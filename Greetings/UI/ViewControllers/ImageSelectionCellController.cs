@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using Greetings.Utils;
@@ -38,15 +39,15 @@ namespace Greetings.UI.ViewControllers
 			_imageView.material = _materialGrabber.NoGlowRoundEdge;
 		}
 		
-		public ImageSelectionCellController PopulateCell (string imagePath)
+		public async Task<ImageSelectionCellController> PopulateCell (string imagePath)
 		{
 			if (imagePath == "Greetings Icon")
 			{
-				_imageView.SetImage("Greetings.Resources.Greetings.png");
+				await _imageView.SetImageAsync("Greetings.Resources.Greetings.png");
 			}
 			else if (imagePath.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) || imagePath.EndsWith(".apng", StringComparison.OrdinalIgnoreCase))
 			{
-				_imageView.SetImage(imagePath);
+				await _imageView.SetImageAsync(imagePath);
 			}
 			else
 			{
@@ -57,7 +58,7 @@ namespace Greetings.UI.ViewControllers
 					ShouldScale = true,
 					MaintainRatio = true
 				};
-				_imageView.SetImage(imagePath, true, scaleOptions);
+				await _imageView.SetImageAsync(imagePath, true, scaleOptions);
 			}
 			
 			ImageName = Path.GetFileNameWithoutExtension(imagePath);

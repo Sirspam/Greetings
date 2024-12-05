@@ -52,7 +52,7 @@ namespace Greetings.UI.ViewControllers
 		{
 			if (!_parsed)
 			{
-				BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.YesNoModalView.bsml"), parentTransform.gameObject, this);
+				BSMLParser.Instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "Greetings.UI.Views.YesNoModalView.bsml"), parentTransform.gameObject, this);
 				_modalView.name = "GreetingsYesNoModal";				
 				_parsed = true;
 				return;

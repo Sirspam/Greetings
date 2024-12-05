@@ -34,18 +34,16 @@ namespace Greetings.UI.ViewControllers
 		private PluginMetadata _metadata = null!;
 		private PluginConfig _pluginConfig = null!;
 		private ISiraSyncService _siraSyncService = null!;
-		private IPlatformUserModel _platformUserModel = null!;
 		private TimeTweeningManager _timeTweeningManager = null!;
 
 		[Inject]
-		public void Construct(SiraLog siraLog, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> metadata, PluginConfig pluginConfig, ISiraSyncService siraSyncService, IPlatformUserModel platformUserModel, TimeTweeningManager timeTweeningManager)
+		public void Construct(SiraLog siraLog, GreetingsUtils greetingsUtils, UBinder<Plugin, PluginMetadata> metadata, PluginConfig pluginConfig, ISiraSyncService siraSyncService, TimeTweeningManager timeTweeningManager)
 		{
 			_siraLog = siraLog;
 			_greetingsUtils = greetingsUtils;
 			_metadata = metadata.Value;
 			_pluginConfig = pluginConfig;
 			_siraSyncService = siraSyncService;
-			_platformUserModel = platformUserModel;
 			_timeTweeningManager = timeTweeningManager;
 		}
 
@@ -101,8 +99,6 @@ namespace Greetings.UI.ViewControllers
 					UpdateAvailable = true;
 					_timeTweeningManager.AddTween(new FloatTween(0f, 1f, val => _updateText.alpha = val, 0.4f, EaseType.InCubic), this);
 				}
-				
-			/* Fuck you Kryptec*/ if (_pluginConfig.EasterEggs && (await _platformUserModel.GetUserInfo()).platformUserId == "76561198200744503") _playOrPauseImage.SetImage("Greetings.Resources.FUCKUSPAM.png");
 		}
 
 		[UIAction("back-clicked")]
