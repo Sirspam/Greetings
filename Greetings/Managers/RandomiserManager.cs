@@ -39,7 +39,8 @@ namespace Greetings.Managers
 
 		private IEnumerator TimerCoroutine()
 		{
-			yield return new WaitUntil(() => _itsGreetinTime <= DateTime.Now);
+			yield return new WaitUntil(() => _itsGreetinTime <= DateTime.Now && !_gameScenesManager.isInTransition);
+			
 			_siraLog.Info("Playing Greetings");
 			_greetingsScreenManager.StartGreetings(GreetingsUtils.VideoType.RandomVideo, () =>
 			{

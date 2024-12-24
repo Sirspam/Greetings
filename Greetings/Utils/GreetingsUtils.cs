@@ -155,6 +155,7 @@ namespace Greetings.Utils
 
 				if (SkipRequested)
 				{
+					_siraLog.Debug("CreateScreen: SkipRequested");
 					return;
 				}
 				
@@ -201,6 +202,7 @@ namespace Greetings.Utils
 				
 				if (SkipRequested)
 				{
+					_siraLog.Debug("ShowScreen: SkipRequested");
 					return;
 				}
 				
