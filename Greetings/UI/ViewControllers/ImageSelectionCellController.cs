@@ -53,8 +53,8 @@ namespace Greetings.UI.ViewControllers
 			{
 				var scaleOptions = new BeatSaberUI.ScaleOptions
 				{
-					Height = 128,
-					Width = 128,
+					Height = 256,
+					Width = 256,
 					ShouldScale = true,
 					MaintainRatio = true
 				};
