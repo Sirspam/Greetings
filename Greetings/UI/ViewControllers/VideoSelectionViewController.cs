@@ -134,7 +134,14 @@ namespace Greetings.UI.ViewControllers
 		}
 
 		[UIAction("delete-video-clicked")]
-		private void DeleteVideo() => _yesNoModalViewController.ShowModal(_deleteVideoButton.transform, "Are you sure you want to delete this video?", 5, DeleteSelectedVideo);
+		private void DeleteVideo()
+		{
+			const int displayNameLength = 14;
+			
+			var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(_selectedFile.Name);
+			var displayName = fileNameWithoutExtension.Length > displayNameLength ? fileNameWithoutExtension.Substring(0, displayNameLength) + "..." : fileNameWithoutExtension;
+			_yesNoModalViewController.ShowModal(_deleteVideoButton.transform, $"Are you sure you want to delete {displayName}?", 5, DeleteSelectedVideo);
+		}
 		
 		private void DeleteSelectedVideo()
 		{
