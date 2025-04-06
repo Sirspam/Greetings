@@ -3,14 +3,14 @@
   "id": "Greetings",
   "name": "Greetings",
   "author": "Sirspam",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A Beat Saber mod for playing a video on the game's start up, exit or on demand",
   "gameVersion": "1.31.0",
   "icon": "Greetings.Resources.Greetings.png",
   "dependsOn": {
-    "BSIPA": "^4.3.0",
-    "BeatSaberMarkupLanguage": "^1.7.6",
-    "SiraUtil": "^3.0.6"
+    "BSIPA": "^4.3.5",
+    "BeatSaberMarkupLanguage": "^1.12.4",
+    "SiraUtil": "^3.1.14"
   },
   "loadAfter": [
     "SongCore"
